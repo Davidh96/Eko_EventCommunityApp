@@ -37,23 +37,28 @@ public class MainActivity extends AppCompatActivity {
         registerBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //register user
                 registerUser();
             }
         });
     }
 
     private void registerUser(){
+        //get details entered in by user
         String email = emailEdt.getText().toString();
         String password = passwordEdt.getText().toString();
 
         Toast.makeText(this,email + " " + password,Toast.LENGTH_SHORT).show();
 
+        //register user and check if rgistartion is complete
         auth.createUserWithEmailAndPassword(email,password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
+                //if user was registered correctly
                 if(task.isSuccessful()){
                 Toast.makeText(MainActivity.this,"Registered",Toast.LENGTH_SHORT).show();
                 }
+                //if user was not registered correctly
                 else{
                     Toast.makeText(MainActivity.this,"Unable to register you at this time",Toast.LENGTH_SHORT).show();
                 }
