@@ -22,6 +22,7 @@ import java.security.NoSuchAlgorithmException;
 
 public class MainActivity extends Activity {
 
+    //used to register/ssignin users
     private FirebaseAuth auth;
 
     private EditText emailEdt;
@@ -34,6 +35,7 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //get Firebase auth instance
         auth=FirebaseAuth.getInstance();
 
         emailEdt = (EditText)findViewById(R.id.emailEdit);
@@ -46,37 +48,28 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 //register user
-                try {
-                    registerUser();
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                } catch (NoSuchAlgorithmException e) {
-                    e.printStackTrace();
-                }
+                registerUser();
+
             }
         });
 
         signBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try {
-                    signinUser();
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                } catch (NoSuchAlgorithmException e) {
-                    e.printStackTrace();
-                }
+                //sign up user
+                signinUser();
             }
         });
     }
 
-    private void registerUser() throws UnsupportedEncodingException, NoSuchAlgorithmException {
+    //method for registering users
+    private void registerUser() {
         //get details entered in by user
         String email = emailEdt.getText().toString();
         String password = passwordEdt.getText().toString();
 
 
-        //register user and check if rgistartion is complete
+        //register user and check if registartion is complete
         auth.createUserWithEmailAndPassword(email,password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
@@ -92,7 +85,8 @@ public class MainActivity extends Activity {
         });
     }
 
-    private void signinUser() throws UnsupportedEncodingException, NoSuchAlgorithmException {
+    //method for signing up users
+    private void signinUser(){
         //get details entered in by user
         String email = emailEdt.getText().toString();
         String password = passwordEdt.getText().toString();
