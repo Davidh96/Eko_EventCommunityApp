@@ -85,7 +85,7 @@ public class MainActivity extends Activity {
         });
     }
 
-    //method for signing up users
+    //method for signing up user
     private void signinUser(){
         //get details entered in by user
         String email = emailEdt.getText().toString();
