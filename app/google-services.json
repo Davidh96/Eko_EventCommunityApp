@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "381972857347",
+    "firebase_url": "https://ekoapp-ba9b5.firebaseio.com",
+    "project_id": "ekoapp-ba9b5",
+    "storage_bucket": "ekoapp-ba9b5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:381972857347:android:072fc88653648f85",
+        "android_client_info": {
+          "package_name": "com.thedavehunt.eko"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "381972857347-ac47uaj15aoi4pa4rtbmqs6ldnbkgosf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.thedavehunt.eko",
+            "certificate_hash": "6292315d9c1b807b8d61201cef4ddf053501eac0"
+          }
+        },
+        {
+          "client_id": "381972857347-bicpiv185od77iuosile3u9vqo5gbgsr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB3ARutCH2qHDPY3owDH7Wh2TTg6keViZY"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "381972857347-bicpiv185od77iuosile3u9vqo5gbgsr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

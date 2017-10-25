@@ -1,5 +1,6 @@
 package com.thedavehunt.eko;
 
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -19,7 +20,7 @@ import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends Activity {
 
     private FirebaseAuth auth;
 
@@ -74,8 +75,6 @@ public class MainActivity extends AppCompatActivity {
         String email = emailEdt.getText().toString();
         String password = passwordEdt.getText().toString();
 
-        password = SHA1(password);
-
 
         //register user and check if rgistartion is complete
         auth.createUserWithEmailAndPassword(email,password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -98,7 +97,6 @@ public class MainActivity extends AppCompatActivity {
         String email = emailEdt.getText().toString();
         String password = passwordEdt.getText().toString();
 
-        password = SHA1(password);
 
         auth.signInWithEmailAndPassword(email,password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
@@ -106,8 +104,7 @@ public class MainActivity extends AppCompatActivity {
                 //if user was signed in correctly
                 if(task.isSuccessful()){
                     Toast.makeText(MainActivity.this,"Signed In",Toast.LENGTH_SHORT).show();
-                    Intent signedIn = new Intent(MainActivity.this,landingPage.class);
-                    startActivity(signedIn);
+
                 }
                 //if user was not signed in correctly
                 else{
@@ -117,24 +114,5 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private static String convertToHex(byte[] data) {
-        StringBuilder buf = new StringBuilder();
-        for (byte b : data) {
-            int halfbyte = (b >>> 4) & 0x0F;
-            int two_halfs = 0;
-            do {
-                buf.append((0 <= halfbyte) && (halfbyte <= 9) ? (char) ('0' + halfbyte) : (char) ('a' + (halfbyte - 10)));
-                halfbyte = b & 0x0F;
-            } while (two_halfs++ < 1);
-        }
-        return buf.toString();
-    }
 
-    public static String SHA1(String text) throws NoSuchAlgorithmException, UnsupportedEncodingException {
-        MessageDigest md = MessageDigest.getInstance("SHA-1");
-        byte[] textBytes = text.getBytes("iso-8859-1");
-        md.update(textBytes, 0, textBytes.length);
-        byte[] sha1hash = md.digest();
-        return convertToHex(sha1hash);
-    }
 }
