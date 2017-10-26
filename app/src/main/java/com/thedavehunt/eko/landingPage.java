@@ -42,8 +42,7 @@ public class landingPage extends Activity {
             public void onClick(View view) {
                 //TODO
                 Toast.makeText(landingPage.this,"Clicked", Toast.LENGTH_SHORT).show();
-//                Intent createEvent = new Intent(landingPage.this,createEvent.class);
-//                startActivity(createEvent);
+
             }
         });
 
@@ -75,89 +74,6 @@ public class landingPage extends Activity {
         });
 
 
-        rootRef.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-//                eventDoc event = dataSnapshot.getValue(eventDoc.class);
-//                for(DataSnapshot eventy : dataSnapshot.getChildren()){
-//                    eventList.add(event);
-//                }
-//
-//                //list2.add(strin);
-//                //Toast.makeText(landingPage.this,strin,Toast.LENGTH_SHORT);
-//                tempAdapter = new landingListAdapter(landingPage.this,eventList);
-//                //ArrayAdapter ww = new ArrayAdapter(landingPage.this,android.R.layout.simple_list_item_1,list2);
-//
-//                ListView list = (ListView)findViewById(R.id.list1);
-//                list.setAdapter(tempAdapter);
-//
-//
-//                //tempAdapter.notifyAll();
-
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
-
-
     }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        eventRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-
-
-
-
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
-
-//        Toast.makeText(landingPage.this,""+tempin, Toast.LENGTH_SHORT).show();
-//        final String[] temp = {"event1","event2","event3",tempin};
-//
-//        //ListAdapter tempAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,temp);
-//        tempAdapter = new landingListAdapter(this,temp);
-//
-//
-//        ListView list = (ListView)findViewById(R.id.list1);
-//        list.setAdapter(tempAdapter);
-//
-//        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                Toast.makeText(landingPage.this,""+temp[position], Toast.LENGTH_SHORT).show();
-//            }
-//        });
-    }
-
 
 }
