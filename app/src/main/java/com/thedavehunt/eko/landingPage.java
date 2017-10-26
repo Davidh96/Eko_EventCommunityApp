@@ -25,8 +25,6 @@ import java.util.List;
 public class landingPage extends Activity {
 
     DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
-    DatabaseReference eventRef = rootRef.child("event");
-    ArrayList<String> list2 = new ArrayList();
     List<eventDoc> eventList;
     ListAdapter tempAdapter;
 
@@ -34,14 +32,15 @@ public class landingPage extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_landing_page);
-        list2.add("test");
 
+        //FAB, used to allow creation of new events
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //TODO
-                Toast.makeText(landingPage.this,"Clicked", Toast.LENGTH_SHORT).show();
+                Intent createevent = new Intent(landingPage.this,createEvent.class);
+                startActivity(createevent);
 
             }
         });
@@ -55,15 +54,16 @@ public class landingPage extends Activity {
                 eventList.clear();
 
                 for(DataSnapshot eventSnapshop: dataSnapshot.getChildren()){
-                    Toast.makeText(landingPage.this,""+eventSnapshop.toString(),Toast.LENGTH_SHORT).show();
+                    //retrieve data from db and place it in a eventDoc structure
                     eventDoc evnt = eventSnapshop.getValue(eventDoc.class);
-                    //Toast.makeText(landingPage.this,evnt.getEventName(),Toast.LENGTH_SHORT).show();
-                   eventList.add(evnt);
+                    //add event to list
+                    eventList.add(evnt);
                 }
+                //initialise adapter
                 tempAdapter = new landingListAdapter(landingPage.this,eventList);
-                //ArrayAdapter ww = new ArrayAdapter(landingPage.this,android.R.layout.simple_list_item_1,list2);
 
                 ListView list = (ListView)findViewById(R.id.list1);
+                //set adapter for list view
                 list.setAdapter(tempAdapter);
             }
 
