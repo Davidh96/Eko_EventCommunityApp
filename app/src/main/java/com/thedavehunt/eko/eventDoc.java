@@ -9,16 +9,18 @@ public class eventDoc {
     String eventName;
     String eventAuthor;
     String eventDescription;
+    String eventCategory;
     String eventLocation;
 
     public eventDoc() {
     }
 
-    public eventDoc(String id, String eventName, String eventAuthor, String eventDescription, String eventLocation) {
+    public eventDoc(String id, String eventName, String eventAuthor, String eventDescription,String eventCategory, String eventLocation) {
         this.id = id;
         this.eventName = eventName;
         this.eventAuthor = eventAuthor;
         this.eventDescription = eventDescription;
+        this.eventCategory = eventCategory;
         this.eventLocation = eventLocation;
     }
 
@@ -60,5 +62,13 @@ public class eventDoc {
 
     public void setEventLocation(String eventLocation) {
         this.eventLocation = eventLocation;
+    }
+
+    public String getEventCategory() {
+        return eventCategory;
+    }
+
+    public void setEventCategory(String eventCategory) {
+        this.eventCategory = eventCategory;
     }
 }
