@@ -85,7 +85,7 @@ public class MainActivity extends Activity {
         });
     }
 
-    //method for signing up user
+    //method for signing up users
     private void signinUser(){
         //get details entered in by user
         String email = emailEdt.getText().toString();
@@ -98,6 +98,9 @@ public class MainActivity extends Activity {
                 //if user was signed in correctly
                 if(task.isSuccessful()){
                     Toast.makeText(MainActivity.this,"Signed In",Toast.LENGTH_SHORT).show();
+                    Intent landingpage = new Intent(MainActivity.this,landingPage.class);
+                    startActivity(landingpage);
+
 
                 }
                 //if user was not signed in correctly
