@@ -12,6 +12,8 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -66,7 +68,7 @@ public class createEvent extends Activity {
             public void onClick(View view) {
                 //TODO
                 saveEvent();
-                finish();
+
 
             }
         });
@@ -77,6 +79,7 @@ public class createEvent extends Activity {
             @Override
             public void onClick(View view) {
                 //TODO
+                Toast.makeText(getApplicationContext(),"Cancelled",Toast.LENGTH_SHORT).show();
                 finish();
             }
         });
@@ -84,15 +87,39 @@ public class createEvent extends Activity {
 
     //method for saving new events to the Firebase database
     protected void saveEvent(){
+        boolean saved=true;
         //get event name
         name=nameEdt.getText().toString();
         //get event description
         description=descriptionEdt.getText().toString();
 
-        String id = eventRef.push().getKey();
-        eventDoc event1 = new eventDoc(id,name,"admin",description,category,"Dublin");
+        if(name.isEmpty() || description.isEmpty()){
+            Toast.makeText(getApplicationContext(),"Please fill in all information",Toast.LENGTH_SHORT).show();
+            saved=false;
+        }
+        else if(description.length()<30){
+            Toast.makeText(getApplicationContext(),"Description must be atleast 30 charachters long",Toast.LENGTH_SHORT).show();
+            saved=false;
+        }
 
-        rootRef.child(id).setValue(event1);
+        if(saved) {
+            String id = eventRef.push().getKey();
+
+            //get Firebase auth instance
+            FirebaseAuth auth= FirebaseAuth.getInstance();
+            //get user details
+            FirebaseUser user = auth.getCurrentUser();
+            //retrieve users email address
+            String author = user.getEmail();
+            eventDoc event1 = new eventDoc(id, name, author, description, category, "Dublin");
+
+            rootRef.child(id).setValue(event1);
+            Toast.makeText(getApplicationContext(),"Event Created",Toast.LENGTH_SHORT).show();
+            finish();
+        }
+        else{
+
+        }
     }
 
     @Override

@@ -31,7 +31,7 @@
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="e.g I have a football and looking for some people to play a game with."
+        android:hint="e.g I have a football and looking for some people to play a game with"
         android:id="@+id/editDescription"
         android:layout_below="@+id/textDescription"/>
 

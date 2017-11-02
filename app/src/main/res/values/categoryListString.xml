@@ -9,5 +9,7 @@
         <item>Politics</item>
         <item>Food</item>
         <item>Religion</item>
+        <item>Learning</item>
+        <item>Technology</item>
     </string-array>
 </resources>
