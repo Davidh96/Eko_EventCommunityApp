@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingLeft="16dp"
@@ -11,33 +11,63 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Event Name"/>
+        android:text="Event Name"
+        android:id="@+id/textName"/>
 
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="e.g 5-a-side football"
-        android:id="@+id/editName"/>
+        android:id="@+id/editName"
+        android:layout_below="@+id/textName"/>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Description"/>
+        android:text="Description"
+        android:layout_below="@+id/editName"
+        android:id="@+id/textDescription"/>
 
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="e.g I have a football and looking for some people to play a game with."
-        android:id="@+id/editDescription"/>
+        android:id="@+id/editDescription"
+        android:layout_below="@+id/textDescription"/>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Category"/>
+        android:text="Category"
+        android:layout_below="@id/editDescription"
+        android:id="@+id/textCategory"/>
 
     <Spinner
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/spinnerCategory"></Spinner>
+        android:id="@+id/spinnerCategory"
+        android:layout_below="@+id/textCategory"></Spinner>
 
-</LinearLayout>
+
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fabCreate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:src="@android:drawable/ic_menu_save"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fabCancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:src="@android:drawable/ic_menu_close_clear_cancel"
+        android:layout_above="@+id/fabCreate"
+        android:layout_alignParentRight="true"
+        />
+
+</RelativeLayout>

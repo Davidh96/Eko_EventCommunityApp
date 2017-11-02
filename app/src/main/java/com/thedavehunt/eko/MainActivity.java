@@ -69,6 +69,8 @@ public class MainActivity extends Activity {
         String password = passwordEdt.getText().toString();
 
 
+
+
         //register user and check if registartion is complete
         auth.createUserWithEmailAndPassword(email,password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override

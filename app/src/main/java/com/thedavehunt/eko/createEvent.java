@@ -1,6 +1,8 @@
 package com.thedavehunt.eko;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -56,6 +58,41 @@ public class createEvent extends Activity {
 
             }
         });
+
+        //FAB, used to allow creation of new events
+        FloatingActionButton CreateFab = (FloatingActionButton) findViewById(R.id.fabCreate);
+        CreateFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //TODO
+                saveEvent();
+                finish();
+
+            }
+        });
+
+        //FAB, used to cancel creation of new events
+        FloatingActionButton CancelFab = (FloatingActionButton) findViewById(R.id.fabCancel);
+        CancelFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //TODO
+                finish();
+            }
+        });
+    }
+
+    //method for saving new events to the Firebase database
+    protected void saveEvent(){
+        //get event name
+        name=nameEdt.getText().toString();
+        //get event description
+        description=descriptionEdt.getText().toString();
+
+        String id = eventRef.push().getKey();
+        eventDoc event1 = new eventDoc(id,name,"admin",description,category,"Dublin");
+
+        rootRef.child(id).setValue(event1);
     }
 
     @Override
@@ -63,18 +100,5 @@ public class createEvent extends Activity {
         super.onStop();
 
 
-
-        name=nameEdt.getText().toString();
-        description=descriptionEdt.getText().toString();
-
-
-
-
-
-
-        String id = eventRef.push().getKey();
-        eventDoc event1 = new eventDoc(id,name,"admin",description,category,"Dublin");
-
-        rootRef.child(id).setValue(event1);
     }
 }

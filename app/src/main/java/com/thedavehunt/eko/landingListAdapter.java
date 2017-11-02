@@ -21,9 +21,9 @@ public class landingListAdapter extends ArrayAdapter<eventDoc> {
 
     private List<eventDoc> eventList;
 
-    public landingListAdapter(Context context, List<eventDoc> list1) {
-        super(context,R.layout.custom_row, list1);
-        eventList=list1;
+    public landingListAdapter(Context context, List<eventDoc> list) {
+        super(context,R.layout.custom_row, list);
+        eventList=list;
     }
 
     @NonNull
@@ -33,9 +33,16 @@ public class landingListAdapter extends ArrayAdapter<eventDoc> {
         View custom = infl.inflate(R.layout.custom_row,null,true);
 
         eventDoc event = eventList.get(position);
-        TextView text1 =(TextView)custom.findViewById(R.id.text1);
+        TextView eventNameText =(TextView)custom.findViewById(R.id.textEventName);
+        TextView eventDescriptionText =(TextView)custom.findViewById(R.id.textEventDescription);
+        TextView eventCategoryText =(TextView)custom.findViewById(R.id.textEventCategory);
+        TextView eventAuthorText =(TextView)custom.findViewById(R.id.textEventAuthor);
 
-        text1.setText(event.getEventName());
+        //set event information
+        eventNameText.setText(event.getEventName());
+        eventDescriptionText.setText(event.getEventDescription());
+        eventCategoryText.setText("Category: " + event.getEventCategory());
+        eventAuthorText.setText("Creator: " + event.getEventAuthor());
 
         return custom;
     }
