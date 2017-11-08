@@ -48,6 +48,13 @@
         android:id="@+id/spinnerCategory"
         android:layout_below="@+id/textCategory"></Spinner>
 
+    <!--<com.facebook.share.widget.ShareButton-->
+        <!--android:id="@+id/shareButtonFacebook"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_below="@+id/spinnerCategory"-->
+        <!--android:background="@color/colorPrimary"/>-->
+
 
 
     <android.support.design.widget.FloatingActionButton

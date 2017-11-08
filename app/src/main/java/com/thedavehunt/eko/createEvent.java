@@ -2,16 +2,26 @@ package com.thedavehunt.eko;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.share.Sharer;
+import com.facebook.share.model.ShareHashtag;
+import com.facebook.share.model.ShareLinkContent;
+import com.facebook.share.widget.ShareButton;
+import com.facebook.share.widget.ShareDialog;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -22,9 +32,13 @@ public class createEvent extends Activity {
     DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
     DatabaseReference eventRef = rootRef.child("event");
 
+    CallbackManager callbackManager;
+
     EditText nameEdt;
     EditText descriptionEdt;
     Spinner categorySpin;
+    ShareButton shareButton;
+    ShareDialog shareDialog;
 
     String name="";
     String description="";
@@ -38,6 +52,10 @@ public class createEvent extends Activity {
         nameEdt =(EditText)findViewById(R.id.editName);
         descriptionEdt =(EditText)findViewById(R.id.editDescription);
         categorySpin = (Spinner) findViewById(R.id.spinnerCategory);
+        shareButton = (ShareButton)findViewById(R.id.shareButtonFacebook);
+
+        //dialog for facebook sharing
+        shareDialog = new ShareDialog(this);
 
 
     // Create an ArrayAdapter using the string array and a default spinner layout
@@ -83,6 +101,15 @@ public class createEvent extends Activity {
                 finish();
             }
         });
+
+
+    }
+
+    //for posting to facebook
+    @Override
+    protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        callbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
     //method for saving new events to the Firebase database
@@ -97,8 +124,8 @@ public class createEvent extends Activity {
             Toast.makeText(getApplicationContext(),"Please fill in all information",Toast.LENGTH_SHORT).show();
             saved=false;
         }
-        else if(description.length()<30){
-            Toast.makeText(getApplicationContext(),"Description must be atleast 30 charachters long",Toast.LENGTH_SHORT).show();
+        else if(description.length()<25){
+            Toast.makeText(getApplicationContext(),"Description must be atleast 25 characters long",Toast.LENGTH_SHORT).show();
             saved=false;
         }
 
@@ -109,12 +136,31 @@ public class createEvent extends Activity {
             FirebaseAuth auth= FirebaseAuth.getInstance();
             //get user details
             FirebaseUser user = auth.getCurrentUser();
-            //retrieve users email address
-            String author = user.getEmail();
-            eventDoc event1 = new eventDoc(id, name, author, description, category, "Dublin");
+            //retrieve users facebook name
+            String author = user.getDisplayName();
 
-            rootRef.child(id).setValue(event1);
+            // create an event
+            eventDoc event = new eventDoc(id, name, author, description, category, "Dublin");
+
+            //push event to cloud database
+            rootRef.child(id).setValue(event);
             Toast.makeText(getApplicationContext(),"Event Created",Toast.LENGTH_SHORT).show();
+
+            //setu posting event to facebook
+            if (ShareDialog.canShow(ShareLinkContent.class)) {
+                //set post details
+                ShareLinkContent linkContent = new ShareLinkContent.Builder()
+                        .setContentTitle("Test")
+                        .setContentDescription(
+                                "Test Description")
+                        .setQuote(name + ": " +description)
+                        .setContentUrl(Uri.parse("http://facebook.com"))
+                        .build();
+
+                //display post information
+                shareDialog.show(linkContent);
+            }
+
             finish();
         }
         else{
@@ -122,10 +168,4 @@ public class createEvent extends Activity {
         }
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-
-
-    }
 }
