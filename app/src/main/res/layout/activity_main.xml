@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingLeft="16dp"
@@ -10,7 +10,8 @@
 
     <!--android:background="@drawable/login"-->
 
-    <TextView
+    <!--
+    /*<TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Email:"/>
@@ -43,6 +44,15 @@
         android:id="@+id/signinBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Sign In"/>
-    
-</LinearLayout>
+        android:text="Sign In"/>-->
+
+
+    <com.facebook.login.widget.LoginButton
+        android:id="@+id/loginButtonFacebook"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+
+        android:layout_marginBottom="15dp" />
+
+</RelativeLayout>
