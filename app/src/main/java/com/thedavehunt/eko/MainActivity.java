@@ -134,11 +134,11 @@ public class MainActivity extends Activity {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser user = auth.getCurrentUser();
-        Toast.makeText(MainActivity.this,"Welcome " + user.getDisplayName(),Toast.LENGTH_SHORT).show();
-        if(user!=null) {
-            Intent landingpage = new Intent(MainActivity.this, landingPage.class);
-            startActivity(landingpage);
-        }
+//        Toast.makeText(MainActivity.this,"Welcome " + user.getDisplayName(),Toast.LENGTH_SHORT).show();
+//        if(user!=null) {
+//            Intent landingpage = new Intent(MainActivity.this, landingPage.class);
+//            startActivity(landingpage);
+//        }
     }
 
     private void handleFacebookAccessToken(AccessToken token) {

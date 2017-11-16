@@ -1,6 +1,8 @@
 package com.thedavehunt.eko;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.design.widget.FloatingActionButton;
@@ -52,7 +54,7 @@ public class createEvent extends Activity {
         nameEdt =(EditText)findViewById(R.id.editName);
         descriptionEdt =(EditText)findViewById(R.id.editDescription);
         categorySpin = (Spinner) findViewById(R.id.spinnerCategory);
-        shareButton = (ShareButton)findViewById(R.id.shareButtonFacebook);
+//        shareButton = (ShareButton)findViewById(R.id.shareButtonFacebook);
 
         //dialog for facebook sharing
         shareDialog = new ShareDialog(this);
@@ -146,26 +148,45 @@ public class createEvent extends Activity {
             rootRef.child(id).setValue(event);
             Toast.makeText(getApplicationContext(),"Event Created",Toast.LENGTH_SHORT).show();
 
-            //setu posting event to facebook
-            if (ShareDialog.canShow(ShareLinkContent.class)) {
-                //set post details
-                ShareLinkContent linkContent = new ShareLinkContent.Builder()
-                        .setContentTitle("Test")
-                        .setContentDescription(
-                                "Test Description")
-                        .setQuote(name + ": " +description)
-                        .setContentUrl(Uri.parse("http://facebook.com"))
-                        .build();
+            //create alert box to ask user if they wish to post to facebook
+            AlertDialog.Builder alert = new AlertDialog.Builder(this);
+            //alert title
+            alert.setTitle("Share this Event!")
+                    //alert message
+                    .setMessage("Want to post this event on Facebook?")
+                    //if user clicks yes
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            //setup posting event to facebook
+                            if (ShareDialog.canShow(ShareLinkContent.class)) {
+                                //set post details
+                                ShareLinkContent linkContent = new ShareLinkContent.Builder()
+                                        .setContentTitle("Test")
+                                        .setContentDescription(
+                                                "Test Description")
+                                        .setQuote(name + ": " +description)
+                                        .setContentUrl(Uri.parse("http://facebook.com"))
+                                        .build();
 
-                //display post information
-                shareDialog.show(linkContent);
-            }
+                                //display post information
+                                shareDialog.show(linkContent);
+                            }
+                            finish();
 
-            finish();
+                        }
+
+                    })
+                    //if user does not wish to post
+                    .setNegativeButton("Nope", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            finish();
+                        }
+                    })
+                    .show();
+
         }
-        else{
 
-        }
     }
 
 }
