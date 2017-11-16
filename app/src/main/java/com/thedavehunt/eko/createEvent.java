@@ -4,8 +4,13 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -29,7 +34,9 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-public class createEvent extends Activity {
+import static android.content.Context.LOCATION_SERVICE;
+
+public class createEvent extends AppCompatActivity {
 
     DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
     DatabaseReference eventRef = rootRef.child("event");
@@ -39,22 +46,21 @@ public class createEvent extends Activity {
     EditText nameEdt;
     EditText descriptionEdt;
     Spinner categorySpin;
-    ShareButton shareButton;
     ShareDialog shareDialog;
 
-    String name="";
-    String description="";
-    String category="";
+
+    String name = "";
+    String description = "";
+    String category = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_event);
 
-        nameEdt =(EditText)findViewById(R.id.editName);
-        descriptionEdt =(EditText)findViewById(R.id.editDescription);
+        nameEdt = (EditText) findViewById(R.id.editName);
+        descriptionEdt = (EditText) findViewById(R.id.editDescription);
         categorySpin = (Spinner) findViewById(R.id.spinnerCategory);
-//        shareButton = (ShareButton)findViewById(R.id.shareButtonFacebook);
 
         //dialog for facebook sharing
         shareDialog = new ShareDialog(this);

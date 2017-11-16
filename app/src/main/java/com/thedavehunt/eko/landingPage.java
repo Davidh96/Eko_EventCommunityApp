@@ -8,10 +8,13 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.facebook.login.LoginManager;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -28,10 +31,25 @@ public class landingPage extends Activity {
     List<eventDoc> eventList;
     ListAdapter tempAdapter;
 
+    FirebaseAuth auth;
+
+    Button logoutBtn;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_landing_page);
+
+        logoutBtn = (Button) findViewById(R.id.logoutBtn);
+
+        logoutBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                auth.getInstance().signOut();
+                LoginManager.getInstance().logOut();
+                finish();
+            }
+        });
 
         //FAB, used to allow creation of new events
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
