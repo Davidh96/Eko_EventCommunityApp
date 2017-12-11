@@ -33,14 +33,13 @@ public class landingPage extends Activity {
 
     FirebaseAuth auth;
 
-    Button logoutBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_landing_page);
 
-        logoutBtn = (Button) findViewById(R.id.logoutBtn);
+        Button logoutBtn = (Button) findViewById(R.id.logoutBtn);
 
         logoutBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -83,6 +82,17 @@ public class landingPage extends Activity {
                 ListView list = (ListView)findViewById(R.id.list1);
                 //set adapter for list view
                 list.setAdapter(tempAdapter);
+
+                list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                        Intent viewTask = new Intent(getApplicationContext(),viewEvent.class);
+
+                        eventDoc evnt = (eventDoc)eventList.get(i);
+                        viewTask.putExtra("id",evnt.getId());
+                        startActivity(viewTask);
+                    }
+                });
             }
 
             @Override
@@ -90,6 +100,8 @@ public class landingPage extends Activity {
 
             }
         });
+
+
 
 
     }

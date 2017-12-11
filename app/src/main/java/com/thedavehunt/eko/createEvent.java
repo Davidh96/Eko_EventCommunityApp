@@ -36,7 +36,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import static android.content.Context.LOCATION_SERVICE;
 
-public class createEvent extends AppCompatActivity {
+public class createEvent extends Activity {
 
     DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
     DatabaseReference eventRef = rootRef.child("event");
@@ -99,17 +99,6 @@ public class createEvent extends AppCompatActivity {
             }
         });
 
-        //FAB, used to cancel creation of new events
-        FloatingActionButton CancelFab = (FloatingActionButton) findViewById(R.id.fabCancel);
-        CancelFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //TODO
-                Toast.makeText(getApplicationContext(),"Cancelled",Toast.LENGTH_SHORT).show();
-                finish();
-            }
-        });
-
 
     }
 
@@ -139,6 +128,7 @@ public class createEvent extends AppCompatActivity {
 
         if(saved) {
             String id = eventRef.push().getKey();
+            Toast.makeText(getApplicationContext(),id,Toast.LENGTH_SHORT).show();
 
             //get Firebase auth instance
             FirebaseAuth auth= FirebaseAuth.getInstance();

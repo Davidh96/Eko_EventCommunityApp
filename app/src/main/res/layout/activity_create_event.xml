@@ -2,79 +2,153 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingLeft="16dp"
-    android:paddingRight="16dp"
-    android:paddingTop="16dp"
     android:orientation="vertical"
     >
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/titleBar">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Create event"
+        android:id="@+id/titleCreate"
+        android:background="@color/colorPrimary"
+        android:textColor="@color/white"
+        android:textSize="24dp"
+        android:paddingBottom="12dp"
+        android:paddingTop="12dp"
+        android:paddingLeft="16dp"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/titleBar"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp"
+        >
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Event Name"
-        android:id="@+id/textName"/>
+        android:id="@+id/textName"
+        android:paddingTop="12dp"
+        android:textSize="16dp"
+
+        />
 
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="e.g 5-a-side football"
         android:id="@+id/editName"
-        android:layout_below="@+id/textName"/>
+        android:layout_below="@+id/textName"
+        android:paddingBottom="12dp"
+        android:textSize="14dp"/>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Description"
         android:layout_below="@+id/editName"
-        android:id="@+id/textDescription"/>
+        android:id="@+id/textDescription"
+        android:paddingTop="12dp"
+        android:textSize="16dp"/>
 
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="e.g I have a football and looking for some people to play a game with"
         android:id="@+id/editDescription"
-        android:layout_below="@+id/textDescription"/>
+        android:layout_below="@+id/textDescription"
+        android:paddingBottom="12dp"
+        android:textSize="14dp"/>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Category"
         android:layout_below="@id/editDescription"
-        android:id="@+id/textCategory"/>
+        android:id="@+id/textCategory"
+        android:paddingTop="12dp"
+        android:textSize="16dp"/>
 
     <Spinner
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/spinnerCategory"
-        android:layout_below="@+id/textCategory"></Spinner>
+        android:layout_below="@+id/textCategory"
+        android:paddingBottom="12dp"
+        android:textSize="14dp"></Spinner>
 
-    <!--<com.facebook.share.widget.ShareButton-->
-        <!--android:id="@+id/shareButtonFacebook"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_below="@+id/spinnerCategory"-->
-        <!--android:background="@color/colorPrimary"/>-->
+        <DatePicker
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/eventDate"
+            android:layout_below="@+id/spinnerCategory"></DatePicker>
+
+        <TimePicker
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/eventDate"></TimePicker>
 
 
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fabCreate"
-        android:layout_width="wrap_content"
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="end|bottom"
-        android:src="@android:drawable/ic_menu_save"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        />
+        >
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fabCancel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end|bottom"
-        android:src="@android:drawable/ic_menu_close_clear_cancel"
-        android:layout_above="@+id/fabCreate"
-        android:layout_alignParentRight="true"
-        />
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fabCreate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_margin="14dp"
+            android:src="@android:drawable/ic_menu_save" />
 
+
+    </RelativeLayout>
+
+
+
+
+    <!--<android.support.design.widget.FloatingActionButton-->
+        <!--android:id="@+id/fabCreate"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_gravity="end|bottom"-->
+        <!--android:src="@android:drawable/ic_menu_save"-->
+        <!--android:layout_alignParentBottom="true"-->
+        <!--android:layout_alignParentRight="true"-->
+        <!--/>-->
+
+    <!--<android.support.design.widget.FloatingActionButton-->
+        <!--android:id="@+id/fabCancel"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_gravity="end|bottom"-->
+        <!--android:src="@android:drawable/ic_menu_close_clear_cancel"-->
+        <!--android:layout_above="@+id/fabCreate"-->
+        <!--android:layout_alignParentRight="true"-->
+        <!--/>-->
+        </LinearLayout>
+</ScrollView>
 </RelativeLayout>
