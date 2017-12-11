@@ -31,8 +31,11 @@ import com.facebook.share.widget.ShareButton;
 import com.facebook.share.widget.ShareDialog;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import static android.content.Context.LOCATION_SERVICE;
 
@@ -52,11 +55,20 @@ public class createEvent extends Activity {
     String name = "";
     String description = "";
     String category = "";
+    String id;
+
+    ArrayAdapter<CharSequence> adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_event);
+
+        Intent i = getIntent();
+        //get id of event selected
+        id = i.getStringExtra("id");
+
+
 
         nameEdt = (EditText) findViewById(R.id.editName);
         descriptionEdt = (EditText) findViewById(R.id.editDescription);
@@ -66,19 +78,23 @@ public class createEvent extends Activity {
         shareDialog = new ShareDialog(this);
 
 
-    // Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        adapter = ArrayAdapter.createFromResource(this,
                 R.array.category_array, android.R.layout.simple_spinner_item);
-    // Specify the layout to use when the list of choices appears
+        // Specify the layout to use when the list of choices appears
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-    // Apply the adapter to the spinner
+        // Apply the adapter to the spinner
         categorySpin.setAdapter(adapter);
+
+        if(id!=null){
+            retrieveData();
+        }
 
         categorySpin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 category = parent.getItemAtPosition(position).toString();
-                Toast.makeText(createEvent.this,category,Toast.LENGTH_LONG).show();
+
             }
 
             @Override
@@ -127,7 +143,12 @@ public class createEvent extends Activity {
         }
 
         if(saved) {
-            String id = eventRef.push().getKey();
+            //check if this is an edited event
+            if (id == null) {
+                //if new event, create new key
+                id = eventRef.push().getKey();
+            }
+
             Toast.makeText(getApplicationContext(),id,Toast.LENGTH_SHORT).show();
 
             //get Firebase auth instance
@@ -183,6 +204,33 @@ public class createEvent extends Activity {
 
         }
 
+    }
+
+
+    //function that retrieves selected item and displays it to users
+    private void retrieveData(){
+
+        rootRef.child(id).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+
+                //get event class
+                eventDoc event = snapshot.getValue(eventDoc.class);
+
+                //set event name and description
+                nameEdt.setText(event.getEventName());
+                descriptionEdt.setText(event.getEventDescription());
+
+                //set value of spinner
+                int pos = adapter.getPosition(event.getEventCategory());
+                categorySpin.setSelection(pos);
+
+
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
     }
 
 }

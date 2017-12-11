@@ -131,6 +131,33 @@
             android:id="@+id/viewEventAuthor"/>
     </LinearLayout>
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:layout_margin="14dp"
+            android:src="@android:drawable/ic_menu_edit"
+            android:onClick="editEvent"/>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_margin="14dp"
+            android:src="@android:drawable/ic_menu_close_clear_cancel"
+            android:onClick="deleteEvent"
+            android:layout_above="@+id/fab"
+            />
+
+    </RelativeLayout>
 
 
 
