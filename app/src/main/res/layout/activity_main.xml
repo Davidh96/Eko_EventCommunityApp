@@ -49,6 +49,21 @@
         android:layout_height="100dp"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
+        android:layout_margin="14dp"
     />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="25dp"
+        android:textSize="15dp"
+        android:text="Continue as Guest"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@+id/loginButtonFacebook"
+        android:textAllCaps="false"
+        android:background="@color/colorPrimary"
+        android:textColor="@color/white"
+        android:layout_margin="14dp"
+        android:id="@+id/mainGuestLogin"/>
 
 </RelativeLayout>

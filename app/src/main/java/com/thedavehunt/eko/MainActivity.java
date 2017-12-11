@@ -68,6 +68,17 @@ public class MainActivity extends Activity {
         //get Firebase auth instance
         auth = FirebaseAuth.getInstance();
 
+        //button to allow guest users to use the app
+        Button guestLogin = (Button)findViewById(R.id.mainGuestLogin);
+        guestLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent landingpage = new Intent(MainActivity.this, landingPage.class);
+                startActivity(landingpage);
+            }
+        });
+
+
 
         mCallbackManager = CallbackManager.Factory.create();
         LoginButton loginButton = (LoginButton) findViewById(R.id.loginButtonFacebook);
