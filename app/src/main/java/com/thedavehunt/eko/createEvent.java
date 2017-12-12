@@ -42,7 +42,7 @@ import static android.content.Context.LOCATION_SERVICE;
 public class createEvent extends Activity {
 
     DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
-    DatabaseReference eventRef = rootRef.child("event");
+
 
     CallbackManager callbackManager;
 
@@ -58,6 +58,7 @@ public class createEvent extends Activity {
     String id;
 
     ArrayAdapter<CharSequence> adapter;
+    databaseManager dbm = new databaseManager();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,7 +112,6 @@ public class createEvent extends Activity {
                 //TODO
                 saveEvent();
 
-
             }
         });
 
@@ -143,13 +143,6 @@ public class createEvent extends Activity {
         }
 
         if(saved) {
-            //check if this is an edited event
-            if (id == null) {
-                //if new event, create new key
-                id = eventRef.push().getKey();
-            }
-
-            Toast.makeText(getApplicationContext(),id,Toast.LENGTH_SHORT).show();
 
             //get Firebase auth instance
             FirebaseAuth auth= FirebaseAuth.getInstance();
@@ -161,9 +154,9 @@ public class createEvent extends Activity {
             // create an event
             eventDoc event = new eventDoc(id, name, author, description, category, "Dublin");
 
-            //push event to cloud database
-            rootRef.child(id).setValue(event);
-            Toast.makeText(getApplicationContext(),"Event Created",Toast.LENGTH_SHORT).show();
+
+            dbm.createEvent(event);
+
 
             //create alert box to ask user if they wish to post to facebook
             AlertDialog.Builder alert = new AlertDialog.Builder(this);
@@ -210,12 +203,13 @@ public class createEvent extends Activity {
     //function that retrieves selected item and displays it to users
     private void retrieveData(){
 
+        //eventDoc event =dbm.readEvent(id);
         rootRef.child(id).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
 
                 //get event class
-                eventDoc event = snapshot.getValue(eventDoc.class);
+                 eventDoc event = snapshot.getValue(eventDoc.class);
 
                 //set event name and description
                 nameEdt.setText(event.getEventName());

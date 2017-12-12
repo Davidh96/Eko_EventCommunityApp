@@ -19,6 +19,8 @@ import com.google.firebase.database.ValueEventListener;
 
 public class viewEvent extends Activity {
 
+    databaseManager dbm = new databaseManager();
+
     DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
 
     TextView eventNameTxt;
@@ -50,7 +52,6 @@ public class viewEvent extends Activity {
 
     //function that retrieves selected item and displays it to users
     private void retrieveData(){
-
 
 
             rootRef.child(id).addValueEventListener(new ValueEventListener() {
@@ -89,8 +90,8 @@ public class viewEvent extends Activity {
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         //delete currently selected event
-                        rootRef.child(id).removeValue();
-                        finish();
+                        dbm.deleteEvent(id,viewEvent.this);
+                        //finish();
 
                     }
 
