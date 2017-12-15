@@ -25,7 +25,8 @@ public class viewEvent extends Activity {
 
     TextView eventNameTxt;
     TextView eventDescriptionTxt;
-    TextView eventDateTimeTxt;
+    TextView eventDateTxt;
+    TextView eventTimeTxt;
     TextView eventCategoryTxt;
     TextView eventCreatorTxt;
 
@@ -43,7 +44,8 @@ public class viewEvent extends Activity {
 
         eventNameTxt=(TextView)findViewById(R.id.viewEventName);
         eventDescriptionTxt=(TextView)findViewById(R.id.viewEventDescription);
-        eventDateTimeTxt=(TextView)findViewById(R.id.viewEventDateTime);
+        eventDateTxt=(TextView)findViewById(R.id.viewEventDate);
+        eventTimeTxt=(TextView)findViewById(R.id.viewEventTime);
         eventCategoryTxt=(TextView)findViewById(R.id.viewEventCategory);
         eventCreatorTxt=(TextView)findViewById(R.id.viewEventAuthor);
 
@@ -64,6 +66,8 @@ public class viewEvent extends Activity {
                 //place event info into text views
                 eventNameTxt.setText(event.getEventName());
                 eventDescriptionTxt.setText(event.getEventDescription());
+                eventDateTxt.setText(event.getEventDate());
+                eventTimeTxt.setText(event.getEventTime());
                 eventCategoryTxt.setText(event.getEventCategory());
                 eventCreatorTxt.setText(event.getEventAuthor());
             }

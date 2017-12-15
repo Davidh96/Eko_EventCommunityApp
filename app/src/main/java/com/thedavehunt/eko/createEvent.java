@@ -17,8 +17,10 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.facebook.CallbackManager;
@@ -29,6 +31,7 @@ import com.facebook.share.model.ShareHashtag;
 import com.facebook.share.model.ShareLinkContent;
 import com.facebook.share.widget.ShareButton;
 import com.facebook.share.widget.ShareDialog;
+import com.google.android.gms.maps.MapView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -49,12 +52,17 @@ public class createEvent extends Activity {
     EditText nameEdt;
     EditText descriptionEdt;
     Spinner categorySpin;
+    DatePicker dateEdt;
+    TimePicker timeEdt;
+
     ShareDialog shareDialog;
 
 
     String name = "";
     String description = "";
     String category = "";
+    String date="";
+    String time="";
     String id;
 
     ArrayAdapter<CharSequence> adapter;
@@ -71,9 +79,12 @@ public class createEvent extends Activity {
 
 
 
-        nameEdt = (EditText) findViewById(R.id.editName);
-        descriptionEdt = (EditText) findViewById(R.id.editDescription);
-        categorySpin = (Spinner) findViewById(R.id.spinnerCategory);
+        nameEdt = (EditText) findViewById(R.id.createEditName);
+        descriptionEdt = (EditText) findViewById(R.id.createEditDescription);
+        categorySpin = (Spinner) findViewById(R.id.createSpinnerCategory);
+        dateEdt=(DatePicker)findViewById(R.id.createEventDate);
+        timeEdt=(TimePicker)findViewById(R.id.createEventTime);
+
 
         //dialog for facebook sharing
         shareDialog = new ShareDialog(this);
@@ -133,6 +144,11 @@ public class createEvent extends Activity {
         //get event description
         description=descriptionEdt.getText().toString();
 
+        date = "" + dateEdt.getDayOfMonth() + "-" + dateEdt.getMonth() + "-" + dateEdt.getYear();
+
+        time = "" + timeEdt.getHour() + ":" + timeEdt.getMinute();
+        Toast.makeText(getApplicationContext(),time,Toast.LENGTH_SHORT).show();
+
         if(name.isEmpty() || description.isEmpty()){
             Toast.makeText(getApplicationContext(),"Please fill in all information",Toast.LENGTH_SHORT).show();
             saved=false;
@@ -152,7 +168,7 @@ public class createEvent extends Activity {
             String author = user.getDisplayName();
 
             // create an event
-            eventDoc event = new eventDoc(id, name, author, description, category, "Dublin");
+            eventDoc event = new eventDoc(id, name, author, description, category, "Dublin",date,time);
 
 
             dbm.createEvent(event);
