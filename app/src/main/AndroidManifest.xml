@@ -44,7 +44,22 @@
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
         </activity>
-        <activity android:name=".viewEvent"></activity>
+        <activity android:name=".viewEvent" />
+        <!--
+             The API key for Google Maps-based APIs is defined as a string resource.
+             (See the file "res/values/google_maps_api.xml").
+             Note that the API key is linked to the encryption key used to sign the APK.
+             You need a different API key for each encryption key, including the release key that is used to
+             sign the APK for publishing.
+             You can define the keys for the debug and release targets in src/debug/ and src/release/. 
+        -->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value= "AIzaSyAGMNjhXVKC-S6XvjZBZfR6sPUiYsVvEI8" />
+
+        <activity
+            android:name=".locationMaps"
+            android:label="@string/title_activity_location_maps"></activity>
     </application>
 
 </manifest>

@@ -176,7 +176,7 @@ public class MainActivity extends Activity {
     }
 
     void getLocation(){
-      //locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 5000, 0, locationListener);
+      locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 5000, 0, locationListener);
     }
 
 

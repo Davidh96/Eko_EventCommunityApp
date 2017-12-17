@@ -9,6 +9,8 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.Build;
+import android.provider.Settings;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -46,6 +48,8 @@ public class createEvent extends Activity {
 
     DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
 
+    LocationManager locationManager;
+    LocationListener locationListener;
 
     CallbackManager callbackManager;
 
@@ -64,6 +68,9 @@ public class createEvent extends Activity {
     String date="";
     String time="";
     String id;
+
+    public static double locLong;
+    public static double locLat;
 
     ArrayAdapter<CharSequence> adapter;
     databaseManager dbm = new databaseManager();
@@ -125,6 +132,49 @@ public class createEvent extends Activity {
 
             }
         });
+
+        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+
+        locationListener = new LocationListener() {
+            //when location is updated
+            @Override
+            public void onLocationChanged(Location location) {
+                locLong = location.getLongitude();
+                locLat = location.getLatitude();
+            }
+
+            @Override
+            public void onStatusChanged(String s, int i, Bundle bundle) {
+
+            }
+
+            @Override
+            public void onProviderEnabled(String s) {
+
+            }
+
+            //if gps is disabled
+            @Override
+            public void onProviderDisabled(String s) {
+                Intent _intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                startActivity(_intent);
+            }
+        };
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{
+                        android.Manifest.permission.ACCESS_COARSE_LOCATION,
+                        android.Manifest.permission.ACCESS_FINE_LOCATION,
+                        android.Manifest.permission.INTERNET
+                }, 10);
+                return;
+            }
+        } else {
+            getLocation();
+        }
+
+        getLocation();
 
 
     }
@@ -241,6 +291,17 @@ public class createEvent extends Activity {
             public void onCancelled(DatabaseError databaseError) {
             }
         });
+    }
+
+    public void setLocation(View v){
+        Intent i = new Intent(createEvent.this,locationMaps.class);
+        i.putExtra("lat",locLat);
+        i.putExtra("long",locLong);
+        startActivity(i);
+    }
+
+    void getLocation(){
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 5000, 0, locationListener);
     }
 
 }
