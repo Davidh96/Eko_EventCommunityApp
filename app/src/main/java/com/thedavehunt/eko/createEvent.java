@@ -65,6 +65,7 @@ public class createEvent extends Activity {
     String name = "";
     String description = "";
     String category = "";
+    String location="";
     String date="";
     String time="";
     String id;
@@ -179,11 +180,16 @@ public class createEvent extends Activity {
 
     }
 
-    //for posting to facebook
     @Override
     protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        callbackManager.onActivityResult(requestCode, resultCode, data);
+
+        //if location was set correctly
+        if(resultCode == Activity.RESULT_OK){
+            location = "" + data.getDoubleExtra("eLat",0) + "," + data.getDoubleExtra("eLong",0);
+        }
+        else{
+            location = "" + locLat + "," + locLong;
+        }
     }
 
     //method for saving new events to the Firebase database
@@ -218,7 +224,7 @@ public class createEvent extends Activity {
             String author = user.getDisplayName();
 
             // create an event
-            eventDoc event = new eventDoc(id, name, author, description, category, "Dublin",date,time);
+            eventDoc event = new eventDoc(id, name, author, description, category, location,date,time);
 
 
             dbm.createEvent(event);
@@ -297,11 +303,13 @@ public class createEvent extends Activity {
         Intent i = new Intent(createEvent.this,locationMaps.class);
         i.putExtra("lat",locLat);
         i.putExtra("long",locLong);
-        startActivity(i);
+        //to get location result
+        startActivityForResult(i,10);
     }
 
     void getLocation(){
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 5000, 0, locationListener);
     }
+
 
 }

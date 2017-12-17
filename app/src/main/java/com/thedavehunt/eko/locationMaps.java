@@ -1,8 +1,11 @@
 package com.thedavehunt.eko;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Toast;
 
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -16,8 +19,8 @@ public class locationMaps extends FragmentActivity implements OnMapReadyCallback
 
     private GoogleMap mMap;
 
-    public static double locLong;
-    public static double locLat;
+    public double locLong;
+    public double locLat;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +59,7 @@ public class locationMaps extends FragmentActivity implements OnMapReadyCallback
         mMap.setMyLocationEnabled(true);
         //display button to show user location
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
+        mMap.getUiSettings().setCompassEnabled(true);
 
         // Add an event location marker and move the camera
         LatLng eventLoc = new LatLng(locLat, locLong);
@@ -64,6 +68,35 @@ public class locationMaps extends FragmentActivity implements OnMapReadyCallback
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(eventLoc,15));
 
 
+        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {
+                //get the current zoom value
+                float lastZoom=mMap.getCameraPosition().zoom;
+                mMap.clear();
+
+                locationMaps.this.locLat=latLng.latitude;
+                locationMaps.this.locLong=latLng.longitude;
+
+                // Add an event location marker and move the camera
+                LatLng eventLoc = new LatLng(locLat, locLong);
+                mMap.addMarker(new MarkerOptions().position(eventLoc).title("Event Location"));
+                //set camera position and zoom
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(eventLoc,lastZoom));
+
+            }
+        });
+
+
+    }
+
+    public void returnLocation(View v){
+        //Toast.makeText(getApplicationContext(),"" + locationMaps.this.locLat + "," + locationMaps.this.locLong, Toast.LENGTH_SHORT).show();
+        Intent i = new Intent();
+        i.putExtra("eLat",locLat);
+        i.putExtra("eLong",locLong);
+        setResult(Activity.RESULT_OK,i);
+        finish();
     }
 
 }
