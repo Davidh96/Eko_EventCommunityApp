@@ -2,8 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    >
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical">
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -111,18 +111,40 @@
                 android:layout_marginBottom="14dp"
                 android:onClick="setLocation"/>
 
-
-            <DatePicker
-                android:layout_width="wrap_content"
+            <Button
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/createEventDate"
-                android:layout_below="@+id/createButtonLocation"></DatePicker>
+                android:id="@+id/createButtonDate"
+                android:layout_below="@+id/createButtonLocation"
+                android:text="Select Event Date"
+                android:textAllCaps="false"
+                android:background="@color/colorAccent"
+                android:onClick="showDateFragment"/>
 
-            <TimePicker
-                android:layout_width="wrap_content"
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/layout_date_container"
+                android:layout_below="@+id/createButtonDate"
+                ></RelativeLayout>
+
+            <Button
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/createEventTime"
-                android:layout_below="@+id/createEventDate"></TimePicker>
+                android:id="@+id/createButtonTime"
+                android:layout_below="@+id/createButtonDate"
+                android:text="Select Event Time"
+                android:textAllCaps="false"
+                android:background="@color/colorAccent"
+                android:onClick="showTimeFragment"/>
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/layout_time_container"
+                android:layout_below="@+id/createButtonTime"
+                ></RelativeLayout>
 
 
 
@@ -140,6 +162,4 @@
         android:layout_margin="14dp"
         android:src="@android:drawable/ic_menu_save" />
 
-
-    <!--</RelativeLayout>-->
 </RelativeLayout>

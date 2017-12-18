@@ -23,7 +23,7 @@ public class databaseManager {
     DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
     DatabaseReference eventRef = rootRef.child("event");
 
-    static eventDoc event;
+    public eventDoc event;
 
     public void createEvent(eventDoc event){
         this.event=event;
@@ -42,7 +42,7 @@ public class databaseManager {
         Toast.makeText(getApplicationContext(),"Event Created",Toast.LENGTH_SHORT).show();
     }
 
-    public eventDoc readEvent(String id){
+    public void readEvent(String id){
 
         Toast.makeText(getApplicationContext(),id,Toast.LENGTH_LONG).show();
 
@@ -52,7 +52,8 @@ public class databaseManager {
             public void onDataChange(DataSnapshot snapshot) {
 
                 //get event class
-                databaseManager.event = snapshot.getValue(eventDoc.class);
+                databaseManager.this.event = snapshot.getValue(eventDoc.class);
+                //Toast.makeText(getApplicationContext(),databaseManager.this.event.getEventName(),Toast.LENGTH_LONG).show();
 
 
             }
@@ -61,9 +62,9 @@ public class databaseManager {
             }
         });
 
-        Toast.makeText(getApplicationContext(),event.getEventName(),Toast.LENGTH_LONG).show();
+        Toast.makeText(getApplicationContext(),databaseManager.this.event.getEventName(),Toast.LENGTH_LONG).show();
 
-        return event;
+        //return event;
     }
 
     public void deleteEvent(String id,Context con){

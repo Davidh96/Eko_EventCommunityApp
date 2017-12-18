@@ -2,6 +2,9 @@ package com.thedavehunt.eko;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -70,6 +73,8 @@ public class createEvent extends Activity {
     String time="";
     String id;
 
+    boolean toggle=false;
+
     public static double locLong;
     public static double locLat;
 
@@ -81,6 +86,8 @@ public class createEvent extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_event);
 
+
+
         Intent i = getIntent();
         //get id of event selected
         id = i.getStringExtra("id");
@@ -90,8 +97,8 @@ public class createEvent extends Activity {
         nameEdt = (EditText) findViewById(R.id.createEditName);
         descriptionEdt = (EditText) findViewById(R.id.createEditDescription);
         categorySpin = (Spinner) findViewById(R.id.createSpinnerCategory);
-        dateEdt=(DatePicker)findViewById(R.id.createEventDate);
-        timeEdt=(TimePicker)findViewById(R.id.createEventTime);
+//        dateEdt=(DatePicker)findViewById(R.id.createEventDate);
+        //timeEdt=(TimePicker)findViewById(R.id.createEventTime);
 
 
         //dialog for facebook sharing
@@ -200,9 +207,11 @@ public class createEvent extends Activity {
         //get event description
         description=descriptionEdt.getText().toString();
 
-        date = "" + dateEdt.getDayOfMonth() + "-" + dateEdt.getMonth() + "-" + dateEdt.getYear();
+        //date="test";
+        //date = "" + dateEdt.getDayOfMonth() + "-" + dateEdt.getMonth() + "-" + dateEdt.getYear();
 
-        time = "" + timeEdt.getHour() + ":" + timeEdt.getMinute();
+        //time="test1";
+        //time = "" + timeEdt.getHour() + ":" + timeEdt.getMinute();
         Toast.makeText(getApplicationContext(),time,Toast.LENGTH_SHORT).show();
 
         if(name.isEmpty() || description.isEmpty()){
@@ -275,6 +284,17 @@ public class createEvent extends Activity {
     //function that retrieves selected item and displays it to users
     private void retrieveData(){
 
+        //dbm.readEvent(id);
+//        //get event class
+//
+//        //set event name and description
+//        nameEdt.setText(event.getEventName());
+//        descriptionEdt.setText(event.getEventDescription());
+//
+//        //set value of spinner
+//        int pos = adapter.getPosition(event.getEventCategory());
+//        categorySpin.setSelection(pos);
+
         //eventDoc event =dbm.readEvent(id);
         rootRef.child(id).addValueEventListener(new ValueEventListener() {
             @Override
@@ -311,5 +331,54 @@ public class createEvent extends Activity {
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 5000, 0, locationListener);
     }
 
+    FragmentManager fragmentManager = getFragmentManager();
+
+    selectDateFragment frag1 = new selectDateFragment();
+    selectTimeFragment frag2 = new selectTimeFragment();
+
+//
+
+    public void showDateFragment(View v){
+
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+
+        if(toggle) {
+            toggle=false;
+            dateEdt=(DatePicker)findViewById(R.id.datePickerFragment);
+            date=dateEdt.getYear() + "-" + dateEdt.getMonth() + "-" + dateEdt.getDayOfMonth();
+            fragmentTransaction.remove(frag1);
+        }
+        else{
+            toggle=true;
+
+            fragmentTransaction.add(R.id.layout_date_container, frag1);
+            fragmentTransaction.show(frag1);
+        }
+
+        fragmentTransaction.commit();
+
+    }
+
+    public void showTimeFragment(View v){
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+
+        if(toggle) {
+            toggle=false;
+
+            timeEdt=(TimePicker)findViewById(R.id.timePickerFragment);
+            time=timeEdt.getHour() + ":" + timeEdt.getMinute();
+            fragmentTransaction.remove(frag2);
+        }
+        else{
+            toggle=true;
+
+            fragmentTransaction.add(R.id.layout_time_container, frag2);
+            fragmentTransaction.show(frag2);
+        }
+
+        fragmentTransaction.commit();
+    }
 
 }
