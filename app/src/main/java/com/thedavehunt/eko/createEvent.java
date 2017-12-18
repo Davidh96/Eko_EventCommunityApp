@@ -62,6 +62,9 @@ public class createEvent extends Activity {
     DatePicker dateEdt;
     TimePicker timeEdt;
 
+    Button timeToggle;
+    Button dateToggle;
+
     ShareDialog shareDialog;
 
 
@@ -97,8 +100,10 @@ public class createEvent extends Activity {
         nameEdt = (EditText) findViewById(R.id.createEditName);
         descriptionEdt = (EditText) findViewById(R.id.createEditDescription);
         categorySpin = (Spinner) findViewById(R.id.createSpinnerCategory);
-//        dateEdt=(DatePicker)findViewById(R.id.createEventDate);
-        //timeEdt=(TimePicker)findViewById(R.id.createEventTime);
+
+        dateToggle = (Button)findViewById(R.id.createButtonDate);
+        timeToggle = (Button)findViewById(R.id.createButtonTime);
+
 
 
         //dialog for facebook sharing
@@ -345,12 +350,21 @@ public class createEvent extends Activity {
 
         if(toggle) {
             toggle=false;
+            dateToggle.setText("Select Date");
+
+            timeToggle.setClickable(true);
+            timeToggle.setBackgroundColor(getResources().getColor(R.color.colorAccent,null));
+
             dateEdt=(DatePicker)findViewById(R.id.datePickerFragment);
             date=dateEdt.getYear() + "-" + dateEdt.getMonth() + "-" + dateEdt.getDayOfMonth();
             fragmentTransaction.remove(frag1);
         }
         else{
             toggle=true;
+            dateToggle.setText("Tap to Save");
+
+            timeToggle.setClickable(false);
+            timeToggle.setBackgroundColor(getResources().getColor(R.color.secondaryDarkColor,null));
 
             fragmentTransaction.add(R.id.layout_date_container, frag1);
             fragmentTransaction.show(frag1);
@@ -366,6 +380,10 @@ public class createEvent extends Activity {
 
         if(toggle) {
             toggle=false;
+            timeToggle.setText("Select Time");
+
+            dateToggle.setClickable(true);
+            dateToggle.setBackgroundColor(getResources().getColor(R.color.colorAccent,null));
 
             timeEdt=(TimePicker)findViewById(R.id.timePickerFragment);
             time=timeEdt.getHour() + ":" + timeEdt.getMinute();
@@ -373,6 +391,10 @@ public class createEvent extends Activity {
         }
         else{
             toggle=true;
+            timeToggle.setText("Tap to Save");
+
+            dateToggle.setClickable(false);
+            dateToggle.setBackgroundColor(getResources().getColor(R.color.secondaryDarkColor,null));
 
             fragmentTransaction.add(R.id.layout_time_container, frag2);
             fragmentTransaction.show(frag2);

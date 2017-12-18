@@ -8,6 +8,7 @@
     <DatePicker
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/datePickerFragment"></DatePicker>
+        android:id="@+id/datePickerFragment"
+        android:scaleX="1.1"></DatePicker>
 
 </FrameLayout>

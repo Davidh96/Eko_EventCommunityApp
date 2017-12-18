@@ -11,6 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.login.LoginManager;
@@ -100,6 +101,7 @@ public class landingPage extends Activity {
 
             }
         });
+
 
 
 

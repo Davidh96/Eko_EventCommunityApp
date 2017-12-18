@@ -105,45 +105,60 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/createButtonLocation"
                 android:layout_below="@id/createSpinnerCategory"
-                android:text="Set Event Location"
+                android:text="Set Location"
                 android:textAllCaps="false"
                 android:background="@color/colorAccent"
                 android:layout_marginBottom="14dp"
                 android:onClick="setLocation"/>
 
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/createButtonDate"
-                android:layout_below="@+id/createButtonLocation"
-                android:text="Select Event Date"
-                android:textAllCaps="false"
-                android:background="@color/colorAccent"
-                android:onClick="showDateFragment"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/dateTimeLayoutContainer"
+                    android:layout_below="@+id/createButtonLocation"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/createButtonDate"
+                        android:layout_below="@+id/createButtonLocation"
+                        android:text="Select Date"
+                        android:textAllCaps="false"
+                        android:background="@color/colorAccent"
+                        android:onClick="showDateFragment"
+                        android:layout_weight="1"
+                        android:layout_marginRight="14dp"/>
+
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/createButtonTime"
+                        android:layout_below="@+id/createButtonDate"
+                        android:text="Select Time"
+                        android:textAllCaps="false"
+                        android:background="@color/colorAccent"
+                        android:onClick="showTimeFragment"
+                        android:layout_weight="1"
+                        android:layout_marginLeft="14dp"/>
+
+                </LinearLayout>
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/layout_date_container"
-                android:layout_below="@+id/createButtonDate"
+                android:layout_below="@+id/dateTimeLayoutContainer"
                 ></RelativeLayout>
 
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/createButtonTime"
-                android:layout_below="@+id/createButtonDate"
-                android:text="Select Event Time"
-                android:textAllCaps="false"
-                android:background="@color/colorAccent"
-                android:onClick="showTimeFragment"/>
+
 
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/layout_time_container"
-                android:layout_below="@+id/createButtonTime"
+                android:layout_below="@+id/dateTimeLayoutContainer"
                 ></RelativeLayout>
 
 
