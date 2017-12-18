@@ -212,19 +212,27 @@ public class createEvent extends Activity {
         //get event description
         description=descriptionEdt.getText().toString();
 
-        //date="test";
-        //date = "" + dateEdt.getDayOfMonth() + "-" + dateEdt.getMonth() + "-" + dateEdt.getYear();
-
-        //time="test1";
-        //time = "" + timeEdt.getHour() + ":" + timeEdt.getMinute();
-        Toast.makeText(getApplicationContext(),time,Toast.LENGTH_SHORT).show();
-
         if(name.isEmpty() || description.isEmpty()){
             Toast.makeText(getApplicationContext(),"Please fill in all information",Toast.LENGTH_SHORT).show();
             saved=false;
         }
         else if(description.length()<25){
             Toast.makeText(getApplicationContext(),"Description must be atleast 25 characters long",Toast.LENGTH_SHORT).show();
+            saved=false;
+        }
+
+        if(date.isEmpty()){
+            Toast.makeText(getApplicationContext(),"Please give a date",Toast.LENGTH_SHORT).show();
+            saved=false;
+        }
+
+        if(time.isEmpty()){
+            Toast.makeText(getApplicationContext(),"Please give a time",Toast.LENGTH_SHORT).show();
+            saved=false;
+        }
+
+        if(location.isEmpty()){
+            Toast.makeText(getApplicationContext(),"Please select location",Toast.LENGTH_SHORT).show();
             saved=false;
         }
 
@@ -289,18 +297,6 @@ public class createEvent extends Activity {
     //function that retrieves selected item and displays it to users
     private void retrieveData(){
 
-        //dbm.readEvent(id);
-//        //get event class
-//
-//        //set event name and description
-//        nameEdt.setText(event.getEventName());
-//        descriptionEdt.setText(event.getEventDescription());
-//
-//        //set value of spinner
-//        int pos = adapter.getPosition(event.getEventCategory());
-//        categorySpin.setSelection(pos);
-
-        //eventDoc event =dbm.readEvent(id);
         rootRef.child(id).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
@@ -351,21 +347,50 @@ public class createEvent extends Activity {
         if(toggle) {
             toggle=false;
             dateToggle.setText("Select Date");
+            dateToggle.setBackgroundColor(getResources().getColor(R.color.colorAccent,null));
+            dateToggle.setTextColor(getResources().getColor(R.color.secondaryTextColor,null));
 
+            //set time toggle to be clickable
             timeToggle.setClickable(true);
             timeToggle.setBackgroundColor(getResources().getColor(R.color.colorAccent,null));
 
+            //hide fragment
             dateEdt=(DatePicker)findViewById(R.id.datePickerFragment);
             date=dateEdt.getYear() + "-" + dateEdt.getMonth() + "-" + dateEdt.getDayOfMonth();
             fragmentTransaction.remove(frag1);
+
+            //for formatting dates
+            if(!date.isEmpty()){
+
+                //format day
+                String day =""+dateEdt.getDayOfMonth();
+                if(day.length()==1){
+                    day="0" + day;
+                }
+
+                //format month
+                String month =""+dateEdt.getMonth();
+                if(month.length()==1){
+                    month="0" + month;
+                }
+
+                date =dateEdt.getYear() + "-" + month + "-"+ day;
+
+                Toast.makeText(getApplicationContext(),"Date Saved",Toast.LENGTH_SHORT).show();
+            }
         }
         else{
             toggle=true;
             dateToggle.setText("Tap to Save");
+            //bring attention to button
+            dateToggle.setBackgroundColor(getResources().getColor(R.color.attention,null));
+            dateToggle.setTextColor(getResources().getColor(R.color.primaryTextColor,null));
 
+            //make time toggle unclickable
             timeToggle.setClickable(false);
             timeToggle.setBackgroundColor(getResources().getColor(R.color.secondaryDarkColor,null));
 
+            //show fragment
             fragmentTransaction.add(R.id.layout_date_container, frag1);
             fragmentTransaction.show(frag1);
         }
@@ -381,21 +406,49 @@ public class createEvent extends Activity {
         if(toggle) {
             toggle=false;
             timeToggle.setText("Select Time");
+            timeToggle.setBackgroundColor(getResources().getColor(R.color.colorAccent,null));
+            timeToggle.setTextColor(getResources().getColor(R.color.secondaryTextColor,null));
 
+            //set date toggle to clickable
             dateToggle.setClickable(true);
             dateToggle.setBackgroundColor(getResources().getColor(R.color.colorAccent,null));
 
             timeEdt=(TimePicker)findViewById(R.id.timePickerFragment);
             time=timeEdt.getHour() + ":" + timeEdt.getMinute();
+            //hide fragment
             fragmentTransaction.remove(frag2);
+
+            //for formating time
+            if(!time.isEmpty()){
+                //format hour
+                String hour = ""+timeEdt.getHour();
+                if(hour.length()==1){
+                    hour="0" + hour;
+                }
+
+                //format minutes
+                String mins =""+timeEdt.getMinute();
+                if(mins.length()==1){
+                    mins="0" + mins;
+                }
+
+                time = hour + ":"+ mins;
+
+                Toast.makeText(getApplicationContext(),"Time Saved",Toast.LENGTH_SHORT).show();
+            }
         }
         else{
             toggle=true;
             timeToggle.setText("Tap to Save");
+            //bring attention to button
+            timeToggle.setBackgroundColor(getResources().getColor(R.color.attention,null));
+            timeToggle.setTextColor(getResources().getColor(R.color.primaryTextColor,null));
 
+            //make date toggle unclickable
             dateToggle.setClickable(false);
             dateToggle.setBackgroundColor(getResources().getColor(R.color.secondaryDarkColor,null));
 
+            //show fragment
             fragmentTransaction.add(R.id.layout_time_container, frag2);
             fragmentTransaction.show(frag2);
         }
