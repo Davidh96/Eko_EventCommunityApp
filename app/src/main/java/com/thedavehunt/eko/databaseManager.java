@@ -7,6 +7,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -22,6 +24,12 @@ import static com.facebook.FacebookSdk.getApplicationContext;
 public class databaseManager {
     DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
     DatabaseReference eventRef = rootRef.child("event");
+    //get Firebase auth instance
+    FirebaseAuth auth= FirebaseAuth.getInstance();
+    //get user details
+    FirebaseUser user = auth.getCurrentUser();
+
+
 
     public eventDoc event;
 
@@ -39,7 +47,20 @@ public class databaseManager {
 
         //push event to cloud database
         rootRef.child(id).setValue(event);
+
+        //set creator as an event member
+        eventMember creator = new eventMember(user.getUid(),user.getDisplayName());
+        addEventMember(id,creator);
+
         Toast.makeText(getApplicationContext(),"Event Created",Toast.LENGTH_SHORT).show();
+    }
+
+    //add member to event
+    public void addEventMember(String eventId,eventMember member){
+        //get reference for member
+        DatabaseReference memberRef = rootRef.child(eventId).child("members").child(member.getId());
+        //add member
+        memberRef.setValue(member);
     }
 
     public void readEvent(String id){

@@ -1,5 +1,11 @@
 package com.thedavehunt.eko;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Created by david on 25/10/17.
  */
@@ -8,25 +14,44 @@ public class eventDoc {
     String id;
     String eventName;
     String eventAuthor;
+    String eventAuthorID;
     String eventDescription;
     String eventCategory;
     String eventLocation;
     String eventDate;
     String eventTime;
 
+    //eventMember member;
+
+    //DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
+
 
     public eventDoc() {
     }
 
-    public eventDoc(String id, String eventName, String eventAuthor, String eventDescription,String eventCategory, String eventLocation, String eventDate, String eventTime) {
+    public eventDoc(String id, String eventName, String eventAuthor, String eventAuthorID,  String eventDescription,String eventCategory, String eventLocation, String eventDate, String eventTime) {
         this.id = id;
         this.eventName = eventName;
         this.eventAuthor = eventAuthor;
+        this.eventAuthorID=eventAuthorID;
         this.eventDescription = eventDescription;
         this.eventCategory = eventCategory;
         this.eventLocation = eventLocation;
         this.eventDate=eventDate;
         this.eventTime=eventTime;
+
+        //DatabaseReference usersRef = rootRef.child("users");
+//        DatabaseReference eventRef = rootRef.child("event");
+//
+//        member = new eventMember("1","david");
+//
+////        Map<String, eventMember> users = new HashMap<>();
+////        users.put("alanisawesome", new eventMember("June 23, 1912", "Alan Turing"));
+////        users.put("gracehop", new eventMember("December 9, 1906", "Grace Hopper"));
+//
+//        eventRef.setValue("hello");
+
+
     }
 
     public String getId() {

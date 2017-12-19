@@ -246,9 +246,10 @@ public class createEvent extends Activity {
             FirebaseUser user = auth.getCurrentUser();
             //retrieve users facebook name
             String author = user.getDisplayName();
+            String authorID = user.getUid();
 
             // create an event
-            eventDoc event = new eventDoc(id, name, author, description, category, location,date,time);
+            eventDoc event = new eventDoc(id, name, author, authorID, description, category, location,date,time);
 
             dbm.createEvent(event);
 
