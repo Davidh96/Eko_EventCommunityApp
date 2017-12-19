@@ -87,7 +87,7 @@ public class landingPage extends Activity {
                 list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                        Intent viewTask = new Intent(getApplicationContext(),viewEvent.class);
+                        Intent viewTask = new Intent(landingPage.this,viewEvent.class);
 
                         eventDoc evnt = (eventDoc)eventList.get(i);
                         viewTask.putExtra("id",evnt.getId());

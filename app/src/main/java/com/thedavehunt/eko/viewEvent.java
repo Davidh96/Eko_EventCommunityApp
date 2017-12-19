@@ -5,23 +5,33 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-public class viewEvent extends Activity {
+public class viewEvent extends FragmentActivity implements OnMapReadyCallback {
 
     databaseManager dbm = new databaseManager();
 
     DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
+
+    private GoogleMap mMap;
+    eventDoc event;
 
     TextView eventNameTxt;
     TextView eventDescriptionTxt;
@@ -31,6 +41,7 @@ public class viewEvent extends Activity {
     TextView eventCreatorTxt;
 
     String id;
+    public static String location;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,33 +60,14 @@ public class viewEvent extends Activity {
         eventCategoryTxt=(TextView)findViewById(R.id.viewEventCategory);
         eventCreatorTxt=(TextView)findViewById(R.id.viewEventAuthor);
 
-        retrieveData();
+        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map1);
+        mapFragment.getMapAsync(this);
+
+        //retrieveData();
     }
 
-    //function that retrieves selected item and displays it to users
-    private void retrieveData(){
-
-
-            rootRef.child(id).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot snapshot) {
-
-                //get event class
-                eventDoc event = snapshot.getValue(eventDoc.class);
-
-                //place event info into text views
-                eventNameTxt.setText(event.getEventName());
-                eventDescriptionTxt.setText(event.getEventDescription());
-                eventDateTxt.setText(event.getEventDate());
-                eventTimeTxt.setText(event.getEventTime());
-                eventCategoryTxt.setText(event.getEventCategory());
-                eventCreatorTxt.setText(event.getEventAuthor());
-            }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
-    }
 
     public void editEvent(View v){
         Intent createEvent = new Intent(getApplicationContext(),createEvent.class);
@@ -108,6 +100,59 @@ public class viewEvent extends Activity {
                     }
                 })
                 .show();
+
+
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+
+
+
+        mMap = googleMap;
+        //display user loation
+        mMap.setMyLocationEnabled(true);
+        //display button to show user location
+        mMap.getUiSettings().setMyLocationButtonEnabled(true);
+        mMap.getUiSettings().setCompassEnabled(true);
+
+
+        //retrieve data
+        rootRef.child(id).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+
+                //get event class
+                viewEvent.this.event = snapshot.getValue(eventDoc.class);
+
+                //place event info into text views
+                eventNameTxt.setText(event.getEventName());
+                eventDescriptionTxt.setText(event.getEventDescription());
+                eventDateTxt.setText(event.getEventDate());
+                eventTimeTxt.setText(event.getEventTime());
+                eventCategoryTxt.setText(event.getEventCategory());
+                eventCreatorTxt.setText(event.getEventAuthor());
+
+                viewEvent.this.location=event.getEventLocation();
+
+                //seperator for lat and long
+                int commaPos = location.indexOf(",");
+
+                LatLng eventLoc = new LatLng(Double.parseDouble(location.substring(0,commaPos)),Double.parseDouble(location.substring(commaPos+1)));
+                mMap.addMarker(new MarkerOptions().position(eventLoc).title(event.getEventName()));
+                //set camera position and zoom
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(eventLoc,15));
+
+
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+
+
+
+
 
 
     }

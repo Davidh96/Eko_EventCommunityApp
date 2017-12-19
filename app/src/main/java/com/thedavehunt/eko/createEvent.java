@@ -54,6 +54,11 @@ public class createEvent extends Activity {
     LocationManager locationManager;
     LocationListener locationListener;
 
+    FragmentManager fragmentManager = getFragmentManager();
+
+    selectDateFragment frag1 = new selectDateFragment();
+    selectTimeFragment frag2 = new selectTimeFragment();
+
     CallbackManager callbackManager;
 
     EditText nameEdt;
@@ -64,6 +69,7 @@ public class createEvent extends Activity {
 
     Button timeToggle;
     Button dateToggle;
+    Button locationButton;
 
     ShareDialog shareDialog;
 
@@ -89,13 +95,9 @@ public class createEvent extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_event);
 
-
-
         Intent i = getIntent();
         //get id of event selected
         id = i.getStringExtra("id");
-
-
 
         nameEdt = (EditText) findViewById(R.id.createEditName);
         descriptionEdt = (EditText) findViewById(R.id.createEditDescription);
@@ -103,12 +105,10 @@ public class createEvent extends Activity {
 
         dateToggle = (Button)findViewById(R.id.createButtonDate);
         timeToggle = (Button)findViewById(R.id.createButtonTime);
-
-
+        locationButton = (Button)findViewById(R.id.createButtonLocation);
 
         //dialog for facebook sharing
         shareDialog = new ShareDialog(this);
-
 
         // Create an ArrayAdapter using the string array and a default spinner layout
         adapter = ArrayAdapter.createFromResource(this,
@@ -202,6 +202,8 @@ public class createEvent extends Activity {
         else{
             location = "" + locLat + "," + locLong;
         }
+
+        locationButton.setText("Location: " + location);
     }
 
     //method for saving new events to the Firebase database
@@ -248,9 +250,7 @@ public class createEvent extends Activity {
             // create an event
             eventDoc event = new eventDoc(id, name, author, description, category, location,date,time);
 
-
             dbm.createEvent(event);
-
 
             //create alert box to ask user if they wish to post to facebook
             AlertDialog.Builder alert = new AlertDialog.Builder(this);
@@ -312,6 +312,12 @@ public class createEvent extends Activity {
                 int pos = adapter.getPosition(event.getEventCategory());
                 categorySpin.setSelection(pos);
 
+                locationButton.setText("Location: " + event.getEventLocation());
+
+                dateToggle.setText("Date: " + event.getEventDate());
+
+                timeToggle.setText("Time: "+ event.getEventTime());
+
 
             }
             @Override
@@ -332,12 +338,7 @@ public class createEvent extends Activity {
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 5000, 0, locationListener);
     }
 
-    FragmentManager fragmentManager = getFragmentManager();
 
-    selectDateFragment frag1 = new selectDateFragment();
-    selectTimeFragment frag2 = new selectTimeFragment();
-
-//
 
     public void showDateFragment(View v){
 
@@ -346,7 +347,7 @@ public class createEvent extends Activity {
 
         if(toggle) {
             toggle=false;
-            dateToggle.setText("Select Date");
+
             dateToggle.setBackgroundColor(getResources().getColor(R.color.colorAccent,null));
             dateToggle.setTextColor(getResources().getColor(R.color.secondaryTextColor,null));
 
@@ -375,6 +376,7 @@ public class createEvent extends Activity {
                 }
 
                 date =dateEdt.getYear() + "-" + month + "-"+ day;
+                dateToggle.setText("Date: " + date);
 
                 Toast.makeText(getApplicationContext(),"Date Saved",Toast.LENGTH_SHORT).show();
             }
@@ -405,7 +407,7 @@ public class createEvent extends Activity {
 
         if(toggle) {
             toggle=false;
-            timeToggle.setText("Select Time");
+
             timeToggle.setBackgroundColor(getResources().getColor(R.color.colorAccent,null));
             timeToggle.setTextColor(getResources().getColor(R.color.secondaryTextColor,null));
 
@@ -433,6 +435,8 @@ public class createEvent extends Activity {
                 }
 
                 time = hour + ":"+ mins;
+
+                timeToggle.setText("Time: " + time);
 
                 Toast.makeText(getApplicationContext(),"Time Saved",Toast.LENGTH_SHORT).show();
             }
