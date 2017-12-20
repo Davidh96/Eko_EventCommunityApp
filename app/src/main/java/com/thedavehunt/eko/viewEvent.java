@@ -158,30 +158,48 @@ public class viewEvent extends FragmentActivity implements OnMapReadyCallback {
 
     //add member to event
     public void joinEvent(View v){
+        int check=0;
 
-        //create alert box to ask user if they wish to post to facebook
-        AlertDialog.Builder alert = new AlertDialog.Builder(this);
-        //alert title
-        alert.setTitle("Join Event")
-                //alert message
-                .setMessage("Do you want to join the '" + eventNameTxt.getText() + "' event?")
-                //if user clicks yes
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        eventMember member = new eventMember(user.getUid(),user.getDisplayName());
+        for(int i =0;i<members.size();i++){
+            if(user.getUid()==members.get(i).getId()){
+                check++;
+                Toast.makeText(getApplicationContext(),user.getUid() + " , " + members.get(i).getId(),Toast.LENGTH_SHORT).show();
+            }
+        }
 
-                        dbm.addEventMember(id,member);
-                    }
+        if(check>0){
+            Toast.makeText(getApplicationContext(),"You have already joined this event",Toast.LENGTH_SHORT).show();
+        }
+        else{
 
-                })
-                //if user does not wish to post
-                .setNegativeButton("Nope", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
+            //create alert box to ask user if they wish to post to facebook
+            AlertDialog.Builder alert = new AlertDialog.Builder(this);
+            //alert title
+            alert.setTitle("Join Event")
+                    //alert message
+                    .setMessage("Do you want to join the '" + eventNameTxt.getText() + "' event?")
+                    //if user clicks yes
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            eventMember member = new eventMember(user.getUid(),user.getDisplayName());
 
-                    }
-                })
-                .show();
+                            dbm.addEventMember(id,member);
+
+                            Toast.makeText(getApplicationContext(),"Joined '" + event.eventName + "' Event",Toast.LENGTH_SHORT).show();
+                        }
+
+                    })
+                    //if user does not wish to post
+                    .setNegativeButton("Nope", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+
+                        }
+                    })
+                    .show();
+        }
+
+
     }
 
     //allow editing of events
