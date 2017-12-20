@@ -71,6 +71,10 @@ public class createEvent extends Activity {
     Button dateToggle;
     Button locationButton;
 
+    FloatingActionButton CreateFab;
+    FloatingActionButton SaveDateFab;
+    FloatingActionButton SaveTimeFab;
+
     ShareDialog shareDialog;
 
 
@@ -109,6 +113,13 @@ public class createEvent extends Activity {
         timeToggle = (Button)findViewById(R.id.createButtonTime);
         locationButton = (Button)findViewById(R.id.createButtonLocation);
 
+        //FAB, used to allow creation of new events
+        CreateFab = (FloatingActionButton) findViewById(R.id.fabCreate);
+        SaveDateFab =(FloatingActionButton)findViewById(R.id.createFabSaveDate);
+        SaveTimeFab =(FloatingActionButton)findViewById(R.id.createFabSaveTime);
+        SaveDateFab.hide();
+        SaveTimeFab.hide();
+
         //dialog for facebook sharing
         shareDialog = new ShareDialog(this);
 
@@ -137,8 +148,7 @@ public class createEvent extends Activity {
             }
         });
 
-        //FAB, used to allow creation of new events
-        FloatingActionButton CreateFab = (FloatingActionButton) findViewById(R.id.fabCreate);
+
         CreateFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -225,6 +235,11 @@ public class createEvent extends Activity {
             saved=false;
         }
 
+        if(location.isEmpty()){
+            Toast.makeText(getApplicationContext(),"Please select location",Toast.LENGTH_SHORT).show();
+            saved=false;
+        }
+
         if(date.isEmpty()){
             Toast.makeText(getApplicationContext(),"Please give a date",Toast.LENGTH_SHORT).show();
             saved=false;
@@ -232,11 +247,6 @@ public class createEvent extends Activity {
 
         if(time.isEmpty()){
             Toast.makeText(getApplicationContext(),"Please give a time",Toast.LENGTH_SHORT).show();
-            saved=false;
-        }
-
-        if(location.isEmpty()){
-            Toast.makeText(getApplicationContext(),"Please select location",Toast.LENGTH_SHORT).show();
             saved=false;
         }
 
@@ -248,7 +258,7 @@ public class createEvent extends Activity {
             FirebaseUser user = auth.getCurrentUser();
             //retrieve users facebook name
             author = user.getDisplayName();
-            String authorID = user.getUid();
+            authorID = user.getUid();
 
 
 
@@ -360,6 +370,8 @@ public class createEvent extends Activity {
 
         if(toggle) {
             toggle=false;
+            CreateFab.show();
+            SaveDateFab.hide();
 
             dateToggle.setBackgroundColor(getResources().getColor(R.color.colorAccent,null));
             dateToggle.setTextColor(getResources().getColor(R.color.secondaryTextColor,null));
@@ -368,38 +380,43 @@ public class createEvent extends Activity {
             timeToggle.setClickable(true);
             timeToggle.setBackgroundColor(getResources().getColor(R.color.colorAccent,null));
 
-            //hide fragment
-            dateEdt=(DatePicker)findViewById(R.id.datePickerFragment);
-            date=dateEdt.getYear() + "-" + dateEdt.getMonth() + "-" + dateEdt.getDayOfMonth();
+//            //hide fragment
+//            dateEdt=(DatePicker)findViewById(R.id.datePickerFragment);
+//            date=dateEdt.getYear() + "-" + dateEdt.getMonth() + "-" + dateEdt.getDayOfMonth();
+//            fragmentTransaction.remove(frag1);
+//
+//            //for formatting dates
+//            if(!date.isEmpty()){
+//
+//                //format day
+//                String day =""+dateEdt.getDayOfMonth();
+//                if(day.length()==1){
+//                    day="0" + day;
+//                }
+//
+//                //format month
+//                String month =""+dateEdt.getMonth();
+//                if(month.length()==1){
+//                    month="0" + month;
+//                }
+//
+//                date =dateEdt.getYear() + "-" + month + "-"+ day;
+//                dateToggle.setText("Date: " + date);
+//
+//                Toast.makeText(getApplicationContext(),"Date Saved",Toast.LENGTH_SHORT).show();
+//            }
+            saveDate();
             fragmentTransaction.remove(frag1);
-
-            //for formatting dates
-            if(!date.isEmpty()){
-
-                //format day
-                String day =""+dateEdt.getDayOfMonth();
-                if(day.length()==1){
-                    day="0" + day;
-                }
-
-                //format month
-                String month =""+dateEdt.getMonth();
-                if(month.length()==1){
-                    month="0" + month;
-                }
-
-                date =dateEdt.getYear() + "-" + month + "-"+ day;
-                dateToggle.setText("Date: " + date);
-
-                Toast.makeText(getApplicationContext(),"Date Saved",Toast.LENGTH_SHORT).show();
-            }
         }
         else{
             toggle=true;
+            CreateFab.hide();
+            SaveDateFab.show();
+
             dateToggle.setText("Tap to Save");
-            //bring attention to button
-            dateToggle.setBackgroundColor(getResources().getColor(R.color.attention,null));
-            dateToggle.setTextColor(getResources().getColor(R.color.primaryTextColor,null));
+//            //bring attention to button
+//            dateToggle.setBackgroundColor(getResources().getColor(R.color.attention,null));
+//            dateToggle.setTextColor(getResources().getColor(R.color.primaryTextColor,null));
 
             //make time toggle unclickable
             timeToggle.setClickable(false);
@@ -408,6 +425,7 @@ public class createEvent extends Activity {
             //show fragment
             fragmentTransaction.add(R.id.layout_date_container, frag1);
             fragmentTransaction.show(frag1);
+
         }
 
         fragmentTransaction.commit();
@@ -420,6 +438,8 @@ public class createEvent extends Activity {
 
         if(toggle) {
             toggle=false;
+            CreateFab.show();
+            SaveTimeFab.hide();
 
             timeToggle.setBackgroundColor(getResources().getColor(R.color.colorAccent,null));
             timeToggle.setTextColor(getResources().getColor(R.color.secondaryTextColor,null));
@@ -456,14 +476,19 @@ public class createEvent extends Activity {
         }
         else{
             toggle=true;
+            CreateFab.hide();
+            SaveTimeFab.show();
+
             timeToggle.setText("Tap to Save");
-            //bring attention to button
-            timeToggle.setBackgroundColor(getResources().getColor(R.color.attention,null));
-            timeToggle.setTextColor(getResources().getColor(R.color.primaryTextColor,null));
+//            //bring attention to button
+//            timeToggle.setBackgroundColor(getResources().getColor(R.color.attention,null));
+//            timeToggle.setTextColor(getResources().getColor(R.color.primaryTextColor,null));
 
             //make date toggle unclickable
             dateToggle.setClickable(false);
             dateToggle.setBackgroundColor(getResources().getColor(R.color.secondaryDarkColor,null));
+
+
 
             //show fragment
             fragmentTransaction.add(R.id.layout_time_container, frag2);
@@ -471,6 +496,34 @@ public class createEvent extends Activity {
         }
 
         fragmentTransaction.commit();
+    }
+
+    public void saveDate(){
+        //hide fragment
+        dateEdt=(DatePicker)findViewById(R.id.datePickerFragment);
+        date=dateEdt.getYear() + "-" + dateEdt.getMonth() + "-" + dateEdt.getDayOfMonth();
+
+
+        //for formatting dates
+        if(!date.isEmpty()){
+
+            //format day
+            String day =""+dateEdt.getDayOfMonth();
+            if(day.length()==1){
+                day="0" + day;
+            }
+
+            //format month
+            String month =""+dateEdt.getMonth();
+            if(month.length()==1){
+                month="0" + month;
+            }
+
+            date =dateEdt.getYear() + "-" + month + "-"+ day;
+            dateToggle.setText("Date: " + date);
+
+            Toast.makeText(getApplicationContext(),"Date Saved",Toast.LENGTH_SHORT).show();
+        }
     }
 
 }

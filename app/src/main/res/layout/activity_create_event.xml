@@ -177,4 +177,26 @@
         android:layout_margin="14dp"
         android:src="@android:drawable/ic_menu_save" />
 
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/createFabSaveDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="14dp"
+        android:onClick="showDateFragment"
+        android:src="@android:drawable/ic_menu_today"
+        />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/createFabSaveTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="14dp"
+        android:src="@android:drawable/ic_menu_recent_history"
+        android:onClick="showTimeFragment"
+        />
+
 </RelativeLayout>
