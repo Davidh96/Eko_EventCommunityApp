@@ -78,6 +78,15 @@ public class eventDoc {
         this.eventAuthor = eventAuthor;
     }
 
+
+    public String getEventAuthorID() {
+        return eventAuthorID;
+    }
+
+    public void setEventAuthorID(String eventAuthorID) {
+        this.eventAuthorID = eventAuthorID;
+    }
+
     public String getEventDescription() {
         return eventDescription;
     }

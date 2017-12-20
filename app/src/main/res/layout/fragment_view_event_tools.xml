@@ -1,0 +1,31 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    tools:context="com.thedavehunt.eko.viewEventToolsFragment">
+
+    <android.support.design.widget.FloatingActionButton
+    android:id="@+id/toolsButtonEdit"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentLeft="true"
+    android:layout_alignParentBottom="true"
+    android:layout_margin="14dp"
+    android:src="@android:drawable/ic_menu_edit"
+    android:onClick="editEvent"
+    />
+
+<android.support.design.widget.FloatingActionButton
+    android:id="@+id/toolsButtonDelete"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_toRightOf="@+id/toolsButtonEdit"
+    android:layout_alignParentBottom="true"
+    android:layout_margin="14dp"
+    android:src="@android:drawable/ic_menu_close_clear_cancel"
+    android:onClick="deleteEvent"
+    />
+
+
+</RelativeLayout>

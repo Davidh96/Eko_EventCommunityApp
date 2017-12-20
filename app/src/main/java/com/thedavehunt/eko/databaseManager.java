@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -60,7 +61,9 @@ public class databaseManager {
         //get reference for member
         DatabaseReference memberRef = rootRef.child(eventId).child("members").child(member.getId());
         //add member
+       //memberRef.setValue(member);
         memberRef.setValue(member);
+
     }
 
     public void readEvent(String id){
@@ -74,8 +77,6 @@ public class databaseManager {
 
                 //get event class
                 databaseManager.this.event = snapshot.getValue(eventDoc.class);
-                //Toast.makeText(getApplicationContext(),databaseManager.this.event.getEventName(),Toast.LENGTH_LONG).show();
-
 
             }
             @Override
