@@ -160,6 +160,7 @@ public class viewEvent extends FragmentActivity implements OnMapReadyCallback {
     public void joinEvent(View v){
         int check=0;
 
+        //check if user is already part of the members
         for(int i =0;i<members.size();i++){
             if(user.getUid()==members.get(i).getId()){
                 check++;
@@ -167,9 +168,11 @@ public class viewEvent extends FragmentActivity implements OnMapReadyCallback {
             }
         }
 
+        //if user is member
         if(check>0){
             Toast.makeText(getApplicationContext(),"You have already joined this event",Toast.LENGTH_SHORT).show();
         }
+        //if not member
         else{
 
             //create alert box to ask user if they wish to post to facebook

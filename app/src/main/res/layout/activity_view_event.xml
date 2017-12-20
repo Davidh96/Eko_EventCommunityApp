@@ -2,6 +2,9 @@
 <RelativeLayout android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -168,8 +171,23 @@
             android:id="@+id/map1"
             android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
-            android:layout_height="300dp"
-            tools:context="com.thedavehunt.eko.viewEvent" />
+            android:layout_height="250dp"
+            tools:context="com.thedavehunt.eko.viewEvent"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="12dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="People attending this event"
+            android:id="@+id/viewMemberListTitle"
+            android:textSize="16dp"
+            android:fontFamily="sans-serif-light"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:paddingTop="12dp"/>
 
         <ListView
             android:layout_width="match_parent"
@@ -179,12 +197,18 @@
 
     </LinearLayout>
 
+    </ScrollView>
+
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/edit_tools_layout_container"
         android:layout_alignParentLeft="true"
         android:layout_alignParentBottom="true"></RelativeLayout>
+
+
+
+
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/viewButtonJoin"
