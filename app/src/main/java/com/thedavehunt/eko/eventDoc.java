@@ -40,8 +40,8 @@ public class eventDoc {
         this.eventLocation = eventLocation;
         this.eventDate=eventDate;
         this.eventTime=eventTime;
-        eventMember mem = new eventMember("test","test");
-        members.add(mem);
+//        eventMember mem = new eventMember("test","test");
+//        members.add(mem);
     }
 
     public String getId() {

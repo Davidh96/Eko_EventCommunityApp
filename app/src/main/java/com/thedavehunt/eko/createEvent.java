@@ -76,6 +76,8 @@ public class createEvent extends Activity {
 
     String name = "";
     String description = "";
+    String author="";
+    String authorID="";
     String category = "";
     String location="";
     String date="";
@@ -245,13 +247,10 @@ public class createEvent extends Activity {
             //get user details
             FirebaseUser user = auth.getCurrentUser();
             //retrieve users facebook name
-            String author = user.getDisplayName();
+            author = user.getDisplayName();
             String authorID = user.getUid();
 
-            // create an event
-            eventDoc event = new eventDoc(id, name, author, authorID, description, category, location,date,time);
 
-            dbm.createEvent(event);
 
             //create alert box to ask user if they wish to post to facebook
             AlertDialog.Builder alert = new AlertDialog.Builder(this);
@@ -276,6 +275,7 @@ public class createEvent extends Activity {
                                 //display post information
                                 shareDialog.show(linkContent);
                             }
+                            createEventDoc();
                             finish();
 
                         }
@@ -285,13 +285,22 @@ public class createEvent extends Activity {
                     .setNegativeButton("Nope", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
+                            createEventDoc();
                             finish();
                         }
                     })
+
                     .show();
 
         }
 
+    }
+
+    private void createEventDoc(){
+        // create an event
+        eventDoc event = new eventDoc(id, name, author, authorID, description, category, location,date,time);
+
+        dbm.createEvent(event);
     }
 
 
@@ -313,11 +322,14 @@ public class createEvent extends Activity {
                 int pos = adapter.getPosition(event.getEventCategory());
                 categorySpin.setSelection(pos);
 
-                locationButton.setText("Location: " + event.getEventLocation());
+                location= event.getEventLocation();
+                locationButton.setText("Location: " + location);
 
-                dateToggle.setText("Date: " + event.getEventDate());
+                date=event.getEventDate();
+                dateToggle.setText("Date: " + date);
 
-                timeToggle.setText("Time: "+ event.getEventTime());
+                time = event.getEventTime();
+                timeToggle.setText("Time: "+ time);
 
 
             }
