@@ -81,6 +81,26 @@ public class databaseManager {
 
     }
 
+    public void removeEventMember(String eventId, eventMember member){
+        final eventMember member1 = member;
+        final String id =eventId;
+
+        rootRef.child(eventId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+
+                //get event class
+                databaseManager.this.event = snapshot.getValue(eventDoc.class);
+                event.removeMembers(member1);
+                rootRef.child(id).setValue(event);
+
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+    }
+
     public void readEvent(String id){
 
         Toast.makeText(getApplicationContext(),id,Toast.LENGTH_LONG).show();

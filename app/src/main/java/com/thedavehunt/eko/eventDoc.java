@@ -1,5 +1,7 @@
 package com.thedavehunt.eko;
 
+import android.widget.Toast;
+
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -38,6 +40,8 @@ public class eventDoc {
         this.eventLocation = eventLocation;
         this.eventDate=eventDate;
         this.eventTime=eventTime;
+        eventMember mem = new eventMember("test","test");
+        members.add(mem);
     }
 
     public String getId() {
@@ -123,6 +127,16 @@ public class eventDoc {
 
     public void addMembers(eventMember member) {
         this.members.add(member);
+    }
+
+    public void removeMembers(eventMember member){
+        for(int i=0;i < members.size();i++){
+            if(members.get(i).getId().equals(member.getId())){
+                members.remove(i);
+            }
+        }
+
+
     }
 
 }

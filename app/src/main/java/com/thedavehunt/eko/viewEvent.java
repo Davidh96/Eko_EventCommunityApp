@@ -205,6 +205,19 @@ public class viewEvent extends FragmentActivity implements OnMapReadyCallback {
 
     }
 
+    public void leaveEvent(View v){
+        if(!user.getUid().equals(event.eventAuthorID)) {
+            eventMember member = new eventMember(user.getUid(), user.getDisplayName());
+
+            dbm.removeEventMember(id, member);
+
+            Toast.makeText(getApplicationContext(), "Left '" + event.eventName + "' Event", Toast.LENGTH_SHORT).show();
+        }
+        else{
+            Toast.makeText(getApplicationContext(),"You cannot leave event, you must delete the event", Toast.LENGTH_LONG).show();
+        }
+    }
+
     //allow editing of events
     public void editEvent(View v){
         Intent createEvent = new Intent(getApplicationContext(),createEvent.class);
