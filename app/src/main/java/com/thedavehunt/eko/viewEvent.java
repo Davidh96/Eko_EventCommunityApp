@@ -98,7 +98,7 @@ public class viewEvent extends FragmentActivity implements OnMapReadyCallback {
 
 
         //retrieve data
-        rootRef.child(id).addValueEventListener(new ValueEventListener() {
+        rootRef.child(id).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
 
@@ -197,7 +197,7 @@ public class viewEvent extends FragmentActivity implements OnMapReadyCallback {
                     public void onClick(DialogInterface dialog, int which) {
                         //delete currently selected event
                         dbm.deleteEvent(id,viewEvent.this);
-                        //finish();
+                        finish();
 
                     }
 
