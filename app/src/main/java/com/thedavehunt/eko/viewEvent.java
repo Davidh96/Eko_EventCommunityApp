@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,6 +37,7 @@ public class viewEvent extends FragmentActivity implements OnMapReadyCallback {
 
     databaseManager dbm = new databaseManager();
 
+    ListAdapter tempAdapter;
     List<eventMember> members;
 
     DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
@@ -113,6 +115,12 @@ public class viewEvent extends FragmentActivity implements OnMapReadyCallback {
                 eventCategoryTxt.setText(event.getEventCategory());
                 eventCreatorTxt.setText(event.getEventAuthor());
 
+                members = event.getMembers();
+
+                //initialise adapter
+                tempAdapter = new memberListAdapter(viewEvent.this,members);
+
+                memberList.setAdapter(tempAdapter);
 
                 viewEvent.this.location=event.getEventLocation();
 
@@ -174,7 +182,6 @@ public class viewEvent extends FragmentActivity implements OnMapReadyCallback {
                     }
                 })
                 .show();
-
     }
 
     //allow editing of events
@@ -210,8 +217,6 @@ public class viewEvent extends FragmentActivity implements OnMapReadyCallback {
                     }
                 })
                 .show();
-
-
     }
 
 }

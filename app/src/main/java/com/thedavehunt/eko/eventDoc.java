@@ -3,7 +3,9 @@ package com.thedavehunt.eko;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -21,10 +23,7 @@ public class eventDoc {
     String eventDate;
     String eventTime;
 
-    //eventMember member;
-
-    //DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
-
+    List<eventMember> members = new ArrayList<eventMember>();
 
     public eventDoc() {
     }
@@ -39,19 +38,6 @@ public class eventDoc {
         this.eventLocation = eventLocation;
         this.eventDate=eventDate;
         this.eventTime=eventTime;
-
-        //DatabaseReference usersRef = rootRef.child("users");
-//        DatabaseReference eventRef = rootRef.child("event");
-//
-//        member = new eventMember("1","david");
-//
-////        Map<String, eventMember> users = new HashMap<>();
-////        users.put("alanisawesome", new eventMember("June 23, 1912", "Alan Turing"));
-////        users.put("gracehop", new eventMember("December 9, 1906", "Grace Hopper"));
-//
-//        eventRef.setValue("hello");
-
-
     }
 
     public String getId() {
@@ -126,4 +112,17 @@ public class eventDoc {
     public void setEventTime(String eventTime) {
         this.eventTime = eventTime;
     }
+
+    public List<eventMember> getMembers() {
+        return members;
+    }
+
+    public void setMembers(List<eventMember> members) {
+        this.members = members;
+    }
+
+    public void addMembers(eventMember member) {
+        this.members.add(member);
+    }
+
 }

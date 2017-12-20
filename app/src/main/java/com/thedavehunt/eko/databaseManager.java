@@ -46,23 +46,38 @@ public class databaseManager {
 
         event.setId(id);
 
+        event.addMembers(new eventMember(user.getUid(),user.getDisplayName()));
+
         //push event to cloud database
         rootRef.child(id).setValue(event);
 
         //set creator as an event member
-        eventMember creator = new eventMember(user.getUid(),user.getDisplayName());
-        addEventMember(id,creator);
+//        eventMember creator = new eventMember(user.getUid(),user.getDisplayName());
+//        addEventMember(id,creator);
 
         Toast.makeText(getApplicationContext(),"Event Created",Toast.LENGTH_SHORT).show();
     }
 
     //add member to event
     public void addEventMember(String eventId,eventMember member){
-        //get reference for member
-        DatabaseReference memberRef = rootRef.child(eventId).child("members").child(member.getId());
-        //add member
-       //memberRef.setValue(member);
-        memberRef.setValue(member);
+
+        final eventMember member1 = member;
+        final String id =eventId;
+
+        rootRef.child(eventId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+
+                //get event class
+                databaseManager.this.event = snapshot.getValue(eventDoc.class);
+                event.addMembers(member1);
+                rootRef.child(id).setValue(event);
+
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
 
     }
 
