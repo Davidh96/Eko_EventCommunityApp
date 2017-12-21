@@ -7,6 +7,7 @@ import android.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -58,6 +59,9 @@ public class viewEvent extends FragmentActivity implements OnMapReadyCallback {
     TextView eventCreatorTxt;
     ListView memberList;
 
+    FloatingActionButton joinBtn;
+    FloatingActionButton leaveBtn;
+
     String id;
     public static String location;
 
@@ -78,11 +82,17 @@ public class viewEvent extends FragmentActivity implements OnMapReadyCallback {
         eventCategoryTxt=(TextView)findViewById(R.id.viewEventCategory);
         eventCreatorTxt=(TextView)findViewById(R.id.viewEventAuthor);
         memberList=(ListView)findViewById(R.id.list2);
+        joinBtn = (FloatingActionButton)findViewById(R.id.viewButtonJoin);
+        leaveBtn = (FloatingActionButton)findViewById(R.id.viewButtonLeave);
+
+
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map1);
         mapFragment.getMapAsync(this);
+
+
     }
 
 
@@ -116,6 +126,26 @@ public class viewEvent extends FragmentActivity implements OnMapReadyCallback {
                 eventCreatorTxt.setText(event.getEventAuthor());
 
                 members = event.getMembers();
+
+                int check=0;
+
+                //check if user is already part of the members
+                for(int j =0;j<members.size();j++){
+                    if(user.getUid().equals(members.get(j).getId())){
+                        check++;
+                    }
+                }
+
+                //if user is member
+                if(check>0){
+                    ///Toast.makeText(getApplicationContext(),"You have already joined this event",Toast.LENGTH_SHORT).show();
+                    joinBtn.hide();
+                    leaveBtn.show();
+                }
+                else{
+                    joinBtn.show();
+                    leaveBtn.hide();
+                }
 
                 //initialise adapter
                 tempAdapter = new memberListAdapter(viewEvent.this,members);
@@ -158,37 +188,58 @@ public class viewEvent extends FragmentActivity implements OnMapReadyCallback {
 
     //add member to event
     public void joinEvent(View v){
-        int check=0;
 
-        //check if user is already part of the members
-        for(int i =0;i<members.size();i++){
-            if(user.getUid()==members.get(i).getId()){
-                check++;
-                Toast.makeText(getApplicationContext(),user.getUid() + " , " + members.get(i).getId(),Toast.LENGTH_SHORT).show();
-            }
-        }
 
-        //if user is member
-        if(check>0){
-            Toast.makeText(getApplicationContext(),"You have already joined this event",Toast.LENGTH_SHORT).show();
-        }
-        //if not member
-        else{
+        //create alert box to ask user if they wish to join event
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        //alert title
+        alert.setTitle("Join Event")
+                //alert message
+                .setMessage("Do you want to join the '" + eventNameTxt.getText() + "' event?")
+                //if user clicks yes
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        eventMember member = new eventMember(user.getUid(),user.getDisplayName());
 
-            //create alert box to ask user if they wish to post to facebook
+                        dbm.addEventMember(id,member);
+
+                        joinBtn.hide();
+                        leaveBtn.show();
+
+                        Toast.makeText(getApplicationContext(),"Joined '" + event.eventName + "' Event",Toast.LENGTH_SHORT).show();
+                    }
+
+                })
+                //if user does not wish to join
+                .setNegativeButton("Nope", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                })
+                .show();
+
+
+
+    }
+
+    public void leaveEvent(View v){
+        if(!user.getUid().equals(event.eventAuthorID)) {
+            //create alert box to ask user if they wish to leave the event
             AlertDialog.Builder alert = new AlertDialog.Builder(this);
             //alert title
-            alert.setTitle("Join Event")
+            alert.setTitle("Leave Event")
                     //alert message
-                    .setMessage("Do you want to join the '" + eventNameTxt.getText() + "' event?")
+                    .setMessage("Do you want to leave the '" + eventNameTxt.getText() + "' event?")
                     //if user clicks yes
                     .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
-                            eventMember member = new eventMember(user.getUid(),user.getDisplayName());
+                            eventMember member = new eventMember(user.getUid(), user.getDisplayName());
 
-                            dbm.addEventMember(id,member);
+                            dbm.removeEventMember(id, member);
 
-                            Toast.makeText(getApplicationContext(),"Joined '" + event.eventName + "' Event",Toast.LENGTH_SHORT).show();
+                            joinBtn.show();
+                            leaveBtn.hide();
                         }
 
                     })
@@ -200,16 +251,7 @@ public class viewEvent extends FragmentActivity implements OnMapReadyCallback {
                         }
                     })
                     .show();
-        }
 
-
-    }
-
-    public void leaveEvent(View v){
-        if(!user.getUid().equals(event.eventAuthorID)) {
-            eventMember member = new eventMember(user.getUid(), user.getDisplayName());
-
-            dbm.removeEventMember(id, member);
 
             Toast.makeText(getApplicationContext(), "Left '" + event.eventName + "' Event", Toast.LENGTH_SHORT).show();
         }
