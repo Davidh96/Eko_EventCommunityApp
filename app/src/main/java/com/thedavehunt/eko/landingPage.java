@@ -17,6 +17,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -60,7 +61,7 @@ public class landingPage extends Activity {
         loadingCircle = (ProgressBar)findViewById(R.id.loadingCircle);
         loadingCircle.setVisibility(View.VISIBLE);
 
-        Button logoutBtn = (Button) findViewById(R.id.logoutBtn);
+        ImageButton logoutBtn = (ImageButton) findViewById(R.id.logoutBtn);
 
         logoutBtn.setOnClickListener(new View.OnClickListener() {
             @Override
