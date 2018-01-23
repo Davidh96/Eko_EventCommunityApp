@@ -19,6 +19,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,6 +45,7 @@ public class landingPage extends Activity {
     List<eventDoc> eventList;
     ListAdapter tempAdapter;
 
+    ProgressBar loadingCircle;
     public double lati;
     public double longi;
 
@@ -54,6 +56,9 @@ public class landingPage extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_landing_page);
+
+        loadingCircle = (ProgressBar)findViewById(R.id.loadingCircle);
+        loadingCircle.setVisibility(View.VISIBLE);
 
         Button logoutBtn = (Button) findViewById(R.id.logoutBtn);
 
@@ -155,6 +160,9 @@ public class landingPage extends Activity {
                         startActivity(viewTask);
                     }
                 });
+
+                //indicate loading has finished
+                loadingCircle.setVisibility(View.GONE);
             }
 
             @Override
@@ -162,7 +170,6 @@ public class landingPage extends Activity {
 
             }
         });
-
 
 
     }

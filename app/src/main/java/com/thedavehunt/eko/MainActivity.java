@@ -19,6 +19,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -52,6 +53,7 @@ public class MainActivity extends Activity {
     private CallbackManager mCallbackManager;
     private FirebaseAuth.AuthStateListener mAuthListener;
 
+    ProgressBar loadingCircle;
     TextView locTxt;
 
     LocationManager locationManager;
@@ -61,6 +63,10 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        loadingCircle = (ProgressBar)findViewById(R.id.loadingCircle);
+        loadingCircle.setVisibility(View.INVISIBLE);
+
 
         locTxt= (TextView)findViewById(R.id.locationText);
 
@@ -88,6 +94,8 @@ public class MainActivity extends Activity {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 handleFacebookAccessToken(loginResult.getAccessToken());
+                loadingCircle.setVisibility(View.VISIBLE);
+
 
             }
 

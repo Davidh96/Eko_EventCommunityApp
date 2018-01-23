@@ -39,6 +39,7 @@
         android:id="@+id/list1"
         ></ListView>
 
+
     </LinearLayout>
 
     <RelativeLayout
@@ -57,6 +58,14 @@
             android:src="@android:drawable/ic_menu_add" />
 
     </RelativeLayout>
+
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:layout_centerInParent="true"
+        android:id="@+id/loadingCircle"
+        />
 
 
     <!--android:layout_alignParentBottom="true"-->
