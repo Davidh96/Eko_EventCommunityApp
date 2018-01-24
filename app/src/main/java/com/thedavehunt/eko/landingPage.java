@@ -13,6 +13,8 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.format.Time;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -33,10 +35,16 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class landingPage extends Activity {
+
+    databaseManager dbm = new databaseManager();
 
     DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
 
@@ -141,8 +149,36 @@ public class landingPage extends Activity {
                 for(DataSnapshot eventSnapshop: dataSnapshot.getChildren()){
                     //retrieve data from db and place it in a eventDoc structure
                     eventDoc evnt = eventSnapshop.getValue(eventDoc.class);
-                    //add event to list
-                    eventList.add(evnt);
+
+                    //check if event has already occurred
+                    Calendar calander = Calendar.getInstance();
+                    //used to formatting date and time for comparisons
+                    SimpleDateFormat timeFormat = new SimpleDateFormat("HHmm");
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("YYYYMMDD");
+
+                    //get current date and time as integers
+                    int currentTime = Integer.parseInt(timeFormat.format(calander.getTime()));
+                    int currentDate = Integer.parseInt(dateFormat.format(calander.getTime()));
+                    //get event date and time as integers
+                    int eventTime = Integer.parseInt(evnt.getEventTime().replaceAll(":", ""));
+                    int eventDate = Integer.parseInt(evnt.getEventDate().replaceAll("-", ""));
+
+                    //if the event is a previous date
+                    if(currentDate>eventDate){
+                        Toast.makeText(getApplicationContext(),""+currentDate + ", " + eventDate,Toast.LENGTH_LONG).show();
+                        //delete currently selected event
+                        dbm.deleteEvent(evnt.getId(),landingPage.this);
+                    }
+                    //if the event is a previous time
+                    else if(currentDate==eventDate && currentTime>eventTime) {
+                        //delete currently selected event
+                        dbm.deleteEvent(evnt.getId(),landingPage.this);
+                    }
+                    else {
+
+                        //add event to list
+                        eventList.add(evnt);
+                    }
                 }
                 //initialise adapter
                 tempAdapter = new landingListAdapter(landingPage.this,eventList);

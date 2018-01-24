@@ -501,7 +501,8 @@ public class createEvent extends Activity {
     public void saveDate(){
         //hide fragment
         dateEdt=(DatePicker)findViewById(R.id.datePickerFragment);
-        date=dateEdt.getYear() + "-" + dateEdt.getMonth() + "-" + dateEdt.getDayOfMonth();
+        date=dateEdt.getYear() + "-" + (dateEdt.getMonth()+1) + "-" + dateEdt.getDayOfMonth();
+        Toast.makeText(getApplicationContext(),date,Toast.LENGTH_SHORT).show();
 
 
         //for formatting dates
@@ -514,7 +515,7 @@ public class createEvent extends Activity {
             }
 
             //format month
-            String month =""+dateEdt.getMonth();
+            String month =""+(dateEdt.getMonth()+1);
             if(month.length()==1){
                 month="0" + month;
             }

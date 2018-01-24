@@ -9,9 +9,9 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ekologolatest"
+        android:icon="@mipmap/ekologo"
         android:label="Eko"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/ekologo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".splashActiity">
