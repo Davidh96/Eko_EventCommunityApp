@@ -36,14 +36,23 @@
 
     </LinearLayout>
 
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="refresh"
+        android:id="@+id/refreshBtn"
+        android:onClick="refreshList"
+        android:layout_below="@+id/topBar"/>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/topBar"
+        android:layout_below="@+id/refreshBtn"
         android:orientation="horizontal"
         android:layout_alignParentBottom="true"
         android:gravity="right"
         >
+
 
     <ListView
         android:layout_width="match_parent"

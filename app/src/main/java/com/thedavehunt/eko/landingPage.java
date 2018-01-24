@@ -11,35 +11,26 @@ import android.os.Build;
 import android.provider.Settings;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.format.Time;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 public class landingPage extends Activity {
@@ -137,8 +128,10 @@ public class landingPage extends Activity {
 
         getLocation();
 
+        setListContents();
+    }
 
-
+    void setListContents(){
         eventList= new ArrayList<eventDoc>();
 
         rootRef.addValueEventListener(new ValueEventListener() {
@@ -199,7 +192,7 @@ public class landingPage extends Activity {
                 });
 
                 //indicate loading has finished
-                loadingCircle.setVisibility(View.GONE);
+                loadingCircle.setVisibility(View.INVISIBLE);
             }
 
             @Override
@@ -207,12 +200,17 @@ public class landingPage extends Activity {
 
             }
         });
-
-
     }
 
     void getLocation(){
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 5000, 0, locationListener);
+    }
+
+    public void refreshList(View v)
+    {
+        //indicate loading
+        loadingCircle.setVisibility(View.VISIBLE);
+        setListContents();
     }
 
 
@@ -231,5 +229,4 @@ public class landingPage extends Activity {
 //            return R * c;
 //        }
     }
-
-}
+    }
