@@ -1,23 +1,26 @@
 package com.thedavehunt.eko;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentActivity;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -26,22 +29,23 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.List;
 
 public class viewEvent extends FragmentActivity implements OnMapReadyCallback {
 
     databaseManager dbm = new databaseManager();
+    private String url;
+
 
     ListAdapter tempAdapter;
     List<eventMember> members;
 
-    DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
+    public eventDoc event;
 
     //get Firebase auth instance
     FirebaseAuth auth= FirebaseAuth.getInstance();
@@ -49,7 +53,6 @@ public class viewEvent extends FragmentActivity implements OnMapReadyCallback {
     FirebaseUser user = auth.getCurrentUser();
 
     private GoogleMap mMap;
-    eventDoc event;
 
     TextView eventNameTxt;
     TextView eventDescriptionTxt;
@@ -58,6 +61,7 @@ public class viewEvent extends FragmentActivity implements OnMapReadyCallback {
     TextView eventCategoryTxt;
     TextView eventCreatorTxt;
     ListView memberList;
+    ProgressBar loadingCircle;
 
     FloatingActionButton joinBtn;
     FloatingActionButton leaveBtn;
@@ -70,10 +74,13 @@ public class viewEvent extends FragmentActivity implements OnMapReadyCallback {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_event);
 
+        url = getResources().getString(R.string.serverURLrecieve);
+
         Intent i = getIntent();
 
         //get id of event selected
         id = i.getStringExtra("id");
+        url += id;
 
         eventNameTxt=(TextView)findViewById(R.id.viewEventName);
         eventDescriptionTxt=(TextView)findViewById(R.id.viewEventDescription);
@@ -84,6 +91,9 @@ public class viewEvent extends FragmentActivity implements OnMapReadyCallback {
         memberList=(ListView)findViewById(R.id.list2);
         joinBtn = (FloatingActionButton)findViewById(R.id.viewButtonJoin);
         leaveBtn = (FloatingActionButton)findViewById(R.id.viewButtonLeave);
+        loadingCircle=(ProgressBar)findViewById(R.id.loadingCircle);
+
+        loadingCircle.setVisibility(View.VISIBLE);
 
 
 
@@ -99,8 +109,6 @@ public class viewEvent extends FragmentActivity implements OnMapReadyCallback {
     @Override
     public void onMapReady(GoogleMap googleMap) {
 
-
-
         mMap = googleMap;
         //display user loation
         mMap.setMyLocationEnabled(true);
@@ -108,14 +116,70 @@ public class viewEvent extends FragmentActivity implements OnMapReadyCallback {
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
         mMap.getUiSettings().setCompassEnabled(true);
 
+        //get event data
+        retrieveData();
 
-        //retrieve data
-        rootRef.child(id).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot snapshot) {
+    }
 
-                //get event class
-                viewEvent.this.event = snapshot.getValue(eventDoc.class);
+    public void retrieveData(){
+
+        //creating a string request to send request to the url
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        loadingCircle.setVisibility(View.INVISIBLE);
+
+                        try {
+
+                            //getting the whole json object from the response
+                            JSONObject eventObj = new JSONObject(response);
+
+
+                            //place data into an eventDoc
+                            event = new eventDoc(eventObj.getString("id"),eventObj.getString("eventName"),eventObj.getString("eventAuthor"),eventObj.getString("eventAuthorID"),
+                                    eventObj.getString("eventDescription"),eventObj.getString("eventCategory"),eventObj.getString("eventLocation"),eventObj.getString("eventDate"),
+                                    eventObj.getString("eventTime"));
+
+                            //get members list
+                            JSONArray members = eventObj.getJSONArray("members");
+
+                            //place each member into event member
+                            for(int i=0;i<members.length();i++){
+                                JSONObject mem = members.getJSONObject(i);
+                                eventMember member = new eventMember(mem.getString("id"),mem.getString("name"));
+                                event.addMembers(member);
+
+                            }
+
+                            //display data
+                            setData();
+
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        //displaying the error in toast if occurrs
+                        Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+        //creating a request queue
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+
+        //adding the string request to request queue
+        requestQueue.add(stringRequest);
+
+    }
+
+    //display dat to user
+    public void setData(){
+
 
                 //place event info into text views
                 eventNameTxt.setText(event.getEventName());
@@ -138,7 +202,6 @@ public class viewEvent extends FragmentActivity implements OnMapReadyCallback {
 
                 //if user is member
                 if(check>0){
-                    ///Toast.makeText(getApplicationContext(),"You have already joined this event",Toast.LENGTH_SHORT).show();
                     joinBtn.hide();
                     leaveBtn.show();
                 }
@@ -163,7 +226,7 @@ public class viewEvent extends FragmentActivity implements OnMapReadyCallback {
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(eventLoc,15));
 
                 //if the current user is the creator of this event, show event editing tools
-                if(event.getEventAuthorID().equals(user.getUid())){
+                if(event.getEventAuthorID().equals(user.getUid())) {
                     //create fragment for tools
                     FragmentManager fragmentManager = getFragmentManager();
 
@@ -174,16 +237,14 @@ public class viewEvent extends FragmentActivity implements OnMapReadyCallback {
                     fragmentTransaction.add(R.id.edit_tools_layout_container, frag1);
                     fragmentTransaction.show(frag1);
                     fragmentTransaction.commit();
-
                 }
+    }
 
-
-            }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
-
+    //allow editing of events
+    public void editEvent(View v){
+        Intent createEvent = new Intent(getApplicationContext(),createEvent.class);
+        createEvent.putExtra("id",id);
+        startActivity(createEvent);
     }
 
     //add member to event
@@ -219,8 +280,6 @@ public class viewEvent extends FragmentActivity implements OnMapReadyCallback {
                 })
                 .show();
 
-
-
     }
 
     public void leaveEvent(View v){
@@ -240,6 +299,9 @@ public class viewEvent extends FragmentActivity implements OnMapReadyCallback {
 
                             joinBtn.show();
                             leaveBtn.hide();
+
+                            Toast.makeText(getApplicationContext(), "Left '" + event.eventName + "' Event", Toast.LENGTH_SHORT).show();
+
                         }
 
                     })
@@ -253,18 +315,10 @@ public class viewEvent extends FragmentActivity implements OnMapReadyCallback {
                     .show();
 
 
-            Toast.makeText(getApplicationContext(), "Left '" + event.eventName + "' Event", Toast.LENGTH_SHORT).show();
         }
         else{
             Toast.makeText(getApplicationContext(),"You cannot leave event, you must delete the event", Toast.LENGTH_LONG).show();
         }
-    }
-
-    //allow editing of events
-    public void editEvent(View v){
-        Intent createEvent = new Intent(getApplicationContext(),createEvent.class);
-        createEvent.putExtra("id",id);
-        startActivity(createEvent);
     }
 
     //delete events

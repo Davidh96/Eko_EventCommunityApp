@@ -2,9 +2,6 @@ package com.thedavehunt.eko;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -16,67 +13,55 @@ import android.os.Build;
 import android.provider.Settings;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.TimePicker;
+import android.widget.TextView;
 import android.widget.Toast;
-
-import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
-import com.facebook.share.Sharer;
-import com.facebook.share.model.ShareHashtag;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.facebook.share.model.ShareLinkContent;
-import com.facebook.share.widget.ShareButton;
 import com.facebook.share.widget.ShareDialog;
-import com.google.android.gms.maps.MapView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
-import static android.content.Context.LOCATION_SERVICE;
 
-public class createEvent extends Activity {
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-    DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
+
+public class createEvent extends FragmentActivity implements selectDateDialog.DateDialogListener, selectTimeDialog.TimeDialogListener {
 
     LocationManager locationManager;
     LocationListener locationListener;
 
-    FragmentManager fragmentManager = getFragmentManager();
+    private String url;
 
-    selectDateFragment frag1 = new selectDateFragment();
-    selectTimeFragment frag2 = new selectTimeFragment();
-
-    CallbackManager callbackManager;
-
-    EditText nameEdt;
-    EditText descriptionEdt;
+    EditText nameEdit;
+    EditText descriptionEdit;
     Spinner categorySpin;
-    DatePicker dateEdt;
-    TimePicker timeEdt;
 
     Button timeToggle;
     Button dateToggle;
     Button locationButton;
 
+    TextView dateText;
+    TextView timeText;
+    TextView locationText;
+
     FloatingActionButton CreateFab;
-    FloatingActionButton SaveDateFab;
-    FloatingActionButton SaveTimeFab;
 
     ShareDialog shareDialog;
-
 
     String name = "";
     String description = "";
@@ -87,8 +72,6 @@ public class createEvent extends Activity {
     String date="";
     String time="";
     String id;
-
-    boolean toggle=false;
 
     public static double locLong;
     public static double locLat;
@@ -101,24 +84,28 @@ public class createEvent extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_event);
 
+        url = getResources().getString(R.string.serverURLrecieve);
+
         Intent i = getIntent();
         //get id of event selected
         id = i.getStringExtra("id");
 
-        nameEdt = (EditText) findViewById(R.id.createEditName);
-        descriptionEdt = (EditText) findViewById(R.id.createEditDescription);
-        categorySpin = (Spinner) findViewById(R.id.createSpinnerCategory);
+        url += id;
 
-        dateToggle = (Button)findViewById(R.id.createButtonDate);
-        timeToggle = (Button)findViewById(R.id.createButtonTime);
-        locationButton = (Button)findViewById(R.id.createButtonLocation);
+        nameEdit = (EditText) findViewById(R.id.editNameCreate);
+        descriptionEdit = (EditText) findViewById(R.id.editDescriptionCreate);
+        categorySpin = (Spinner) findViewById(R.id.spinnerCategoryCreate);
+
+        dateToggle = (Button)findViewById(R.id.buttonDateCreate);
+        timeToggle = (Button)findViewById(R.id.buttonTimeCreate);
+        locationButton = (Button)findViewById(R.id.buttonLocationCreate);
+
+        dateText = (TextView)findViewById(R.id.textDateCreate);
+        timeText=(TextView)findViewById(R.id.textTimeCreate);
+        locationText = (TextView)findViewById(R.id.textLocationCreate);
 
         //FAB, used to allow creation of new events
         CreateFab = (FloatingActionButton) findViewById(R.id.fabCreate);
-        SaveDateFab =(FloatingActionButton)findViewById(R.id.createFabSaveDate);
-        SaveTimeFab =(FloatingActionButton)findViewById(R.id.createFabSaveTime);
-        SaveDateFab.hide();
-        SaveTimeFab.hide();
 
         //dialog for facebook sharing
         shareDialog = new ShareDialog(this);
@@ -158,47 +145,6 @@ public class createEvent extends Activity {
             }
         });
 
-        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-
-        locationListener = new LocationListener() {
-            //when location is updated
-            @Override
-            public void onLocationChanged(Location location) {
-                locLong = location.getLongitude();
-                locLat = location.getLatitude();
-            }
-
-            @Override
-            public void onStatusChanged(String s, int i, Bundle bundle) {
-
-            }
-
-            @Override
-            public void onProviderEnabled(String s) {
-
-            }
-
-            //if gps is disabled
-            @Override
-            public void onProviderDisabled(String s) {
-                Intent _intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                startActivity(_intent);
-            }
-        };
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{
-                        android.Manifest.permission.ACCESS_COARSE_LOCATION,
-                        android.Manifest.permission.ACCESS_FINE_LOCATION,
-                        android.Manifest.permission.INTERNET
-                }, 10);
-                return;
-            }
-        } else {
-            getLocation();
-        }
-
         getLocation();
 
 
@@ -215,19 +161,20 @@ public class createEvent extends Activity {
             location = "" + locLat + "," + locLong;
         }
 
-        locationButton.setText("Location: " + location);
+        locationText.setText("Location Saved");
     }
 
     //method for saving new events to the Firebase database
     protected void saveEvent(){
         boolean saved=true;
-        //get event name
-        name=nameEdt.getText().toString();
-        //get event description
-        description=descriptionEdt.getText().toString();
 
-        if(name.isEmpty() || description.isEmpty()){
-            Toast.makeText(getApplicationContext(),"Please fill in all information",Toast.LENGTH_SHORT).show();
+        //get event name
+        name=nameEdit.getText().toString();
+        //get event description
+        description=descriptionEdit.getText().toString();
+
+        if(name.isEmpty()){
+            Toast.makeText(getApplicationContext(),"Please name your event",Toast.LENGTH_SHORT).show();
             saved=false;
         }
         else if(description.length()<25){
@@ -265,21 +212,18 @@ public class createEvent extends Activity {
             //create alert box to ask user if they wish to post to facebook
             AlertDialog.Builder alert = new AlertDialog.Builder(this);
             //alert title
-            alert.setTitle("Share this Event!")
+            alert.setTitle(getResources().getString(R.string.facebookPostTitle))
                     //alert message
-                    .setMessage("Want to post this event on Facebook?")
+                    .setMessage(getResources().getString(R.string.facebookPostQuestion))
                     //if user clicks yes
-                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    .setPositiveButton(getResources().getString(R.string.positiveActionText), new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             //setup posting event to facebook
                             if (ShareDialog.canShow(ShareLinkContent.class)) {
                                 //set post details
                                 ShareLinkContent linkContent = new ShareLinkContent.Builder()
-                                        .setContentTitle("Test")
-                                        .setContentDescription(
-                                                "Test Description")
                                         .setQuote(name + ": " +description)
-                                        .setContentUrl(Uri.parse("http://facebook.com"))
+                                        .setContentUrl(Uri.parse(url))
                                         .build();
 
                                 //display post information
@@ -292,7 +236,7 @@ public class createEvent extends Activity {
 
                     })
                     //if user does not wish to post
-                    .setNegativeButton("Nope", new DialogInterface.OnClickListener() {
+                    .setNegativeButton(getResources().getString(R.string.negativeActionText), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             createEventDoc();
@@ -316,37 +260,70 @@ public class createEvent extends Activity {
 
     //function that retrieves selected item and displays it to users
     private void retrieveData(){
+        //creating a string request to send request to the url
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
 
-        rootRef.child(id).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot snapshot) {
+                        try {
 
-                //get event class
-                 eventDoc event = snapshot.getValue(eventDoc.class);
-
-                //set event name and description
-                nameEdt.setText(event.getEventName());
-                descriptionEdt.setText(event.getEventDescription());
-
-                //set value of spinner
-                int pos = adapter.getPosition(event.getEventCategory());
-                categorySpin.setSelection(pos);
-
-                location= event.getEventLocation();
-                locationButton.setText("Location: " + location);
-
-                date=event.getEventDate();
-                dateToggle.setText("Date: " + date);
-
-                time = event.getEventTime();
-                timeToggle.setText("Time: "+ time);
+                            //getting the whole json object from the response
+                            JSONObject eventObj = new JSONObject(response);
 
 
-            }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
+
+                            eventDoc event = new eventDoc(eventObj.getString("id"),eventObj.getString("eventName"),eventObj.getString("eventAuthor"),eventObj.getString("eventAuthorID"),
+                                    eventObj.getString("eventDescription"),eventObj.getString("eventCategory"),eventObj.getString("eventLocation"),eventObj.getString("eventDate"),
+                                    eventObj.getString("eventTime"));
+
+
+                            JSONArray members = eventObj.getJSONArray("members");
+
+                            for(int i=0;i<members.length();i++){
+                                JSONObject mem = members.getJSONObject(i);
+                                eventMember member = new eventMember(mem.getString("id"),mem.getString("name"));
+                                event.addMembers(member);
+
+                            }
+
+
+                            //set event name and description
+                            nameEdit.setText(event.getEventName());
+                            descriptionEdit.setText(event.getEventDescription());
+
+                            //set value of spinner
+                            int pos = adapter.getPosition(event.getEventCategory());
+                            categorySpin.setSelection(pos);
+
+                            location= event.getEventLocation();
+                            locationText.setText("Location Saved");
+
+                            date=event.getEventDate();
+                            dateText.setText(date);
+
+                            time = event.getEventTime();
+                            timeText.setText(time);
+
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        //displaying the error in toast if occurrs
+                        Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+        //creating a request queue
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+
+        //adding the string request to request queue
+        requestQueue.add(stringRequest);
     }
 
     public void setLocation(View v){
@@ -358,173 +335,74 @@ public class createEvent extends Activity {
     }
 
     void getLocation(){
+        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+
+        locationListener = new LocationListener() {
+            //when location is updated
+            @Override
+            public void onLocationChanged(Location location) {
+                locLong = location.getLongitude();
+                locLat = location.getLatitude();
+            }
+
+            @Override
+            public void onStatusChanged(String s, int i, Bundle bundle) {
+
+            }
+
+            @Override
+            public void onProviderEnabled(String s) {
+
+            }
+
+            //if gps is disabled
+            @Override
+            public void onProviderDisabled(String s) {
+                Intent _intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                startActivity(_intent);
+            }
+        };
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{
+                        android.Manifest.permission.ACCESS_COARSE_LOCATION,
+                        android.Manifest.permission.ACCESS_FINE_LOCATION,
+                        android.Manifest.permission.INTERNET
+                }, 10);
+                return;
+            }
+        }
+
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 5000, 0, locationListener);
     }
 
 
 
+    //shows date fragment
     public void showDateFragment(View v){
 
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
-
-        if(toggle) {
-            toggle=false;
-            CreateFab.show();
-            SaveDateFab.hide();
-
-            dateToggle.setBackgroundColor(getResources().getColor(R.color.colorAccent,null));
-            dateToggle.setTextColor(getResources().getColor(R.color.secondaryTextColor,null));
-
-            //set time toggle to be clickable
-            timeToggle.setClickable(true);
-            timeToggle.setBackgroundColor(getResources().getColor(R.color.colorAccent,null));
-
-//            //hide fragment
-//            dateEdt=(DatePicker)findViewById(R.id.datePickerFragment);
-//            date=dateEdt.getYear() + "-" + dateEdt.getMonth() + "-" + dateEdt.getDayOfMonth();
-//            fragmentTransaction.remove(frag1);
-//
-//            //for formatting dates
-//            if(!date.isEmpty()){
-//
-//                //format day
-//                String day =""+dateEdt.getDayOfMonth();
-//                if(day.length()==1){
-//                    day="0" + day;
-//                }
-//
-//                //format month
-//                String month =""+dateEdt.getMonth();
-//                if(month.length()==1){
-//                    month="0" + month;
-//                }
-//
-//                date =dateEdt.getYear() + "-" + month + "-"+ day;
-//                dateToggle.setText("Date: " + date);
-//
-//                Toast.makeText(getApplicationContext(),"Date Saved",Toast.LENGTH_SHORT).show();
-//            }
-            saveDate();
-            fragmentTransaction.remove(frag1);
-        }
-        else{
-            toggle=true;
-            CreateFab.hide();
-            SaveDateFab.show();
-
-            dateToggle.setText("Tap to Save");
-//            //bring attention to button
-//            dateToggle.setBackgroundColor(getResources().getColor(R.color.attention,null));
-//            dateToggle.setTextColor(getResources().getColor(R.color.primaryTextColor,null));
-
-            //make time toggle unclickable
-            timeToggle.setClickable(false);
-            timeToggle.setBackgroundColor(getResources().getColor(R.color.secondaryDarkColor,null));
-
-            //show fragment
-            fragmentTransaction.add(R.id.layout_date_container, frag1);
-            fragmentTransaction.show(frag1);
-
-        }
-
-        fragmentTransaction.commit();
-
+        selectDateDialog dateDialog = new selectDateDialog();
+        dateDialog.show(getSupportFragmentManager(),"tag");
     }
 
+    //shows time fragment
     public void showTimeFragment(View v){
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
-
-        if(toggle) {
-            toggle=false;
-            CreateFab.show();
-            SaveTimeFab.hide();
-
-            timeToggle.setBackgroundColor(getResources().getColor(R.color.colorAccent,null));
-            timeToggle.setTextColor(getResources().getColor(R.color.secondaryTextColor,null));
-
-            //set date toggle to clickable
-            dateToggle.setClickable(true);
-            dateToggle.setBackgroundColor(getResources().getColor(R.color.colorAccent,null));
-
-            timeEdt=(TimePicker)findViewById(R.id.timePickerFragment);
-            time=timeEdt.getHour() + ":" + timeEdt.getMinute();
-            //hide fragment
-            fragmentTransaction.remove(frag2);
-
-            //for formating time
-            if(!time.isEmpty()){
-                //format hour
-                String hour = ""+timeEdt.getHour();
-                if(hour.length()==1){
-                    hour="0" + hour;
-                }
-
-                //format minutes
-                String mins =""+timeEdt.getMinute();
-                if(mins.length()==1){
-                    mins="0" + mins;
-                }
-
-                time = hour + ":"+ mins;
-
-                timeToggle.setText("Time: " + time);
-
-                Toast.makeText(getApplicationContext(),"Time Saved",Toast.LENGTH_SHORT).show();
-            }
-        }
-        else{
-            toggle=true;
-            CreateFab.hide();
-            SaveTimeFab.show();
-
-            timeToggle.setText("Tap to Save");
-//            //bring attention to button
-//            timeToggle.setBackgroundColor(getResources().getColor(R.color.attention,null));
-//            timeToggle.setTextColor(getResources().getColor(R.color.primaryTextColor,null));
-
-            //make date toggle unclickable
-            dateToggle.setClickable(false);
-            dateToggle.setBackgroundColor(getResources().getColor(R.color.secondaryDarkColor,null));
-
-
-
-            //show fragment
-            fragmentTransaction.add(R.id.layout_time_container, frag2);
-            fragmentTransaction.show(frag2);
-        }
-
-        fragmentTransaction.commit();
+        selectTimeDialog timeDialog = new selectTimeDialog();
+        timeDialog.show(getSupportFragmentManager(),"tag");
     }
 
-    public void saveDate(){
-        //hide fragment
-        dateEdt=(DatePicker)findViewById(R.id.datePickerFragment);
-        date=dateEdt.getYear() + "-" + (dateEdt.getMonth()+1) + "-" + dateEdt.getDayOfMonth();
-        Toast.makeText(getApplicationContext(),date,Toast.LENGTH_SHORT).show();
-
-
-        //for formatting dates
-        if(!date.isEmpty()){
-
-            //format day
-            String day =""+dateEdt.getDayOfMonth();
-            if(day.length()==1){
-                day="0" + day;
-            }
-
-            //format month
-            String month =""+(dateEdt.getMonth()+1);
-            if(month.length()==1){
-                month="0" + month;
-            }
-
-            date =dateEdt.getYear() + "-" + month + "-"+ day;
-            dateToggle.setText("Date: " + date);
-
-            Toast.makeText(getApplicationContext(),"Date Saved",Toast.LENGTH_SHORT).show();
-        }
+    //gives date chosen by user
+    @Override
+    public void returnDate(String date) {
+        this.date=date;
+        dateText.setText(date);
     }
 
+    //gives time chosen by user
+    @Override
+    public void returnTime(String time) {
+        this.time=time;
+        timeText.setText(time);
+    }
 }

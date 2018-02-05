@@ -22,7 +22,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Create event"
-                android:id="@+id/createEventTitle"
+                android:id="@+id/textTitleCreate"
                 android:background="@color/colorPrimary"
                 android:textColor="@color/white"
                 android:textSize="24dp"
@@ -46,7 +46,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Event Name"
-                android:id="@+id/textName"
+                android:id="@+id/textNameCreate"
                 android:paddingTop="12dp"
                 android:textSize="16dp"
 
@@ -55,9 +55,9 @@
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:id="@+id/editNameCreate"
                 android:hint="e.g 5-a-side football"
-                android:id="@+id/createEditName"
-                android:layout_below="@+id/textName"
+                android:layout_below="@+id/textNameCreate"
                 android:paddingBottom="12dp"
                 android:textSize="14dp"
                 android:layout_marginBottom="14dp"/>
@@ -65,9 +65,9 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:id="@+id/textDescriptionCreate"
                 android:text="Description"
-                android:layout_below="@+id/createEditName"
-                android:id="@+id/textDescription"
+                android:layout_below="@+id/editNameCreate"
                 android:paddingTop="12dp"
                 android:textSize="16dp"/>
 
@@ -75,8 +75,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="e.g I have a football and looking for some people to play a game with"
-                android:id="@+id/createEditDescription"
-                android:layout_below="@+id/textDescription"
+                android:id="@+id/editDescriptionCreate"
+                android:layout_below="@+id/textDescriptionCreate"
                 android:paddingBottom="12dp"
                 android:textSize="14dp"
                 android:layout_marginBottom="14dp"/>
@@ -84,27 +84,34 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:id="@+id/textCategoryCreate"
                 android:text="Category"
-                android:layout_below="@id/createEditDescription"
-                android:id="@+id/textCategory"
+                android:layout_below="@id/editDescriptionCreate"
                 android:paddingTop="12dp"
                 android:textSize="16dp"/>
 
             <Spinner
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/createSpinnerCategory"
-                android:layout_below="@+id/textCategory"
+                android:id="@+id/spinnerCategoryCreate"
+                android:layout_below="@+id/textCategoryCreate"
                 android:paddingBottom="12dp"
                 android:textSize="14dp"
                 android:layout_marginBottom="14dp"></Spinner>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/textLocationCreate"
+                android:layout_below="@id/spinnerCategoryCreate"
+                android:textAlignment="center"/>
 
 
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/createButtonLocation"
-                android:layout_below="@id/createSpinnerCategory"
+                android:id="@+id/buttonLocationCreate"
+                android:layout_below="@id/textLocationCreate"
                 android:text="Set Location"
                 android:textAllCaps="false"
                 android:background="@color/colorAccent"
@@ -114,14 +121,42 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:id="@+id/dateTimeText"
+                    android:layout_below="@+id/buttonLocationCreate"
+                    android:orientation="horizontal"
+                    android:weightSum="1">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/textDateCreate"
+                        android:textAlignment="center"
+                        android:layout_weight=".5"
+                        android:layout_marginRight="14dp"
+                        />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textAlignment="center"
+                        android:id="@+id/textTimeCreate"
+                        android:layout_weight=".5"
+                        android:layout_marginLeft="14dp"
+                        />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:id="@+id/dateTimeLayoutContainer"
-                    android:layout_below="@+id/createButtonLocation"
+                    android:layout_below="@+id/dateTimeText"
                     android:orientation="horizontal">
 
                     <Button
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:id="@+id/createButtonDate"
+                        android:id="@+id/buttonDateCreate"
                         android:layout_below="@+id/createButtonLocation"
                         android:text="Select Date"
                         android:textAllCaps="false"
@@ -133,7 +168,7 @@
                     <Button
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:id="@+id/createButtonTime"
+                        android:id="@+id/buttonTimeCreate"
                         android:layout_below="@+id/createButtonDate"
                         android:text="Select Time"
                         android:textAllCaps="false"
@@ -143,25 +178,6 @@
                         android:layout_marginLeft="14dp"/>
 
                 </LinearLayout>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/layout_date_container"
-                android:layout_below="@+id/dateTimeLayoutContainer"
-                ></RelativeLayout>
-
-
-
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/layout_time_container"
-                android:layout_below="@+id/dateTimeLayoutContainer"
-                ></RelativeLayout>
-
-
 
             </RelativeLayout>
 
@@ -176,27 +192,5 @@
         android:layout_alignParentBottom="true"
         android:layout_margin="14dp"
         android:src="@android:drawable/ic_menu_save" />
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/createFabSaveDate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:layout_margin="14dp"
-        android:onClick="showDateFragment"
-        android:src="@android:drawable/ic_menu_today"
-        />
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/createFabSaveTime"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:layout_margin="14dp"
-        android:src="@android:drawable/ic_menu_recent_history"
-        android:onClick="showTimeFragment"
-        />
 
 </RelativeLayout>
