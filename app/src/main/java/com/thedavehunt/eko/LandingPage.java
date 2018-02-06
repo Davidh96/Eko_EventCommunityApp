@@ -1,26 +1,22 @@
 package com.thedavehunt.eko;
 
-import android.*;
 import android.app.Activity;
-import android.app.VoiceInteractor;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
+import android.os.Handler;
 import android.provider.Settings;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ImageButton;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -42,21 +38,36 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class landingPage extends Activity {
+public class LandingPage extends Activity {
 
-    List<eventDoc> eventList;
-    ListAdapter tempAdapter;
+    private List<eventDoc> eventList;
+    private ListAdapter listAdapter;
 
-    ProgressBar loadingCircle;
+    private ProgressBar loadingCircle;
 
-    FirebaseAuth auth;
+    private FirebaseAuth auth;
 
-private String url;
+    private String url;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_landing_page);
+
+        final SwipeRefreshLayout swipeRefreshLayout = (SwipeRefreshLayout)findViewById(R.id.layoutRefreshLanding);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                swipeRefreshLayout.setRefreshing(true);
+                (new Handler()).postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                       swipeRefreshLayout.setRefreshing(false);
+                       setListContents();
+                    }
+                },1000);
+            }
+        });
 
         url=getResources().getString(R.string.serverURL);
 
@@ -65,8 +76,6 @@ private String url;
 
 
         eventList = new ArrayList<eventDoc>();
-
-         String test4="{'events':[{'-L4HHHAj1-7OmJkDeCZu':{'eventTime':'1652','eventDescription':'Hshsgsgvsgsvwggwgwvwggwgwgwgw','eventLocation':'53.25876.135','eventCategory':'Sport','eventAuthorID':'TozRmqVdeVOYpT9jOXJHXHAkOXq2','eventName':'Test','eventAuthor':'DaveHunt','members':[{'id':'TozRmqVdeVOYpT9jOXJHXHAkOXq2','name':'DaveHunt'}],'id':'-L4HHHAj1-7OmJkDeCZu','eventDate':'2018-03-15'}},{'-L4HHt-nUSRJwtnthNyV':{'eventTime':'1655','eventDescription':'Sgshshsbsbsbhsjsuwiwiwisbsbxbdb','eventLocation':'53.25876.135','eventCategory':'Sport','eventAuthorID':'TozRmqVdeVOYpT9jOXJHXHAkOXq2','eventName':'Hsbsbsb','eventAuthor':'DaveHunt','members':[{'id':'TozRmqVdeVOYpT9jOXJHXHAkOXq2','name':'DaveHunt'}],'id':'-L4HHt-nUSRJwtnthNyV','eventDate':'2018-03-08'}}]}";
 
         getLocation();
 
@@ -128,11 +137,11 @@ private String url;
                             }
 
                             //initialise adapter
-                            tempAdapter = new landingListAdapter(landingPage.this,eventList);
+                            listAdapter = new landingListAdapter(LandingPage.this,eventList);
 
-                            ListView list = (ListView)findViewById(R.id.list1);
+                            ListView list = (ListView)findViewById(R.id.listEventLanding);
                             //set adapter for list view
-                            list.setAdapter(tempAdapter);
+                            list.setAdapter(listAdapter);
 
 
                         } catch (JSONException e) {
@@ -155,16 +164,16 @@ private String url;
         requestQueue.add(stringRequest);
 
         //initialise adapter
-        tempAdapter = new landingListAdapter(landingPage.this,eventList);
+        listAdapter = new landingListAdapter(LandingPage.this,eventList);
 
-        ListView list = (ListView)findViewById(R.id.list1);
+        ListView list = (ListView)findViewById(R.id.listEventLanding);
         //set adapter for list view
-        list.setAdapter(tempAdapter);
+        list.setAdapter(listAdapter);
 
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Intent viewTask = new Intent(landingPage.this,viewEvent.class);
+                Intent viewTask = new Intent(LandingPage.this,viewEvent.class);
 
                 eventDoc evnt = (eventDoc)eventList.get(i);
                 viewTask.putExtra("id",evnt.getId());
@@ -213,11 +222,7 @@ private String url;
                 return;
             }
         }
-//        else{
-//            getLocation();
-//        }
 
-        //getLocation();
 
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 5000, 0, locationListener);
     }
@@ -240,7 +245,7 @@ private String url;
     public void createEvent(View v)
     {
         //TODO
-        Intent createevent = new Intent(landingPage.this,createEvent.class);
+        Intent createevent = new Intent(LandingPage.this,createEvent.class);
         startActivity(createevent);
     }
 

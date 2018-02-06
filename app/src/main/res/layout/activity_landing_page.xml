@@ -3,18 +3,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
 <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:id="@+id/topBar"
+    android:id="@+id/layoutTopLanding"
     android:weightSum="1">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/eventListTitle"
-        android:text="Events in your area"
+        android:id="@+id/textTitleBarLanding"
+        android:text="@string/textTitleLanding"
         android:textSize="24dp"
         android:fontFamily="sans-serif-regular"
         android:background="@color/colorPrimary"
@@ -28,7 +29,7 @@
     <ImageButton
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/logoutBtn"
+        android:id="@+id/buttonLogoutLanding"
         android:src="@android:drawable/ic_menu_revert"
         android:layout_weight=".425"
         android:background="@color/colorPrimary"
@@ -37,7 +38,7 @@
     <ImageButton
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/refreshBtn"
+        android:id="@+id/buttonRefreshLanding"
         android:src="@android:drawable/ic_popup_sync"
         android:onClick="refreshList"
         android:layout_weight=".425"
@@ -46,44 +47,31 @@
 
     </LinearLayout>
 
-
-
-    <LinearLayout
+    <android.support.v4.widget.SwipeRefreshLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/topBar"
-        android:orientation="horizontal"
-        android:layout_alignParentBottom="true"
-        android:gravity="right"
-        >
-
+        android:layout_height="wrap_content"
+        android:id="@+id/layoutRefreshLanding"
+        android:layout_below="@+id/layoutTopLanding">
 
     <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/list1"
+        android:id="@+id/listEventLanding"
         ></ListView>
 
+    </android.support.v4.widget.SwipeRefreshLayout>
 
-    </LinearLayout>
 
-    <RelativeLayout
-        android:layout_width="match_parent"
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fabCreateLanding"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        >
+        android:layout_alignParentBottom="true"
+        android:layout_margin="14dp"
+        android:src="@android:drawable/ic_menu_add"
+        android:onClick="createEvent"/>
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_margin="14dp"
-            android:src="@android:drawable/ic_menu_add"
-            android:onClick="createEvent"/>
-
-    </RelativeLayout>
 
     <ProgressBar
         android:layout_width="wrap_content"

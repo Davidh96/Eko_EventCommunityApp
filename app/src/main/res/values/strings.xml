@@ -8,5 +8,6 @@
     <string name="positiveActionText">Sure</string>
     <string name="negativeActionText">Nope</string>
     <string name="facebookPostQuestion">Do you want to post your event to Facebook?</string>
-    <string name="facebookPostTitle">Post to Facebook?</string>
+    <string name="facebookPostTitle">Share event on Facebook</string>
+    <string name="textTitleLanding">Nearby Events</string>
 </resources>

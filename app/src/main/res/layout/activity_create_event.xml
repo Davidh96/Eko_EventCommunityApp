@@ -185,9 +185,10 @@
     </ScrollView>
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fabCreate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:id="@+id/fabCreate"
+        android:onClick="saveEventClick"
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
         android:layout_margin="14dp"

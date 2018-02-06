@@ -33,8 +33,6 @@ import com.facebook.share.model.ShareLinkContent;
 import com.facebook.share.widget.ShareDialog;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -42,42 +40,42 @@ import org.json.JSONObject;
 
 public class createEvent extends FragmentActivity implements selectDateDialog.DateDialogListener, selectTimeDialog.TimeDialogListener {
 
-    LocationManager locationManager;
-    LocationListener locationListener;
+    private LocationManager locationManager;
+    private LocationListener locationListener;
 
     private String url;
 
-    EditText nameEdit;
-    EditText descriptionEdit;
-    Spinner categorySpin;
+    private EditText nameEdit;
+    private EditText descriptionEdit;
+    private Spinner categorySpin;
 
-    Button timeToggle;
-    Button dateToggle;
-    Button locationButton;
+    private Button timeToggle;
+    private Button dateToggle;
+    private Button locationButton;
 
-    TextView dateText;
-    TextView timeText;
-    TextView locationText;
+    private TextView dateText;
+    private TextView timeText;
+    private TextView locationText;
 
-    FloatingActionButton CreateFab;
+    private FloatingActionButton CreateFab;
 
-    ShareDialog shareDialog;
+    private ShareDialog shareDialog;
 
-    String name = "";
-    String description = "";
-    String author="";
-    String authorID="";
-    String category = "";
-    String location="";
-    String date="";
-    String time="";
-    String id;
+    private String name = "";
+    private String description = "";
+    private String author="";
+    private String authorID="";
+    private String category = "";
+    private String location="";
+    private String date="";
+    private String time="";
+    private String id;
 
     public static double locLong;
     public static double locLat;
 
-    ArrayAdapter<CharSequence> adapter;
-    databaseManager dbm = new databaseManager();
+    private ArrayAdapter<CharSequence> adapter;
+    private databaseManager dbm = new databaseManager();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -135,15 +133,6 @@ public class createEvent extends FragmentActivity implements selectDateDialog.Da
             }
         });
 
-
-        CreateFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //TODO
-                saveEvent();
-
-            }
-        });
 
         getLocation();
 
@@ -390,6 +379,10 @@ public class createEvent extends FragmentActivity implements selectDateDialog.Da
     public void showTimeFragment(View v){
         selectTimeDialog timeDialog = new selectTimeDialog();
         timeDialog.show(getSupportFragmentManager(),"tag");
+    }
+
+    public void saveEventClick(View v){
+        saveEvent();
     }
 
     //gives date chosen by user
