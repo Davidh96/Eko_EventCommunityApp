@@ -1,15 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="category_array">
-        <item>Sport</item>
-        <item>Outdoors</item>
-        <item>Movie/TV</item>
+        <item>Choose a category</item>
+        <item>Arts</item>
+        <item>Fashion</item>
+        <item>Food/Drink</item>
         <item>Games</item>
+        <item>Learning</item>
+        <item>Movie/TV</item>
+        <item>Music</item>
+        <item>Outdoors</item>
         <item>Photography</item>
         <item>Politics</item>
-        <item>Food</item>
+        <item>Reading</item>
         <item>Religion</item>
-        <item>Learning</item>
+        <item>Sport</item>
         <item>Technology</item>
+        <item>Writing</item>
+        <item>Other</item>
     </string-array>
 </resources>

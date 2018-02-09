@@ -123,7 +123,9 @@ public class CreateEvent extends FragmentActivity implements selectDateDialog.Da
         categorySpin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                category = parent.getItemAtPosition(position).toString();
+                if(position!=0) {
+                    category = parent.getItemAtPosition(position).toString();
+                }
 
             }
 
@@ -171,9 +173,13 @@ public class CreateEvent extends FragmentActivity implements selectDateDialog.Da
             saved=false;
         }
 
-        if(location.isEmpty()){
-            Toast.makeText(getApplicationContext(),"Please select location",Toast.LENGTH_SHORT).show();
+        if(category.isEmpty()){
+            Toast.makeText(getApplicationContext(),"Please select a category",Toast.LENGTH_SHORT).show();
             saved=false;
+        }
+
+        if(location.isEmpty()){
+
         }
 
         if(date.isEmpty()){
