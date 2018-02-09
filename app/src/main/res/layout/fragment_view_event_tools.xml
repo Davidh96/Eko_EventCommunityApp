@@ -13,20 +13,8 @@
         android:src="@android:drawable/ic_menu_edit"
         android:onClick="editEvent"
         android:background="@color/colorPrimary"
-        android:layout_margin="14dp"
+        android:layout_marginRight="20dp"
         />
-
-    <!--<android.support.design.widget.FloatingActionButton-->
-    <!--android:id="@+id/toolsButtonEdit"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_alignParentRight="true"-->
-    <!--android:src="@android:drawable/ic_menu_edit"-->
-    <!--android:onClick="editEvent"-->
-        <!---->
-    <!--/>-->
-
-    <!--android:layout_margin="14dp"-->
 
     <ImageButton
         android:id="@+id/toolsButtonDelete"
@@ -36,17 +24,7 @@
         android:src="@android:drawable/ic_menu_close_clear_cancel"
         android:onClick="deleteEvent"
         android:background="@color/colorPrimary"
-        android:layout_margin="14dp"
+        android:layout_marginRight="20dp"
         />
-
-<!--<android.support.design.widget.FloatingActionButton-->
-    <!--android:id="@+id/toolsButtonDelete"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_toLeftOf="@+id/toolsButtonEdit"-->
-    <!--android:src="@android:drawable/ic_menu_close_clear_cancel"-->
-    <!--android:onClick="deleteEvent"-->
-    <!--/>-->
-
 
 </RelativeLayout>

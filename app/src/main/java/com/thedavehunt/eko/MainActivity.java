@@ -43,10 +43,6 @@ public class MainActivity extends Activity {
     private FirebaseAuth.AuthStateListener mAuthListener;
 
     ProgressBar loadingCircle;
-    TextView locTxt;
-
-    LocationManager locationManager;
-    LocationListener locationListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,10 +51,6 @@ public class MainActivity extends Activity {
 
         loadingCircle = (ProgressBar)findViewById(R.id.loadingCircle);
         loadingCircle.setVisibility(View.INVISIBLE);
-
-
-        locTxt= (TextView)findViewById(R.id.locationText);
-
 
         //get Firebase auth instance
         auth = FirebaseAuth.getInstance();
@@ -114,32 +106,7 @@ public class MainActivity extends Activity {
         };
 
 
-        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
-        locationListener = new LocationListener() {
-            //when location is updated
-            @Override
-            public void onLocationChanged(Location location) {
-                locTxt.setText("" + location.getLongitude() + " " +location.getLatitude());
-            }
-
-            @Override
-            public void onStatusChanged(String s, int i, Bundle bundle) {
-
-            }
-
-            @Override
-            public void onProviderEnabled(String s) {
-
-            }
-
-            //if gps is disabled
-            @Override
-            public void onProviderDisabled(String s) {
-                Intent _intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                startActivity(_intent);
-            }
-        };
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -151,29 +118,10 @@ public class MainActivity extends Activity {
                 return;
             }
         }
-        else{
-            getLocation();
-        }
-
-        getLocation();
 
 
 
-    }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch(requestCode){
-            case 10:
-                if(grantResults.length>0 && grantResults[0]==PackageManager.PERMISSION_GRANTED)
-                    getLocation();
-                return;
-        }
-    }
-
-    void getLocation(){
-      locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 5000, 0, locationListener);
     }
 
 

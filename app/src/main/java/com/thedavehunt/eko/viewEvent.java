@@ -60,6 +60,7 @@ public class viewEvent extends FragmentActivity implements OnMapReadyCallback {
     TextView eventTimeTxt;
     TextView eventCategoryTxt;
     TextView eventCreatorTxt;
+    TextView memberListTitle;
     ListView memberList;
     ProgressBar loadingCircle;
 
@@ -82,20 +83,19 @@ public class viewEvent extends FragmentActivity implements OnMapReadyCallback {
         id = i.getStringExtra("id");
         url += id;
 
-        eventNameTxt=(TextView)findViewById(R.id.viewEventName);
-        eventDescriptionTxt=(TextView)findViewById(R.id.viewEventDescription);
-        eventDateTxt=(TextView)findViewById(R.id.viewEventDate);
-        eventTimeTxt=(TextView)findViewById(R.id.viewEventTime);
-        eventCategoryTxt=(TextView)findViewById(R.id.viewEventCategory);
-        eventCreatorTxt=(TextView)findViewById(R.id.viewEventAuthor);
-        memberList=(ListView)findViewById(R.id.list2);
-        joinBtn = (FloatingActionButton)findViewById(R.id.viewButtonJoin);
-        leaveBtn = (FloatingActionButton)findViewById(R.id.viewButtonLeave);
+        eventNameTxt=(TextView)findViewById(R.id.textEventView);
+        eventDescriptionTxt=(TextView)findViewById(R.id.textDescriptionView);
+        eventDateTxt=(TextView)findViewById(R.id.textDateView);
+        eventTimeTxt=(TextView)findViewById(R.id.textTimeView);
+        eventCategoryTxt=(TextView)findViewById(R.id.textCategoryView);
+        eventCreatorTxt=(TextView)findViewById(R.id.textCreatorView);
+        memberList=(ListView)findViewById(R.id.listMemberView);
+        memberListTitle = (TextView)findViewById(R.id.textMemberView);
+        joinBtn = (FloatingActionButton)findViewById(R.id.buttonJoinView);
+        leaveBtn = (FloatingActionButton)findViewById(R.id.buttonLeaveView);
         loadingCircle=(ProgressBar)findViewById(R.id.loadingCircle);
 
         loadingCircle.setVisibility(View.VISIBLE);
-
-
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -191,6 +191,8 @@ public class viewEvent extends FragmentActivity implements OnMapReadyCallback {
 
                 members = event.getMembers();
 
+                memberListTitle.setText(getResources().getString(R.string.memberListTitle) + " (" + members.size()  + ")");
+
                 int check=0;
 
                 //check if user is already part of the members
@@ -242,14 +244,13 @@ public class viewEvent extends FragmentActivity implements OnMapReadyCallback {
 
     //allow editing of events
     public void editEvent(View v){
-        Intent createEvent = new Intent(getApplicationContext(),createEvent.class);
+        Intent createEvent = new Intent(getApplicationContext(),CreateEvent.class);
         createEvent.putExtra("id",id);
         startActivity(createEvent);
     }
 
     //add member to event
     public void joinEvent(View v){
-
 
         //create alert box to ask user if they wish to join event
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
@@ -268,6 +269,8 @@ public class viewEvent extends FragmentActivity implements OnMapReadyCallback {
                         leaveBtn.show();
 
                         Toast.makeText(getApplicationContext(),"Joined '" + event.eventName + "' Event",Toast.LENGTH_SHORT).show();
+
+                        retrieveData();
                     }
 
                 })
@@ -301,6 +304,8 @@ public class viewEvent extends FragmentActivity implements OnMapReadyCallback {
                             leaveBtn.hide();
 
                             Toast.makeText(getApplicationContext(), "Left '" + event.eventName + "' Event", Toast.LENGTH_SHORT).show();
+
+                            retrieveData();
 
                         }
 

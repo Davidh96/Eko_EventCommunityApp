@@ -38,7 +38,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 
-public class createEvent extends FragmentActivity implements selectDateDialog.DateDialogListener, selectTimeDialog.TimeDialogListener {
+public class CreateEvent extends FragmentActivity implements selectDateDialog.DateDialogListener, selectTimeDialog.TimeDialogListener {
 
     private LocationManager locationManager;
     private LocationListener locationListener;
@@ -316,7 +316,7 @@ public class createEvent extends FragmentActivity implements selectDateDialog.Da
     }
 
     public void setLocation(View v){
-        Intent i = new Intent(createEvent.this,locationMaps.class);
+        Intent i = new Intent(CreateEvent.this,locationMaps.class);
         i.putExtra("lat",locLat);
         i.putExtra("long",locLong);
         //to get location result

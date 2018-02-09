@@ -82,14 +82,14 @@ public class databaseManager {
         final eventMember member1 = member;
         final String id =eventId;
 
-        rootRef.child(eventId).addListenerForSingleValueEvent(new ValueEventListener() {
+        rootRef.child("events").child(eventId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
 
                 //get event class
                 databaseManager.this.event = snapshot.getValue(eventDoc.class);
                 event.addMembers(member1);
-                rootRef.child(id).setValue(event);
+                rootRef.child("events").child(id).setValue(event);
 
             }
             @Override
@@ -102,8 +102,6 @@ public class databaseManager {
     public void removeEventMember(String eventId, eventMember member){
         final eventMember member1 = member;
         final String id =eventId;
-
-        Toast.makeText(getApplicationContext(),"here",Toast.LENGTH_LONG).show();
 
         rootRef.child("events").child(eventId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override

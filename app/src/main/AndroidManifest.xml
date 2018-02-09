@@ -9,9 +9,9 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/logo"
+        android:icon="@mipmap/ekoiconround"
         android:label="Eko"
-        android:roundIcon="@mipmap/logo"
+        android:roundIcon="@mipmap/ekoiconround"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         >
@@ -23,7 +23,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".LandingPage" />
-        <activity android:name=".createEvent" />
+        <activity android:name=".CreateEvent" />
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"

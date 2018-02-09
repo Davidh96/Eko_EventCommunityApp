@@ -245,7 +245,7 @@ public class LandingPage extends Activity {
     public void createEvent(View v)
     {
         //TODO
-        Intent createevent = new Intent(LandingPage.this,createEvent.class);
+        Intent createevent = new Intent(LandingPage.this,CreateEvent.class);
         startActivity(createevent);
     }
 

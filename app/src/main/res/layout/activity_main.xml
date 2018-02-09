@@ -6,9 +6,8 @@
     android:paddingRight="16dp"
     android:paddingTop="16dp"
     android:orientation="vertical"
-    android:background="@drawable/login"
+    android:background="@drawable/splashbackground"
     >
-
 
     <TextView
         android:layout_width="match_parent"
@@ -30,19 +29,6 @@
         android:layout_below="@+id/ekoTitle"
         android:textAlignment="center"
         android:textColor="@color/white"/>
-
-
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/locationText"
-        android:text=""
-        android:textSize="30dp"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@+id/mainDescription"
-        android:textAlignment="center"/>
-
 
     <com.facebook.login.widget.LoginButton
         android:id="@+id/loginButtonFacebook"

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#F44336</color>
-    <color name="primaryLightColor">#F44336</color>
-    <color name="colorPrimaryDark">#F44336</color>
-    <color name="colorAccent">#448AFF</color>
-    <color name="secondaryLightColor">#88ffff</color>
+    <color name="colorPrimary">#f44336</color>
+    <color name="primaryLightColor">#ba000d</color>
+    <color name="colorPrimaryDark">#f44336</color>
+    <color name="colorAccent">#00BCD4</color>
+    <color name="secondaryLightColor">#69e2ff</color>
     <color name="secondaryDarkColor">#1565C0</color>
-    <color name="primaryTextColor">#ffffff</color>
+    <color name="primaryTextColor">#212121</color>
     <color name="secondaryTextColor">#000000</color>
     <color name="facebookColour">#3b5998</color>
     <color name="white">#ffffff</color>
