@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.thedavehunt.eko.splashActiity"
+    tools:context="com.thedavehunt.eko.SplashActiity"
     android:background="@drawable/splashbackground"
     android:paddingLeft="16dp"
     android:paddingRight="16dp"

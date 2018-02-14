@@ -42,7 +42,7 @@ public class MainActivity extends Activity {
     private CallbackManager mCallbackManager;
     private FirebaseAuth.AuthStateListener mAuthListener;
 
-    ProgressBar loadingCircle;
+    public ProgressBar loadingCircle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,19 +106,17 @@ public class MainActivity extends Activity {
         };
 
 
-
-
+        //request permission
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            if (checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(new String[]{
-                        Manifest.permission.ACCESS_COARSE_LOCATION,
-                        Manifest.permission.ACCESS_FINE_LOCATION,
-                        Manifest.permission.INTERNET
+                        android.Manifest.permission.ACCESS_COARSE_LOCATION,
+                        android.Manifest.permission.ACCESS_FINE_LOCATION,
+                        android.Manifest.permission.INTERNET
                 },10);
                 return;
             }
         }
-
 
 
 

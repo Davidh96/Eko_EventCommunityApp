@@ -6,7 +6,7 @@ import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-public class splashActiity extends Activity {
+public class SplashActiity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

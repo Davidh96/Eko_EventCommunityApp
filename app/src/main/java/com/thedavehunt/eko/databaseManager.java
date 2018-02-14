@@ -141,9 +141,6 @@ public class databaseManager {
                             JSONArray result = obj.getJSONArray("events");
 
 
-
-
-
                             //now looping through all the elements of the json array
                             for (int i = 0; i < result.length(); i++) {
 

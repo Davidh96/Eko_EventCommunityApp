@@ -17,6 +17,7 @@ import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -47,7 +48,12 @@ public class LandingPage extends Activity {
 
     private FirebaseAuth auth;
 
-    private String url;
+    public String url;
+
+    public static double locLat;
+    public static double locLong;
+
+    private TextView title;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,12 +70,13 @@ public class LandingPage extends Activity {
                     public void run() {
                        swipeRefreshLayout.setRefreshing(false);
                        setListContents();
+                        //getLocation();
                     }
                 },1000);
             }
         });
 
-        url=getResources().getString(R.string.serverURL);
+
 
         //views
         loadingCircle = (ProgressBar)findViewById(R.id.loadingCircle);
@@ -78,21 +85,30 @@ public class LandingPage extends Activity {
         eventList = new ArrayList<eventDoc>();
 
         getLocation();
+        title = (TextView)findViewById(R.id.textTitleBarLanding);
+
+        //url=getResources().getString(R.string.serverURL) + "/getEvents/" + locLat + "," + locLong + "/16";
+
 
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        setListContents();
+        if (url != null) {
+            setListContents();
+        }
     }
 
     //retrieve event data from server and put it in the list
     void setListContents(){
 
+
         loadingCircle.setVisibility(View.VISIBLE);
 
         eventList= new ArrayList<eventDoc>();
+
+
 
         //creating a string request to send request to the url
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
@@ -139,6 +155,7 @@ public class LandingPage extends Activity {
                             //initialise adapter
                             listAdapter = new landingListAdapter(LandingPage.this,eventList);
 
+
                             ListView list = (ListView)findViewById(R.id.listEventLanding);
                             //set adapter for list view
                             list.setAdapter(listAdapter);
@@ -173,7 +190,7 @@ public class LandingPage extends Activity {
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Intent viewTask = new Intent(LandingPage.this,viewEvent.class);
+                Intent viewTask = new Intent(LandingPage.this,ViewEvent.class);
 
                 eventDoc evnt = (eventDoc)eventList.get(i);
                 viewTask.putExtra("id",evnt.getId());
@@ -190,7 +207,14 @@ public class LandingPage extends Activity {
             //when location is updated
             @Override
             public void onLocationChanged(Location location) {
+                LandingPage.this.locLat=location.getLatitude();
+                LandingPage.this.locLong=location.getLongitude();
 
+                LandingPage.this.url=getResources().getString(R.string.serverURL) + "/getEvents/" + locLat + "," + locLong + "/16";
+
+                setListContents();
+
+                Toast.makeText(getApplicationContext(),locLat+ "," +locLong,Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -224,13 +248,14 @@ public class LandingPage extends Activity {
         }
 
 
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 5000, 0, locationListener);
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, locationListener);
     }
 
     //is called when refresh button is clicked
     public void refreshList(View v)
     {
         setListContents();
+        //getLocation();
     }
 
     //is called when logout button is clicked

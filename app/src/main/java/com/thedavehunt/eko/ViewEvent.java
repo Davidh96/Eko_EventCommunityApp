@@ -36,7 +36,7 @@ import org.json.JSONObject;
 
 import java.util.List;
 
-public class viewEvent extends FragmentActivity implements OnMapReadyCallback {
+public class ViewEvent extends FragmentActivity implements OnMapReadyCallback {
 
     databaseManager dbm = new databaseManager();
     private String url;
@@ -180,66 +180,65 @@ public class viewEvent extends FragmentActivity implements OnMapReadyCallback {
     //display dat to user
     public void setData(){
 
+        //place event info into text views
+        eventNameTxt.setText(event.getEventName());
+        eventDescriptionTxt.setText(event.getEventDescription());
+        eventDateTxt.setText(event.getEventDate());
+        eventTimeTxt.setText(event.getEventTime());
+        eventCategoryTxt.setText(event.getEventCategory());
+        eventCreatorTxt.setText(event.getEventAuthor());
 
-                //place event info into text views
-                eventNameTxt.setText(event.getEventName());
-                eventDescriptionTxt.setText(event.getEventDescription());
-                eventDateTxt.setText(event.getEventDate());
-                eventTimeTxt.setText(event.getEventTime());
-                eventCategoryTxt.setText(event.getEventCategory());
-                eventCreatorTxt.setText(event.getEventAuthor());
+        members = event.getMembers();
 
-                members = event.getMembers();
+        memberListTitle.setText(getResources().getString(R.string.memberListTitle) + " (" + members.size()  + ")");
 
-                memberListTitle.setText(getResources().getString(R.string.memberListTitle) + " (" + members.size()  + ")");
+        int check=0;
 
-                int check=0;
+        //check if user is already part of the members
+        for(int j =0;j<members.size();j++){
+            if(user.getUid().equals(members.get(j).getId())){
+                check++;
+            }
+        }
 
-                //check if user is already part of the members
-                for(int j =0;j<members.size();j++){
-                    if(user.getUid().equals(members.get(j).getId())){
-                        check++;
-                    }
-                }
+        //if user is member
+        if(check>0){
+            joinBtn.hide();
+            leaveBtn.show();
+        }
+        else{
+            joinBtn.show();
+            leaveBtn.hide();
+        }
 
-                //if user is member
-                if(check>0){
-                    joinBtn.hide();
-                    leaveBtn.show();
-                }
-                else{
-                    joinBtn.show();
-                    leaveBtn.hide();
-                }
+        //initialise adapter
+        tempAdapter = new memberListAdapter(ViewEvent.this,members);
 
-                //initialise adapter
-                tempAdapter = new memberListAdapter(viewEvent.this,members);
+        memberList.setAdapter(tempAdapter);
 
-                memberList.setAdapter(tempAdapter);
+        ViewEvent.this.location=event.getEventLocation();
 
-                viewEvent.this.location=event.getEventLocation();
+        //seperator for lat and long
+        int commaPos = location.indexOf(",");
 
-                //seperator for lat and long
-                int commaPos = location.indexOf(",");
+        LatLng eventLoc = new LatLng(Double.parseDouble(location.substring(0,commaPos)),Double.parseDouble(location.substring(commaPos+1)));
+        mMap.addMarker(new MarkerOptions().position(eventLoc).title(event.getEventName()));
+        //set camera position and zoom
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(eventLoc,15));
 
-                LatLng eventLoc = new LatLng(Double.parseDouble(location.substring(0,commaPos)),Double.parseDouble(location.substring(commaPos+1)));
-                mMap.addMarker(new MarkerOptions().position(eventLoc).title(event.getEventName()));
-                //set camera position and zoom
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(eventLoc,15));
+        //if the current user is the creator of this event, show event editing tools
+        if(event.getEventAuthorID().equals(user.getUid())) {
+            //create fragment for tools
+            FragmentManager fragmentManager = getFragmentManager();
 
-                //if the current user is the creator of this event, show event editing tools
-                if(event.getEventAuthorID().equals(user.getUid())) {
-                    //create fragment for tools
-                    FragmentManager fragmentManager = getFragmentManager();
+            viewEventToolsFragment frag1 = new viewEventToolsFragment();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
-                    viewEventToolsFragment frag1 = new viewEventToolsFragment();
-                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
-                    //show fragment
-                    fragmentTransaction.add(R.id.edit_tools_layout_container, frag1);
-                    fragmentTransaction.show(frag1);
-                    fragmentTransaction.commit();
-                }
+            //show fragment
+            fragmentTransaction.add(R.id.edit_tools_layout_container, frag1);
+            fragmentTransaction.show(frag1);
+            fragmentTransaction.commit();
+        }
     }
 
     //allow editing of events
@@ -338,7 +337,7 @@ public class viewEvent extends FragmentActivity implements OnMapReadyCallback {
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         //delete currently selected event
-                        dbm.deleteEvent(id,viewEvent.this);
+                        dbm.deleteEvent(id,ViewEvent.this);
                         finish();
 
                     }

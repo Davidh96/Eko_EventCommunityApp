@@ -50,9 +50,8 @@ public class selectTimeDialog extends AppCompatDialogFragment {
                             mins="0" + mins;
                         }
 
-                        String time = hour + ":"+ mins;
+                        String time = hour + ""+ mins;
 
-                        //String date= datePicker.getYear() + "-" + datePicker.getMonth() + "-" + datePicker.getDayOfMonth();
                         listener.returnTime(time);
                     }
                 });

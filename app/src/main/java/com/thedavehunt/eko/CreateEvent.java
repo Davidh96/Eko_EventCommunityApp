@@ -164,6 +164,7 @@ public class CreateEvent extends FragmentActivity implements selectDateDialog.Da
         //get event description
         description=descriptionEdit.getText().toString();
 
+
         if(name.isEmpty()){
             Toast.makeText(getApplicationContext(),"Please name your event",Toast.LENGTH_SHORT).show();
             saved=false;
