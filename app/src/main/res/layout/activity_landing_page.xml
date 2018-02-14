@@ -12,19 +12,18 @@
     android:weightSum="1">
 
     <TextView
+        android:id="@+id/textTitleBarLanding"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/textTitleBarLanding"
-        android:text="@string/textTitleLanding"
-        android:textSize="24dp"
-        android:fontFamily="sans-serif-regular"
+        android:layout_weight=".15"
         android:background="@color/colorPrimary"
-        android:textColor="@color/white"
-        android:paddingTop="12dp"
+        android:fontFamily="sans-serif-regular"
         android:paddingBottom="12dp"
         android:paddingLeft="16dp"
-        android:layout_weight=".15"
-        />
+        android:paddingTop="12dp"
+        android:text="@string/textTitleLanding"
+        android:textColor="@color/white"
+        android:textSize="24dp" />
 
     <ImageButton
         android:layout_width="match_parent"
@@ -47,12 +46,39 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/layoutDistanceLanding"
+        android:layout_below="@+id/layoutTopLanding"
+        android:orientation="horizontal"
+        android:weightSum="1"
+        android:paddingTop="14dp"
+        android:paddingBottom="14dp">
+
+        <SeekBar
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id = "@+id/seekbarDistanceLanding"
+            android:layout_weight=".2"
+            />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/textDitanceLanding"
+            android:text="1.6km"
+            android:layout_weight=".8"
+            android:textAlignment="center"/>
+    </LinearLayout>
+
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/layoutRefreshLanding"
-        android:layout_below="@+id/layoutTopLanding">
+        android:layout_below="@+id/layoutDistanceLanding">
+
 
     <ListView
         android:layout_width="match_parent"

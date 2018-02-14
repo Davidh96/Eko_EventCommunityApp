@@ -17,6 +17,7 @@ import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,6 +46,8 @@ public class LandingPage extends Activity {
     private ListAdapter listAdapter;
 
     private ProgressBar loadingCircle;
+    private SeekBar distanceBar;
+    private TextView distanceText;
 
     private FirebaseAuth auth;
 
@@ -52,6 +55,11 @@ public class LandingPage extends Activity {
 
     public static double locLat;
     public static double locLong;
+
+    private float minDist = 1.6f;
+    private float maxDist = 161.0f;
+    private float step = 1;
+    public float chosenDist =1.6f;
 
     private TextView title;
 
@@ -80,6 +88,30 @@ public class LandingPage extends Activity {
 
         //views
         loadingCircle = (ProgressBar)findViewById(R.id.loadingCircle);
+        distanceBar = (SeekBar)findViewById(R.id.seekbarDistanceLanding);
+        distanceText = (TextView)findViewById(R.id.textDitanceLanding);
+
+        distanceBar.setMax((int)((maxDist-minDist)/step));
+
+        distanceBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                chosenDist = minDist + (i*step);
+                distanceText.setText("" + chosenDist + "km");
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                LandingPage.this.url=getResources().getString(R.string.serverURL) + "/getEvents/" + locLat + "," + locLong + "/" + chosenDist;
+                setListContents();
+
+            }
+        });
 
 
         eventList = new ArrayList<eventDoc>();
@@ -87,7 +119,6 @@ public class LandingPage extends Activity {
         getLocation();
         title = (TextView)findViewById(R.id.textTitleBarLanding);
 
-        //url=getResources().getString(R.string.serverURL) + "/getEvents/" + locLat + "," + locLong + "/16";
 
 
     }
@@ -210,7 +241,7 @@ public class LandingPage extends Activity {
                 LandingPage.this.locLat=location.getLatitude();
                 LandingPage.this.locLong=location.getLongitude();
 
-                LandingPage.this.url=getResources().getString(R.string.serverURL) + "/getEvents/" + locLat + "," + locLong + "/16";
+                LandingPage.this.url=getResources().getString(R.string.serverURL) + "/getEvents/" + locLat + "," + locLong + "/" + chosenDist;
 
                 setListContents();
 
