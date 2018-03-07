@@ -3,12 +3,12 @@
     <string name="facebook_app_id">125774961448342</string>
     <string name="fb_login_protocol_scheme">fb125774961448342</string>
     <string name="title_activity_location_maps">Map</string>
-    <string name="serverURL">http://188.166.98.100//</string>
-    <string name="serverURLrecieve">http://188.166.98.100/retrieveEvents/</string>
+    <string name="serverURL">http://188.166.98.100/</string>
+    <string name="serverURLrecieve">http://188.166.98.100/retrieveEvent/</string>
     <string name="positiveActionText">Sure</string>
     <string name="negativeActionText">Nope</string>
     <string name="facebookPostQuestion">Do you want to post your event to Facebook?</string>
     <string name="facebookPostTitle">Share event on Facebook</string>
-    <string name="textTitleLanding">Nearby Events</string>
-    <string name="memberListTitle">Members of this event</string>
+    <string name="textTitleLanding">What\'s Nearby?</string>
+    <string name="memberListTitle">Who\'s Joined?</string>
 </resources>

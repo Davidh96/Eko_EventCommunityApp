@@ -56,8 +56,8 @@ public class LandingPage extends Activity {
     public static double locLat;
     public static double locLong;
 
-    private float minDist = 1.6f;
-    private float maxDist = 161.0f;
+    private float minDist = 1f;
+    private float maxDist = 20.0f;
     private float step = 1;
     public float chosenDist =1.6f;
 
@@ -139,8 +139,6 @@ public class LandingPage extends Activity {
 
         eventList= new ArrayList<eventDoc>();
 
-
-
         //creating a string request to send request to the url
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {
@@ -154,31 +152,35 @@ public class LandingPage extends Activity {
                             //getting the whole json object from the response
                             JSONObject obj = new JSONObject(response);
 
-                            //place events into an array
-                            JSONArray result = obj.getJSONArray("events");
+
+                            String jsonOBj = obj.toString();
 
 
-                            //now looping through all the elements of the json array
-                            for (int i = 0; i < result.length(); i++) {
-                                //indicated where id starts
+                            while(jsonOBj.length()>2) {
+
                                 String startString = "{\"-";
-                                String temp = result.getJSONObject(i).toString();
-                                int startInd = temp.indexOf(startString);
-                                //indicates end of id
-                                String endString ="\"";
-                                int endInd = temp.indexOf(endString,temp.indexOf(endString)+1);
-
-                                //get JSON event key
-                                String key = temp.substring(startInd+startString.length(),endInd);
-                                JSONObject eventObj = result.getJSONObject(i).getJSONObject("-" + key);
+                                int ind = jsonOBj.indexOf(startString) + startString.length();
+                                String id = jsonOBj.substring(ind, jsonOBj.substring(ind).indexOf("\"") + ind);
+;
+                                JSONObject eventObj = obj.getJSONObject("-" + id);
 
                                 //place event details into an eventDoc
-                                eventDoc event = new eventDoc(eventObj.getString("id"),eventObj.getString("eventName"),eventObj.getString("eventAuthor"),eventObj.getString("eventAuthorID"),
-                                        eventObj.getString("eventDescription"),eventObj.getString("eventCategory"),eventObj.getString("eventLocation"),eventObj.getString("eventDate"),
+                                eventDoc event = new eventDoc(eventObj.getString("id"), eventObj.getString("eventName"), eventObj.getString("eventAuthor"), eventObj.getString("eventAuthorID"),
+                                        eventObj.getString("eventDescription"), eventObj.getString("eventCategory"), eventObj.getString("eventLocation"), eventObj.getString("eventDate"),
                                         eventObj.getString("eventTime"));
 
                                 //add event to list
                                 eventList.add(event);
+
+                                String middle = "{\"-" + id + "\":" + eventObj.toString() + ",";
+                                String last ="{\"-" + id + "\":" + eventObj.toString();
+
+                                if(jsonOBj.indexOf(middle)>=0){
+                                    jsonOBj = jsonOBj.replace(middle, "{");
+                                }
+                                else{
+                                    jsonOBj = jsonOBj.replace(last,"{");
+                                }
 
 
                             }
@@ -200,10 +202,12 @@ public class LandingPage extends Activity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        //displaying the error in toast if occurrs
+                        //displaying the error in toast if occurs
                         Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
+
+
 
         //creating a request queue
         RequestQueue requestQueue = Volley.newRequestQueue(this);
@@ -224,7 +228,10 @@ public class LandingPage extends Activity {
                 Intent viewTask = new Intent(LandingPage.this,ViewEvent.class);
 
                 eventDoc evnt = (eventDoc)eventList.get(i);
+                Toast.makeText(getApplicationContext(),evnt.getId(),Toast.LENGTH_LONG);
                 viewTask.putExtra("id",evnt.getId());
+
+                //viewTask.putExtra("loc",evnt.getEventLocation());
                 startActivity(viewTask);
             }
         });
@@ -245,7 +252,6 @@ public class LandingPage extends Activity {
 
                 setListContents();
 
-                Toast.makeText(getApplicationContext(),locLat+ "," +locLong,Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -279,7 +285,7 @@ public class LandingPage extends Activity {
         }
 
 
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, locationListener);
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 100000, 0, locationListener);
     }
 
     //is called when refresh button is clicked

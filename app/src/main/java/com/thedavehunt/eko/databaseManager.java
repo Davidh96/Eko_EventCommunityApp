@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.location.Location;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -65,6 +66,31 @@ public class databaseManager {
         event.setId(id);
 
         event.addMembers(new eventMember(user.getUid(),user.getDisplayName()));
+
+        //String location = event.getEventLocation();
+//        int ind = location.indexOf(",");
+//
+//        String lat = location.substring(0,ind);
+//        String lon = location.substring(ind+1);
+//        lat= lat+ "00";
+//        lon = lon+"00";
+//        int latD = lat.indexOf(".");
+//        int lonD = lon.indexOf(".");
+//
+//        lat = lat.substring(0,latD+3);
+//        lon = lon.substring(0,lonD+3);
+//
+//        lat = lat.replace(".","_");
+//        lon = lon.replace(".","_");
+
+
+        //Toast.makeText(getApplicationContext(),lat + " Hello "+ lon,Toast.LENGTH_SHORT).show();
+
+
+//        Double lat = Double.parseDouble(location.substring(0,ind));
+//        Double lon = Double.parseDouble(location.substring(ind+1));
+//        lat = (double)Math.round(lat*100)/100;
+//        Toast.makeText(getApplicationContext(),lat + " Hello "+ lon,Toast.LENGTH_SHORT).show();
 
         //push event to cloud database
         rootRef.child("events").child(id).setValue(event);

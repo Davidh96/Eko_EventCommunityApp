@@ -247,6 +247,9 @@ public class CreateEvent extends FragmentActivity implements selectDateDialog.Da
     }
 
     private void createEventDoc(){
+        //name = name.replace("\'","\\\'");
+        //name = name.replace("\\\"","\\\"");
+        //description = description.replace("\"","\\\"");
         // create an event
         eventDoc event = new eventDoc(id, name, author, authorID, description, category, location,date,time);
 
@@ -403,6 +406,6 @@ public class CreateEvent extends FragmentActivity implements selectDateDialog.Da
     @Override
     public void returnTime(String time) {
         this.time=time;
-        timeText.setText(time);
+        timeText.setText(time.substring(0,2) + ":" + time.substring(2,4));
     }
 }

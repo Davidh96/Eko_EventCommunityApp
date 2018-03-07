@@ -68,6 +68,7 @@ public class ViewEvent extends FragmentActivity implements OnMapReadyCallback {
     FloatingActionButton leaveBtn;
 
     String id;
+    String loc;
     public static String location;
 
     @Override
@@ -81,7 +82,23 @@ public class ViewEvent extends FragmentActivity implements OnMapReadyCallback {
 
         //get id of event selected
         id = i.getStringExtra("id");
+        //loc = i.getStringExtra("loc");
+        //int ind = loc.indexOf(",");
+
+//        String lat = loc.substring(0,ind);
+//        String lon = loc.substring(ind+1);
+//        lat= lat+ "00";
+//        lon = lon+"00";
+//        int latD = lat.indexOf(".");
+//        int lonD = lon.indexOf(".");
+//
+//        lat = lat.substring(0,latD+3);
+//        lon = lon.substring(0,lonD+3);
+//
+//        url += lat + "," + lon + "/" + id;
+
         url += id;
+
 
         eventNameTxt=(TextView)findViewById(R.id.textEventView);
         eventDescriptionTxt=(TextView)findViewById(R.id.textDescriptionView);
@@ -184,7 +201,8 @@ public class ViewEvent extends FragmentActivity implements OnMapReadyCallback {
         eventNameTxt.setText(event.getEventName());
         eventDescriptionTxt.setText(event.getEventDescription());
         eventDateTxt.setText(event.getEventDate());
-        eventTimeTxt.setText(event.getEventTime());
+        //time.substring(0,2) + ":" + time.substring(2,4)
+        eventTimeTxt.setText(event.getEventTime().substring(0,2) + ":" +event.getEventTime().substring(2,4));
         eventCategoryTxt.setText(event.getEventCategory());
         eventCreatorTxt.setText(event.getEventAuthor());
 
