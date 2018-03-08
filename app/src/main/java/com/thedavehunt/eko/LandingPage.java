@@ -1,6 +1,8 @@
 package com.thedavehunt.eko;
 
 import android.app.Activity;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -29,6 +31,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 
 import org.json.JSONArray;
@@ -49,7 +52,8 @@ public class LandingPage extends Activity {
     private SeekBar distanceBar;
     private TextView distanceText;
 
-    private FirebaseAuth auth;
+    private FirebaseUser user;
+    private  FirebaseAuth auth;
 
     public String url;
 
@@ -68,6 +72,8 @@ public class LandingPage extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_landing_page);
 
+        user = FirebaseAuth.getInstance().getCurrentUser();
+
         final SwipeRefreshLayout swipeRefreshLayout = (SwipeRefreshLayout)findViewById(R.id.layoutRefreshLanding);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -78,11 +84,24 @@ public class LandingPage extends Activity {
                     public void run() {
                        swipeRefreshLayout.setRefreshing(false);
                        setListContents();
-                        //getLocation();
                     }
                 },1000);
             }
         });
+
+        //if the current user is the creator of this event, show event editing tools
+        if(user!=null) {
+            //create fragment for tools
+            FragmentManager fragmentManager = getFragmentManager();
+
+            CreateButtonFragment frag1 = new CreateButtonFragment();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+            //show fragment
+            fragmentTransaction.add(R.id.edit_tools_layout_container, frag1);
+            fragmentTransaction.show(frag1);
+            fragmentTransaction.commit();
+        }
 
 
 
@@ -225,14 +244,22 @@ public class LandingPage extends Activity {
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Intent viewTask = new Intent(LandingPage.this,ViewEvent.class);
 
-                eventDoc evnt = (eventDoc)eventList.get(i);
-                Toast.makeText(getApplicationContext(),evnt.getId(),Toast.LENGTH_LONG);
-                viewTask.putExtra("id",evnt.getId());
+                //check if user or guest
+                if(user!=null) {
 
-                //viewTask.putExtra("loc",evnt.getEventLocation());
-                startActivity(viewTask);
+                    Intent viewTask = new Intent(LandingPage.this, ViewEvent.class);
+
+                    eventDoc evnt = (eventDoc) eventList.get(i);
+                    Toast.makeText(getApplicationContext(), evnt.getId(), Toast.LENGTH_LONG);
+                    viewTask.putExtra("id", evnt.getId());
+
+                    startActivity(viewTask);
+                }
+                else {
+                    Toast.makeText(getApplicationContext(), "You must sign in to view events", Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
     }
@@ -292,7 +319,6 @@ public class LandingPage extends Activity {
     public void refreshList(View v)
     {
         setListContents();
-        //getLocation();
     }
 
     //is called when logout button is clicked

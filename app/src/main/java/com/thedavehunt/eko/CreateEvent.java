@@ -163,13 +163,14 @@ public class CreateEvent extends FragmentActivity implements selectDateDialog.Da
         name=nameEdit.getText().toString();
         //get event description
         description=descriptionEdit.getText().toString();
-
+        String descNospc = description.replaceAll("\\s+","");
 
         if(name.isEmpty()){
             Toast.makeText(getApplicationContext(),"Please name your event",Toast.LENGTH_SHORT).show();
             saved=false;
         }
-        else if(description.length()<25){
+
+        else if(descNospc.length()<25){
             Toast.makeText(getApplicationContext(),"Description must be atleast 25 characters long",Toast.LENGTH_SHORT).show();
             saved=false;
         }

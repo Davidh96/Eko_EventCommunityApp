@@ -82,20 +82,6 @@ public class ViewEvent extends FragmentActivity implements OnMapReadyCallback {
 
         //get id of event selected
         id = i.getStringExtra("id");
-        //loc = i.getStringExtra("loc");
-        //int ind = loc.indexOf(",");
-
-//        String lat = loc.substring(0,ind);
-//        String lon = loc.substring(ind+1);
-//        lat= lat+ "00";
-//        lon = lon+"00";
-//        int latD = lat.indexOf(".");
-//        int lonD = lon.indexOf(".");
-//
-//        lat = lat.substring(0,latD+3);
-//        lon = lon.substring(0,lonD+3);
-//
-//        url += lat + "," + lon + "/" + id;
 
         url += id;
 
