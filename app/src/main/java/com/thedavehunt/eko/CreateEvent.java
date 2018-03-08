@@ -180,7 +180,8 @@ public class CreateEvent extends FragmentActivity implements selectDateDialog.Da
         }
 
         if(location.isEmpty()){
-
+            Toast.makeText(getApplicationContext(),"Please give a location",Toast.LENGTH_SHORT).show();
+            saved=false;
         }
 
         if(date.isEmpty()){
@@ -247,9 +248,7 @@ public class CreateEvent extends FragmentActivity implements selectDateDialog.Da
     }
 
     private void createEventDoc(){
-        //name = name.replace("\'","\\\'");
-        //name = name.replace("\\\"","\\\"");
-        //description = description.replace("\"","\\\"");
+
         // create an event
         eventDoc event = new eventDoc(id, name, author, authorID, description, category, location,date,time);
 
