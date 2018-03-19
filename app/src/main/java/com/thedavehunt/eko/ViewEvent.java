@@ -36,7 +36,7 @@ import org.json.JSONObject;
 
 import java.util.List;
 
-public class ViewEvent extends FragmentActivity implements OnMapReadyCallback {
+public class ViewEvent extends FragmentActivity implements OnMapReadyCallback, RateFragment.RatingDialogListener {
 
     databaseManager dbm = new databaseManager();
     private String url;
@@ -66,6 +66,7 @@ public class ViewEvent extends FragmentActivity implements OnMapReadyCallback {
 
     FloatingActionButton joinBtn;
     FloatingActionButton leaveBtn;
+    FloatingActionButton rateBtn;
 
     String id;
     String loc;
@@ -96,6 +97,7 @@ public class ViewEvent extends FragmentActivity implements OnMapReadyCallback {
         memberListTitle = (TextView)findViewById(R.id.textMemberView);
         joinBtn = (FloatingActionButton)findViewById(R.id.buttonJoinView);
         leaveBtn = (FloatingActionButton)findViewById(R.id.buttonLeaveView);
+        rateBtn = (FloatingActionButton)findViewById(R.id.buttonRateView);
         loadingCircle=(ProgressBar)findViewById(R.id.loadingCircle);
 
         loadingCircle.setVisibility(View.VISIBLE);
@@ -209,10 +211,12 @@ public class ViewEvent extends FragmentActivity implements OnMapReadyCallback {
         if(check>0){
             joinBtn.hide();
             leaveBtn.show();
+            rateBtn.show();
         }
         else{
             joinBtn.show();
             leaveBtn.hide();
+            rateBtn.hide();
         }
 
         //initialise adapter
@@ -267,9 +271,11 @@ public class ViewEvent extends FragmentActivity implements OnMapReadyCallback {
                         eventMember member = new eventMember(user.getUid(),user.getDisplayName());
 
                         dbm.addEventMember(id,member);
+                        dbm.rateEvent(user.getUid(),id,5);
 
                         joinBtn.hide();
                         leaveBtn.show();
+                        rateBtn.show();
 
                         Toast.makeText(getApplicationContext(),"Joined '" + event.eventName + "' Event",Toast.LENGTH_SHORT).show();
 
@@ -305,6 +311,7 @@ public class ViewEvent extends FragmentActivity implements OnMapReadyCallback {
 
                             joinBtn.show();
                             leaveBtn.hide();
+                            rateBtn.hide();
 
                             Toast.makeText(getApplicationContext(), "Left '" + event.eventName + "' Event", Toast.LENGTH_SHORT).show();
 
@@ -355,6 +362,17 @@ public class ViewEvent extends FragmentActivity implements OnMapReadyCallback {
                     }
                 })
                 .show();
+    }
+
+    //shows time fragment
+    public void showRateFragment(View v){
+        RateFragment rateFrag = new RateFragment();
+        rateFrag.show(getSupportFragmentManager(),"tag");
+    }
+
+    public void returnRating(float rating) {
+            float rate= rating;
+            dbm.rateEvent(user.getUid(),id,rate);
     }
 
 }

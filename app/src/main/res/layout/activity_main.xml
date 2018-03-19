@@ -2,12 +2,15 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingLeft="16dp"
-    android:paddingRight="16dp"
-    android:paddingTop="16dp"
     android:orientation="vertical"
-    android:background="@drawable/splashbackground"
+
     >
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/splashbackground2"
+        android:scaleType = "centerCrop"/>
 
     <TextView
         android:layout_width="match_parent"
@@ -38,6 +41,15 @@
         android:layout_centerHorizontal="true"
         android:layout_margin="14dp"
     />
+
+    <com.google.android.gms.common.SignInButton
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/googleBtn"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="14dp"
+        android:layout_below="@id/loginButtonFacebook"></com.google.android.gms.common.SignInButton>
 
     <Button
         android:layout_width="match_parent"

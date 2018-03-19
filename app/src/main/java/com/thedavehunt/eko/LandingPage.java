@@ -316,9 +316,10 @@ public class LandingPage extends Activity {
     }
 
     //is called when refresh button is clicked
-    public void refreshList(View v)
+    public void displayJoined(View v)
     {
-        setListContents();
+        Intent displayJoinedEv = new Intent(LandingPage.this,ViewJoinedEvents.class);
+        startActivity(displayJoinedEv);
     }
 
     //is called when logout button is clicked

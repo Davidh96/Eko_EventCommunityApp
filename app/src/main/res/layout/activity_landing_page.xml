@@ -39,7 +39,7 @@
         android:layout_height="match_parent"
         android:id="@+id/buttonRefreshLanding"
         android:src="@android:drawable/ic_popup_sync"
-        android:onClick="refreshList"
+        android:onClick="displayJoined"
         android:layout_weight=".425"
         android:background="@color/colorPrimary"
         />

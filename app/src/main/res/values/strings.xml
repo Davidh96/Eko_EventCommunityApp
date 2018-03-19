@@ -11,4 +11,7 @@
     <string name="facebookPostTitle">Share event on Facebook</string>
     <string name="textTitleLanding">What\'s Nearby?</string>
     <string name="memberListTitle">Who\'s Joined?</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

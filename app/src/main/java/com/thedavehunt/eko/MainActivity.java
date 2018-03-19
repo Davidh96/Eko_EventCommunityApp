@@ -25,6 +25,12 @@ import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.SignInButton;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
@@ -32,6 +38,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+
 
 import static android.content.ContentValues.TAG;
 
@@ -41,6 +48,9 @@ public class MainActivity extends Activity {
     private FirebaseAuth auth;
     private CallbackManager mCallbackManager;
     private FirebaseAuth.AuthStateListener mAuthListener;
+    private SignInButton mGoogleBtn;
+    private static final int RC_SIGN_IN =1;
+    private GoogleApiClient mGoogleApiClient;
 
     public ProgressBar loadingCircle;
 
@@ -51,6 +61,7 @@ public class MainActivity extends Activity {
 
         loadingCircle = (ProgressBar)findViewById(R.id.loadingCircle);
         loadingCircle.setVisibility(View.INVISIBLE);
+        mGoogleBtn = (SignInButton)findViewById(R.id.googleBtn);
 
         //get Firebase auth instance
         auth = FirebaseAuth.getInstance();
@@ -90,6 +101,22 @@ public class MainActivity extends Activity {
 
             }
         });
+
+        // Configure Google Sign In
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+
+//        mGoogleApiClient = new GoogleApiClient.Builder(getApplicationContext())
+//                .enableAutoManage(this, new GoogleApiClient.OnConnectionFailedListener() {
+//                    @Override
+//                    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+//
+//                    }
+//                })
+//                .addApi(Auth.GOOGLE_SIGN_IN_API,gso)
+//                .build();
 
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -170,5 +197,12 @@ public class MainActivity extends Activity {
                     }
                 });
     }
+
+    private void signIn() {
+        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+        startActivityForResult(signInIntent, RC_SIGN_IN);
+    }
+
+
 
 }

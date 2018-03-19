@@ -55,6 +55,7 @@ public class databaseManager {
 
     public void createEvent(eventDoc event){
         this.event=event;
+
         String id = event.getId();
 
         //check if this is an edited event
@@ -66,6 +67,7 @@ public class databaseManager {
         event.setId(id);
 
         event.addMembers(new eventMember(user.getUid(),user.getDisplayName()));
+
 
         //String location = event.getEventLocation();
 //        int ind = location.indexOf(",");
@@ -94,12 +96,20 @@ public class databaseManager {
 
         //push event to cloud database
         rootRef.child("events").child(id).setValue(event);
+        rateEvent(user.getUid(),id,5);
+
 
         //set creator as an event member
 //        eventMember creator = new eventMember(user.getUid(),user.getDisplayName());
 //        addEventMember(id,creator);
 
         Toast.makeText(getApplicationContext(),"Event Created",Toast.LENGTH_SHORT).show();
+    }
+
+    public void rateEvent(String userID, String eventID,float rating){
+
+        rootRef.child("users").child(userID).child(eventID).child("rating").setValue(rating);
+
     }
 
     //add member to event
