@@ -22,6 +22,14 @@
         android:textAlignment="center"
         android:textColor="@color/white"/>
 
+    <ImageView
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:src="@mipmap/ekoiconroundsplash"
+        android:layout_marginLeft="-85dp"
+        android:layout_marginBottom="-85dp"
+        android:layout_alignParentBottom="true"/>
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -42,14 +50,20 @@
         android:layout_margin="14dp"
     />
 
-    <com.google.android.gms.common.SignInButton
+
+    <Button
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/googleBtn"
+        android:layout_height="25dp"
+        android:textSize="15dp"
+        android:text="Continue with Google"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
+        android:layout_below="@id/loginButtonFacebook"
+        android:textAllCaps="false"
+        android:background="@color/white"
         android:layout_margin="14dp"
-        android:layout_below="@id/loginButtonFacebook"></com.google.android.gms.common.SignInButton>
+        android:id="@+id/googleBtn"/>
+
 
     <Button
         android:layout_width="match_parent"
