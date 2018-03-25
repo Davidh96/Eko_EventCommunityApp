@@ -27,6 +27,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.facebook.login.LoginManager;
@@ -40,6 +41,7 @@ import org.json.JSONObject;
 
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -60,21 +62,30 @@ public class LandingPage extends Activity {
     public static double locLat;
     public static double locLong;
 
+    public float distance=1;
     private float minDist = 1f;
     private float maxDist = 20.0f;
     private float step = 1;
     public float chosenDist =1.6f;
-
-    private TextView title;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_landing_page);
 
+        //get url for retrieving events
+        url=getResources().getString(R.string.serverURLGetEvents);
+        //get current user
         user = FirebaseAuth.getInstance().getCurrentUser();
 
+
+        //views
+        loadingCircle = (ProgressBar)findViewById(R.id.loadingCircle);
+        distanceBar = (SeekBar)findViewById(R.id.seekbarDistanceLanding);
+        distanceText = (TextView)findViewById(R.id.textDitanceLanding);
         final SwipeRefreshLayout swipeRefreshLayout = (SwipeRefreshLayout)findViewById(R.id.layoutRefreshLanding);
+
+        //setup refresh listener
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -83,38 +94,35 @@ public class LandingPage extends Activity {
                     @Override
                     public void run() {
                        swipeRefreshLayout.setRefreshing(false);
+                       //reload the list view
                        setListContents();
                     }
-                },1000);
+                },500);
             }
         });
 
-        //if the current user is the creator of this event, show event editing tools
+        //if the current user is not a guest, show create event buuton
         if(user!=null) {
             //create fragment for tools
             FragmentManager fragmentManager = getFragmentManager();
 
-            CreateButtonFragment frag1 = new CreateButtonFragment();
+            CreateButtonFragment createEvenetfrag = new CreateButtonFragment();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
             //show fragment
-            fragmentTransaction.add(R.id.edit_tools_layout_container, frag1);
-            fragmentTransaction.show(frag1);
+            fragmentTransaction.add(R.id.create_event_layout_container, createEvenetfrag);
+            fragmentTransaction.show(createEvenetfrag);
             fragmentTransaction.commit();
         }
 
-
-
-        //views
-        loadingCircle = (ProgressBar)findViewById(R.id.loadingCircle);
-        distanceBar = (SeekBar)findViewById(R.id.seekbarDistanceLanding);
-        distanceText = (TextView)findViewById(R.id.textDitanceLanding);
-
+        //set the max distance user can choose
         distanceBar.setMax((int)((maxDist-minDist)/step));
 
+        //when user changes distance
         distanceBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                //get distance
                 chosenDist = minDist + (i*step);
                 distanceText.setText("" + chosenDist + "km");
             }
@@ -126,18 +134,16 @@ public class LandingPage extends Activity {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                LandingPage.this.url=getResources().getString(R.string.serverURL) + "/getEvents/" + locLat + "," + locLong + "/" + chosenDist;
+                LandingPage.this.distance = chosenDist;
+                //once the swiping is finished reload list view with new distance
                 setListContents();
 
             }
         });
 
 
-        eventList = new ArrayList<eventDoc>();
-
+        //get user location
         getLocation();
-        title = (TextView)findViewById(R.id.textTitleBarLanding);
-
 
 
     }
@@ -145,94 +151,19 @@ public class LandingPage extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (url != null) {
-            setListContents();
-        }
+        setListContents();
     }
 
     //retrieve event data from server and put it in the list
     void setListContents(){
 
-
         loadingCircle.setVisibility(View.VISIBLE);
 
-        eventList= new ArrayList<eventDoc>();
+        //create event list to display in list view
+        //needs to be cleared everytime
+        eventList = new ArrayList<eventDoc>();
 
-        //creating a string request to send request to the url
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        //hiding the loading after completion
-                        loadingCircle.setVisibility(View.INVISIBLE);
-
-                        try {
-
-                            //getting the whole json object from the response
-                            JSONObject obj = new JSONObject(response);
-
-
-                            String jsonOBj = obj.toString();
-
-
-                            while(jsonOBj.length()>2) {
-
-                                String startString = "{\"-";
-                                int ind = jsonOBj.indexOf(startString) + startString.length();
-                                String id = jsonOBj.substring(ind, jsonOBj.substring(ind).indexOf("\"") + ind);
-;
-                                JSONObject eventObj = obj.getJSONObject("-" + id);
-
-                                //place event details into an eventDoc
-                                eventDoc event = new eventDoc(eventObj.getString("id"), eventObj.getString("eventName"), eventObj.getString("eventAuthor"), eventObj.getString("eventAuthorID"),
-                                        eventObj.getString("eventDescription"), eventObj.getString("eventCategory"), eventObj.getString("eventLocation"), eventObj.getString("eventDate"),
-                                        eventObj.getString("eventTime"));
-
-                                //add event to list
-                                eventList.add(event);
-
-                                String middle = "{\"-" + id + "\":" + eventObj.toString() + ",";
-                                String last ="{\"-" + id + "\":" + eventObj.toString();
-
-                                if(jsonOBj.indexOf(middle)>=0){
-                                    jsonOBj = jsonOBj.replace(middle, "{");
-                                }
-                                else{
-                                    jsonOBj = jsonOBj.replace(last,"{");
-                                }
-
-
-                            }
-
-                            //initialise adapter
-                            listAdapter = new landingListAdapter(LandingPage.this,eventList);
-
-
-                            ListView list = (ListView)findViewById(R.id.listEventLanding);
-                            //set adapter for list view
-                            list.setAdapter(listAdapter);
-
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        //displaying the error in toast if occurs
-                        Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-
-
-        //creating a request queue
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-
-        //adding the string request to request queue
-        requestQueue.add(stringRequest);
+        getEvents();
 
         //initialise adapter
         listAdapter = new landingListAdapter(LandingPage.this,eventList);
@@ -257,28 +188,105 @@ public class LandingPage extends Activity {
                     startActivity(viewTask);
                 }
                 else {
-                    Toast.makeText(getApplicationContext(), "You must sign in to view events", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.guestViewEventToast), Toast.LENGTH_SHORT).show();
+
                 }
 
             }
         });
     }
 
+    void getEvents(){
+        HashMap req = new HashMap();
+        req.put("location",locLat + "," + locLong );
+        req.put("distance", distance);
+        req.put("userID", user.getUid());
+
+        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url,new JSONObject(req),
+            new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    //hiding the loading after completion
+                    loadingCircle.setVisibility(View.INVISIBLE);
+
+                    try {
+
+                        //getting the whole json object from the response
+                        JSONObject obj = response;
+
+
+                        String jsonOBj = obj.toString();
+
+                        //if more than one event
+                        while(jsonOBj.length()>2) {
+
+                            String startString = "{\"-";
+                            int ind = jsonOBj.indexOf(startString) + startString.length();
+                            String id = jsonOBj.substring(ind, jsonOBj.substring(ind).indexOf("\"") + ind);
+
+                            JSONObject eventObj = obj.getJSONObject("-" + id);
+
+                            //place event details into an eventDoc
+                            eventDoc event = new eventDoc(eventObj.getString("id"), eventObj.getString("eventName"), eventObj.getString("eventAuthor"), eventObj.getString("eventAuthorID"),
+                                    eventObj.getString("eventDescription"), eventObj.getString("eventCategory"), eventObj.getString("eventLocation"), eventObj.getString("eventDate"),
+                                    eventObj.getString("eventTime"));
+
+                            //add event to list
+                            eventList.add(event);
+
+                            //get next event in list
+                            String middle = "{\"-" + id + "\":" + eventObj.toString() + ",";
+                            String last ="{\"-" + id + "\":" + eventObj.toString();
+
+                            //if we haven't reached end of list
+                            if(jsonOBj.indexOf(middle)>=0){
+                                jsonOBj = jsonOBj.replace(middle, "{");
+                            }
+                            else{
+                                jsonOBj = jsonOBj.replace(last,"{");
+                            }
+
+
+                        }
+
+                        //initialise adapter
+                        listAdapter = new landingListAdapter(LandingPage.this,eventList);
+
+                        ListView list = (ListView)findViewById(R.id.listEventLanding);
+                        //set adapter for list view
+                        list.setAdapter(listAdapter);
+
+
+                    } catch (JSONException e) {
+
+                    }
+                }},
+            new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                }
+            });
+
+        requestQueue.add(jsonObjectRequest);
+    }
+
+    //get user location
     void getLocation(){
 
+        //create location manager
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
         LocationListener locationListener = new LocationListener() {
             //when location is updated
             @Override
             public void onLocationChanged(Location location) {
+                //set location variables
                 LandingPage.this.locLat=location.getLatitude();
                 LandingPage.this.locLong=location.getLongitude();
-
-                LandingPage.this.url=getResources().getString(R.string.serverURL) + "/getEvents/" + locLat + "," + locLong + "/" + chosenDist;
-
+                //will get user location when location listener is triggered
                 setListContents();
-
             }
 
             @Override
@@ -294,6 +302,7 @@ public class LandingPage extends Activity {
             //if gps is disabled
             @Override
             public void onProviderDisabled(String s) {
+                //open settings
                 Intent _intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                 startActivity(_intent);
             }
@@ -301,6 +310,7 @@ public class LandingPage extends Activity {
 
         //request permission
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            //check permissions
             if (checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(new String[]{
                         android.Manifest.permission.ACCESS_COARSE_LOCATION,
@@ -311,7 +321,7 @@ public class LandingPage extends Activity {
             }
         }
 
-
+        //set when location is requested
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 100000, 0, locationListener);
     }
 
@@ -333,7 +343,6 @@ public class LandingPage extends Activity {
     //called when FAB create button is clicked
     public void createEvent(View v)
     {
-        //TODO
         Intent createevent = new Intent(LandingPage.this,CreateEvent.class);
         startActivity(createevent);
     }

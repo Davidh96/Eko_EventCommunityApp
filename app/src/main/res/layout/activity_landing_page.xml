@@ -102,7 +102,7 @@
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/edit_tools_layout_container"
+        android:id="@+id/create_event_layout_container"
         android:layout_alignParentLeft="true"
         android:layout_alignParentBottom="true"
         android:layout_weight=".5"
