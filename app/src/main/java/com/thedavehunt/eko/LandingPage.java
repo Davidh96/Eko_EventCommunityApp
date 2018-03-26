@@ -16,10 +16,12 @@ import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -51,6 +53,7 @@ public class LandingPage extends Activity {
     private ProgressBar loadingCircle;
     private SeekBar distanceBar;
     private TextView distanceText;
+    private Spinner categorySpinner;
 
     private FirebaseUser user;
     private  FirebaseAuth auth;
@@ -65,6 +68,10 @@ public class LandingPage extends Activity {
     private float maxDist = 20.0f;
     private float step = 1;
     public float chosenDist =1.6f;
+
+    public String category;
+
+    private ArrayAdapter<CharSequence> adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,7 +88,40 @@ public class LandingPage extends Activity {
         loadingCircle = (ProgressBar)findViewById(R.id.loadingCircle);
         distanceBar = (SeekBar)findViewById(R.id.seekbarDistanceLanding);
         distanceText = (TextView)findViewById(R.id.textDitanceLanding);
+        categorySpinner = (Spinner)findViewById(R.id.spinnerCategoryLanding);
         final SwipeRefreshLayout swipeRefreshLayout = (SwipeRefreshLayout)findViewById(R.id.layoutRefreshLanding);
+
+        //default should be to show all categories
+        category = "All";
+
+
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        adapter = ArrayAdapter.createFromResource(this,
+                R.array.category_array, android.R.layout.simple_spinner_item);
+        // Specify the layout to use when the list of choices appears
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        // Apply the adapter to the spinner
+        categorySpinner.setAdapter(adapter);
+
+        categorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if(position!=0) {
+                    LandingPage.this.category = parent.getItemAtPosition(position).toString();
+                }
+                else{
+                    LandingPage.this.category = "All";
+                }
+
+                setListContents(LandingPage.this.category);
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
         //setup refresh listener
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -93,7 +133,7 @@ public class LandingPage extends Activity {
                     public void run() {
                        swipeRefreshLayout.setRefreshing(false);
                        //reload the list view
-                       setListContents();
+                       setListContents(category);
                     }
                 },500);
             }
@@ -134,7 +174,7 @@ public class LandingPage extends Activity {
             public void onStopTrackingTouch(SeekBar seekBar) {
                 LandingPage.this.distance = chosenDist;
                 //once the swiping is finished reload list view with new distance
-                setListContents();
+                setListContents(category);
 
             }
         });
@@ -149,11 +189,11 @@ public class LandingPage extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        setListContents();
+        setListContents(category);
     }
 
     //retrieve event data from server and put it in the list
-    void setListContents(){
+    void setListContents(String filterCategory){
 
         loadingCircle.setVisibility(View.VISIBLE);
 
@@ -161,7 +201,7 @@ public class LandingPage extends Activity {
         //needs to be cleared everytime
         eventList = new ArrayList<eventDoc>();
 
-        getEvents();
+        getEvents(filterCategory);
 
         //initialise adapter
         listAdapter = new landingListAdapter(LandingPage.this,eventList);
@@ -194,13 +234,15 @@ public class LandingPage extends Activity {
         });
     }
 
-    void getEvents(){
+    void getEvents(final String filter){
         HashMap req = new HashMap();
         req.put("location",locLat + "," + locLong );
         req.put("distance", distance);
         req.put("userID", user.getUid());
 
         RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+
+        //Toast.makeText(getApplicationContext(),filterCategory,Toast.LENGTH_SHORT).show();
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url,new JSONObject(req),
             new Response.Listener<JSONObject>() {
@@ -231,8 +273,12 @@ public class LandingPage extends Activity {
                                     eventObj.getString("eventDescription"), eventObj.getString("eventCategory"), eventObj.getString("eventLocation"), eventObj.getString("eventDate"),
                                     eventObj.getString("eventTime"));
 
-                            //add event to list
-                            eventList.add(event);
+                            //filter out results based on category
+                            if(filter.equals("All") || filter.equals(event.eventCategory)) {
+                                //add event to list
+                                eventList.add(event);
+                            }
+
 
                             //get next event in list
                             String middle = "{\"-" + id + "\":" + eventObj.toString() + ",";
@@ -284,7 +330,7 @@ public class LandingPage extends Activity {
                 LandingPage.this.locLat=location.getLatitude();
                 LandingPage.this.locLong=location.getLongitude();
                 //will get user location when location listener is triggered
-                setListContents();
+                setListContents(category);
             }
 
             @Override
