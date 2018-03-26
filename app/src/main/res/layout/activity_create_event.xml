@@ -192,6 +192,6 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
         android:layout_margin="14dp"
-        android:src="@android:drawable/ic_menu_save" />
+        android:src="@drawable/ic_check_black_24dp" />
 
 </RelativeLayout>

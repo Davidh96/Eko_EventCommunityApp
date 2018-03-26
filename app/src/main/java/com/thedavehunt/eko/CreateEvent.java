@@ -302,7 +302,7 @@ public class CreateEvent extends FragmentActivity implements selectDateDialog.Da
                             dateText.setText(date);
 
                             time = event.getEventTime();
-                            timeText.setText(time);
+                            timeText.setText(time.substring(0,2) + ":" + time.substring(2,4));
 
 
                         } catch (JSONException e) {

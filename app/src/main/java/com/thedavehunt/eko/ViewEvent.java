@@ -69,7 +69,6 @@ public class ViewEvent extends FragmentActivity implements OnMapReadyCallback, R
     FloatingActionButton rateBtn;
 
     String id;
-    String loc;
     public static String location;
 
     @Override
@@ -86,7 +85,7 @@ public class ViewEvent extends FragmentActivity implements OnMapReadyCallback, R
 
         url += id;
 
-
+        //get views
         eventNameTxt=(TextView)findViewById(R.id.textEventView);
         eventDescriptionTxt=(TextView)findViewById(R.id.textDescriptionView);
         eventDateTxt=(TextView)findViewById(R.id.textDateView);
@@ -100,6 +99,12 @@ public class ViewEvent extends FragmentActivity implements OnMapReadyCallback, R
         rateBtn = (FloatingActionButton)findViewById(R.id.buttonRateView);
         loadingCircle=(ProgressBar)findViewById(R.id.loadingCircle);
 
+        //hide action buttons until loading has finished
+        joinBtn.hide();
+        leaveBtn.hide();
+        rateBtn.hide();
+
+        //indicate loading
         loadingCircle.setVisibility(View.VISIBLE);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
@@ -126,6 +131,7 @@ public class ViewEvent extends FragmentActivity implements OnMapReadyCallback, R
 
     }
 
+    //get event data
     public void retrieveData(){
 
         //creating a string request to send request to the url
@@ -189,7 +195,6 @@ public class ViewEvent extends FragmentActivity implements OnMapReadyCallback, R
         eventNameTxt.setText(event.getEventName());
         eventDescriptionTxt.setText(event.getEventDescription());
         eventDateTxt.setText(event.getEventDate());
-        //time.substring(0,2) + ":" + time.substring(2,4)
         eventTimeTxt.setText(event.getEventTime().substring(0,2) + ":" +event.getEventTime().substring(2,4));
         eventCategoryTxt.setText(event.getEventCategory());
         eventCreatorTxt.setText(event.getEventAuthor());
@@ -213,8 +218,13 @@ public class ViewEvent extends FragmentActivity implements OnMapReadyCallback, R
             leaveBtn.show();
             rateBtn.show();
         }
+        //if user is not a member
         else{
             joinBtn.show();
+            leaveBtn.hide();
+            rateBtn.hide();
+        }
+        if(user.getUid().equals(event.eventAuthorID)){
             leaveBtn.hide();
             rateBtn.hide();
         }
@@ -266,7 +276,7 @@ public class ViewEvent extends FragmentActivity implements OnMapReadyCallback, R
                 //alert message
                 .setMessage("Do you want to join the '" + eventNameTxt.getText() + "' event?")
                 //if user clicks yes
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                .setPositiveButton(getResources().getString(R.string.positiveActionText), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         eventMember member = new eventMember(user.getUid(),user.getDisplayName());
 
@@ -284,7 +294,7 @@ public class ViewEvent extends FragmentActivity implements OnMapReadyCallback, R
 
                 })
                 //if user does not wish to join
-                .setNegativeButton("Nope", new DialogInterface.OnClickListener() {
+                .setNegativeButton(getResources().getString(R.string.negativeActionText), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
 

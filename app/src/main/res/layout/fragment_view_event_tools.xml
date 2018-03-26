@@ -3,17 +3,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal"
-    tools:context="com.thedavehunt.eko.viewEventToolsFragment">
+    tools:context="com.thedavehunt.eko.viewEventToolsFragment"
+    android:layout_marginTop="8dp">
 
     <ImageButton
         android:id="@+id/toolsButtonEdit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:src="@android:drawable/ic_menu_edit"
+        android:src="@drawable/ic_edit_black_24dp"
         android:onClick="editEvent"
         android:background="@color/colorPrimary"
         android:layout_marginRight="20dp"
+        android:layout_marginLeft="14dp"
         />
 
     <ImageButton
@@ -21,7 +23,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toLeftOf="@+id/toolsButtonEdit"
-        android:src="@android:drawable/ic_menu_close_clear_cancel"
+        android:src="@drawable/ic_delete_black_24dp"
         android:onClick="deleteEvent"
         android:background="@color/colorPrimary"
         android:layout_marginRight="20dp"

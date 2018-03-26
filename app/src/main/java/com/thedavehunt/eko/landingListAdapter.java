@@ -50,7 +50,7 @@ public class landingListAdapter extends ArrayAdapter<eventDoc> {
         //if recomendation
         if(position==0){
             eventPopularText.setText("Recommended");
-            custom.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorPrimary));
+            custom.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorAccent));
 
         }
 
