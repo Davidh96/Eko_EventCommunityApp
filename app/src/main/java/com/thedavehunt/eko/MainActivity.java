@@ -53,6 +53,9 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+        //dbHelper.insertData("Hello David my man");
+
         //get views
         loadingCircle = (ProgressBar)findViewById(R.id.loadingCircle);
         loadingCircle.setVisibility(View.INVISIBLE);

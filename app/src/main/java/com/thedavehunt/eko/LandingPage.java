@@ -78,6 +78,9 @@ public class LandingPage extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_landing_page);
 
+        DatabaseHelper dbHelper = new DatabaseHelper(getApplicationContext());
+        //dbHelper.
+
         //get url for retrieving events
         url=getResources().getString(R.string.serverURLGetEvents);
         //get current user
@@ -372,7 +375,7 @@ public class LandingPage extends Activity {
     //is called when refresh button is clicked
     public void displayJoined(View v)
     {
-        Intent displayJoinedEv = new Intent(LandingPage.this,ViewJoinedEvents.class);
+        Intent displayJoinedEv = new Intent(LandingPage.this,ChatDisplay.class);
         startActivity(displayJoinedEv);
     }
 
