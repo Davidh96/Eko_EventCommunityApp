@@ -375,7 +375,7 @@ public class LandingPage extends Activity {
     //is called when refresh button is clicked
     public void displayJoined(View v)
     {
-        Intent displayJoinedEv = new Intent(LandingPage.this,ChatDisplay.class);
+        Intent displayJoinedEv = new Intent(LandingPage.this,ContactDisplay.class);
         startActivity(displayJoinedEv);
     }
 

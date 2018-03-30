@@ -73,7 +73,8 @@
             </intent-filter>
         </service>
 
-        <activity android:name=".ChatDisplay"></activity>
+        <activity android:name=".ContactDisplay" />
+        <activity android:name=".ViewChat"></activity>
     </application>
 
 </manifest>

@@ -12,11 +12,11 @@ import android.widget.TextView;
 
 import java.util.List;
 
-public class ChatListAdapter extends ArrayAdapter {
+public class ContactListAdapter extends ArrayAdapter {
 
     private List<ContactDoc> contactList;
 
-    public ChatListAdapter(Context context, List<ContactDoc> list) {
+    public ContactListAdapter(Context context, List<ContactDoc> list) {
         super(context,R.layout.custom_row_chat_list, list);
         contactList=list;
     }

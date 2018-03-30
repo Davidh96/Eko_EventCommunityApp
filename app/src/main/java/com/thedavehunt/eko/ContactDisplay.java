@@ -1,21 +1,23 @@
 package com.thedavehunt.eko;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.widget.ListAdapter;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
-public class ChatDisplay extends Activity {
+public class ContactDisplay extends Activity {
     DatabaseHelper dbm;
     SQLiteDatabase db;
 
     ArrayList<ContactDoc> contactList;
-    private ChatListAdapter listAdapter;
+    private ContactListAdapter listAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,10 +46,26 @@ public class ChatDisplay extends Activity {
         }
 
         //initialise adapter
-        listAdapter = new ChatListAdapter(ChatDisplay.this,contactList);
+        listAdapter = new ContactListAdapter(ContactDisplay.this,contactList);
 
         ListView list = (ListView)findViewById(R.id.listChatDisplay);
         //set adapter for list view
         list.setAdapter(listAdapter);
+
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+
+                Intent viewChat = new Intent(ContactDisplay.this, ViewChat.class);
+
+                //eventDoc evnt = (eventDoc) eventList.get(i);
+                Toast.makeText(getApplicationContext(), "Hello " + i, Toast.LENGTH_LONG);
+                viewChat.putExtra("id", contactList.get(i).getContactID() );
+
+                startActivity(viewChat);
+
+            }
+        });
     }
 }
