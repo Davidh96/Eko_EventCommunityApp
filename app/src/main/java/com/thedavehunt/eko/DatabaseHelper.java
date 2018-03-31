@@ -15,12 +15,14 @@ public class DatabaseHelper extends SQLiteOpenHelper{
     public static final String messageData = "Data";
     public static final String messageTime = "Timestamp";
     public static final String messageSenderID = "SenderID";
+    public static  final String messageType = "MessageType";
 
 
     public static final String CONT_TABLE_NAME = "contacts";
     public static final String  fromToken= "fromToken";
     public static final String  fromID= "fromID";
     public static final String  fromName= "fromName";
+
 
 
 
@@ -36,7 +38,8 @@ public class DatabaseHelper extends SQLiteOpenHelper{
                 " ( " + messageID +" INTEGER PRIMARY KEY AUTOINCREMENT," +
                 " " + messageData +" TEXT, "+
                 messageTime +" TEXT, " +
-                messageSenderID + " TEXT)");
+                messageSenderID + " TEXT, "+
+                messageType +" TEXT)");
 
         sqLiteDatabase.execSQL("create table " + CONT_TABLE_NAME +
                 " ( " + fromID +" TEXT PRIMARY KEY," +
@@ -49,12 +52,13 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 
     }
 
-    public boolean insertData(String messageData, String messageTime, String messageSenderID){
+    public boolean insertData(String messageData, String messageTime, String messageSenderID, String messageType){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(this.messageData,messageData);
         contentValues.put(this.messageTime,messageTime);
         contentValues.put(this.messageSenderID,messageSenderID);
+        contentValues.put(this.messageType,messageType);
         db.insert(MSG_TABLE_NAME,null,contentValues);
         return  true;
     }
@@ -73,6 +77,15 @@ public class DatabaseHelper extends SQLiteOpenHelper{
         String[] columns = {fromID,fromToken,fromName};
 
         Cursor cursor = db.query(CONT_TABLE_NAME,columns,null,null,null,null,null);
+
+        return cursor;
+    }
+
+    public Cursor retrieveChat(SQLiteDatabase db, String contactID){
+        String[] columns = {messageData,messageTime,messageSenderID,messageType};
+
+        Cursor cursor = db.query(MSG_TABLE_NAME,columns,null,null,null,null,null);
+        //messageSenderID like " + contactID
 
         return cursor;
     }

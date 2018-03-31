@@ -29,7 +29,7 @@ public class mFirebaseMessagingService extends FirebaseMessagingService {
 
             Date currentTime = Calendar.getInstance().getTime();
 
-            db.insertData(msgData,currentTime.toString(),msgFromID);
+            db.insertData(msgData,currentTime.toString(),msgFromID,"Received");
             db.insertContact(msgFromID,msgFromToken,msgFromName);
 
 //            if (/* Check if data needs to be processed by long running job */ true) {
