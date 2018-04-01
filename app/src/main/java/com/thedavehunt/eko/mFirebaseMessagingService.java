@@ -1,5 +1,8 @@
 package com.thedavehunt.eko;
 
+import android.app.ActivityManager;
+import android.content.ComponentName;
+import android.content.Context;
 import android.util.Log;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
@@ -7,6 +10,8 @@ import com.google.firebase.messaging.RemoteMessage;
 
 import java.util.Calendar;
 import java.util.Date;
+
+import android.content.Intent;
 
 public class mFirebaseMessagingService extends FirebaseMessagingService {
     @Override
@@ -30,7 +35,14 @@ public class mFirebaseMessagingService extends FirebaseMessagingService {
             Date currentTime = Calendar.getInstance().getTime();
 
             db.insertData(msgData,currentTime.toString(),msgFromID,"Received");
-            db.insertContact(msgFromID,msgFromToken,msgFromName);
+            //db.insertContact(msgFromID,msgFromToken,msgFromName);
+
+            Intent i = new Intent("com.thedavehunt.eko");
+            i.setAction("com.thedavehunt.eko");
+            i.addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
+            sendBroadcast(i);
+
+
 
 //            if (/* Check if data needs to be processed by long running job */ true) {
 //                // For long-running tasks (10 seconds or more) use Firebase Job Dispatcher.

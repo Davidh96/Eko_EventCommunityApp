@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 public class DatabaseHelper extends SQLiteOpenHelper{
 
@@ -23,8 +24,9 @@ public class DatabaseHelper extends SQLiteOpenHelper{
     public static final String  fromID= "fromID";
     public static final String  fromName= "fromName";
 
-
-
+    public static final String  TOKEN_TABLE_NAME = "fcmToken";
+    public static final String  tokenID= "TokenID";
+    public static final String  tokenValue= "TokenValue";
 
 
     public DatabaseHelper(Context context) {
@@ -45,11 +47,25 @@ public class DatabaseHelper extends SQLiteOpenHelper{
                 " ( " + fromID +" TEXT PRIMARY KEY," +
                 " " + fromToken +" TEXT, "+
                 fromName +" TEXT)");
+
+        sqLiteDatabase.execSQL("create table " + TOKEN_TABLE_NAME +
+                " ( " + tokenID +" TEXT PRIMARY KEY," +
+                " " + tokenValue +" TEXT)");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
 
+    }
+
+    public boolean insertToken(String ID, String token){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(this.tokenID,ID);
+        contentValues.put(this.tokenValue,token);
+        db.insert(TOKEN_TABLE_NAME,null,contentValues);
+        Log.d("Inserted data","data was inserted");
+        return  true;
     }
 
     public boolean insertData(String messageData, String messageTime, String messageSenderID, String messageType){
@@ -60,6 +76,9 @@ public class DatabaseHelper extends SQLiteOpenHelper{
         contentValues.put(this.messageSenderID,messageSenderID);
         contentValues.put(this.messageType,messageType);
         db.insert(MSG_TABLE_NAME,null,contentValues);
+
+
+
         return  true;
     }
 
@@ -81,11 +100,26 @@ public class DatabaseHelper extends SQLiteOpenHelper{
         return cursor;
     }
 
+    public Cursor retrieveContact(SQLiteDatabase db,String contactID){
+        String[] columns = {fromID,fromToken,fromName};
+
+        Cursor cursor = db.query(CONT_TABLE_NAME,columns,"fromID = " + "'" + contactID + "'",null,null,null,null);
+
+        return cursor;
+    }
+
     public Cursor retrieveChat(SQLiteDatabase db, String contactID){
         String[] columns = {messageData,messageTime,messageSenderID,messageType};
 
-        Cursor cursor = db.query(MSG_TABLE_NAME,columns,null,null,null,null,null);
-        //messageSenderID like " + contactID
+        Cursor cursor = db.query(MSG_TABLE_NAME,columns,"SenderID = " + "'" + contactID + "'",null,null,null,null);
+
+        return cursor;
+    }
+
+    public Cursor retrieveToken(SQLiteDatabase db, String myID){
+        String[] columns = {tokenID,tokenValue};
+
+        Cursor cursor = db.query(TOKEN_TABLE_NAME,columns,"TokenID = " + "'" + myID + "'",null,null,null,null);
 
         return cursor;
     }

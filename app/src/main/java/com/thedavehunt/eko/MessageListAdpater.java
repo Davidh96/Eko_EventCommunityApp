@@ -4,13 +4,20 @@ import android.app.Notification;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
+import android.text.Layout;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
+
+import static android.view.View.TEXT_ALIGNMENT_VIEW_END;
 
 public class MessageListAdpater extends ArrayAdapter {
 
@@ -31,6 +38,13 @@ public class MessageListAdpater extends ArrayAdapter {
         TextView messageDta =(TextView)custom.findViewById(R.id.textMessageRow);
 
         messageDta.setText(message.getMessageData());
+
+        if(message.getMessageType().equals("Sent")){
+
+            custom.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorAccent));
+            messageDta.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
+            //messageDta.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+        }
 
         return custom;
     }
