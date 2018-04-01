@@ -108,8 +108,12 @@ public class databaseManager {
 
     public void rateEvent(String userID, String eventID,float rating){
 
-        rootRef.child("users").child(userID).child(eventID).child("rating").setValue(rating);
+        rootRef.child("users").child(userID).child("rated").child(eventID).child("rating").setValue(rating);
 
+    }
+
+    public void updateToken(String userID,String userToken){
+        rootRef.child("users").child(userID).child("Token").setValue(userToken);
     }
 
     //add member to event

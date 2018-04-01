@@ -35,22 +35,13 @@ public class mFirebaseMessagingService extends FirebaseMessagingService {
             Date currentTime = Calendar.getInstance().getTime();
 
             db.insertData(msgData,currentTime.toString(),msgFromID,"Received");
-            //db.insertContact(msgFromID,msgFromToken,msgFromName);
+            db.insertContact(msgFromID,msgFromToken,msgFromName);
 
             Intent i = new Intent("com.thedavehunt.eko");
             i.setAction("com.thedavehunt.eko");
             i.addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
             sendBroadcast(i);
 
-
-
-//            if (/* Check if data needs to be processed by long running job */ true) {
-//                // For long-running tasks (10 seconds or more) use Firebase Job Dispatcher.
-//                scheduleJob();
-//            } else {
-//                // Handle message within 10 seconds
-//                handleNow();
-//            }
 
         }
 

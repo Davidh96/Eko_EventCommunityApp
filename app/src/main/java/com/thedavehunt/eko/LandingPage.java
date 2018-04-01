@@ -5,6 +5,8 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -73,6 +75,8 @@ public class LandingPage extends Activity {
 
     private ArrayAdapter<CharSequence> adapter;
 
+    String myToken;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,6 +89,22 @@ public class LandingPage extends Activity {
         url=getResources().getString(R.string.serverURLGetEvents);
         //get current user
         user = FirebaseAuth.getInstance().getCurrentUser();
+
+        DatabaseHelper dbm = new DatabaseHelper(getApplicationContext());
+        SQLiteDatabase db = dbm.getWritableDatabase();
+
+        Cursor results = dbm.retrieveToken(db,"temp");
+
+        while(results.moveToNext()){
+            myToken = results.getString(results.getColumnIndex("TokenValue"));
+//            senderToken = results.getString(results.getColumnIndex("fromToken"));
+//            senderID = results.getString(results.getColumnIndex("fromID"));
+//            contact = new ContactDoc(senderToken, senderID, senderName);
+            //contactList.add(message);
+        }
+
+        databaseManager dbm1 = new databaseManager();
+        dbm1.updateToken(user.getUid(),myToken);
 
 
         //views
