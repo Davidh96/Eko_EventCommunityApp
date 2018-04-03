@@ -5,6 +5,8 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -13,6 +15,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.tasks.Task;
@@ -29,6 +32,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import static com.facebook.FacebookSdk.getApplicationContext;
@@ -38,6 +44,7 @@ import static com.facebook.FacebookSdk.getApplicationContext;
  */
 
 public class databaseManager {
+
     DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
     DatabaseReference eventRef = rootRef.child("event");
     //get Firebase auth instance
@@ -49,9 +56,10 @@ public class databaseManager {
 
     public ArrayList<eventDoc> eventList;
 
-
-
     public eventDoc event;
+
+    public String contactToken;
+
 
     public void createEvent(eventDoc event){
         this.event=event;
@@ -68,50 +76,22 @@ public class databaseManager {
 
         event.addMembers(new eventMember(user.getUid(),user.getDisplayName()));
 
-
-        //String location = event.getEventLocation();
-//        int ind = location.indexOf(",");
-//
-//        String lat = location.substring(0,ind);
-//        String lon = location.substring(ind+1);
-//        lat= lat+ "00";
-//        lon = lon+"00";
-//        int latD = lat.indexOf(".");
-//        int lonD = lon.indexOf(".");
-//
-//        lat = lat.substring(0,latD+3);
-//        lon = lon.substring(0,lonD+3);
-//
-//        lat = lat.replace(".","_");
-//        lon = lon.replace(".","_");
-
-
-        //Toast.makeText(getApplicationContext(),lat + " Hello "+ lon,Toast.LENGTH_SHORT).show();
-
-
-//        Double lat = Double.parseDouble(location.substring(0,ind));
-//        Double lon = Double.parseDouble(location.substring(ind+1));
-//        lat = (double)Math.round(lat*100)/100;
-//        Toast.makeText(getApplicationContext(),lat + " Hello "+ lon,Toast.LENGTH_SHORT).show();
-
         //push event to cloud database
         rootRef.child("events").child(id).setValue(event);
+        //give rating of 5 from the creator
         rateEvent(user.getUid(),id,5);
-
-
-        //set creator as an event member
-//        eventMember creator = new eventMember(user.getUid(),user.getDisplayName());
-//        addEventMember(id,creator);
 
         Toast.makeText(getApplicationContext(),"Event Created",Toast.LENGTH_SHORT).show();
     }
 
+    //give selected event a rating from a user
     public void rateEvent(String userID, String eventID,float rating){
 
         rootRef.child("users").child(userID).child("rated").child(eventID).child("rating").setValue(rating);
 
     }
 
+    //send updated token to firebase db
     public void updateToken(String userID,String userToken){
         rootRef.child("users").child(userID).child("Token").setValue(userToken);
     }
@@ -139,6 +119,7 @@ public class databaseManager {
 
     }
 
+    //remove member from event
     public void removeEventMember(String eventId, eventMember member){
         final eventMember member1 = member;
         final String id =eventId;
@@ -159,90 +140,132 @@ public class databaseManager {
         });
     }
 
+    //delete a selected event
+    public void deleteEvent(String id,Context con){
+        //((Activity)con).finish();
 
-    public ArrayList<eventDoc> retrieveAllEvents(){
-        eventList = new ArrayList<eventDoc>();
-    //creating a string request to send request to the url
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        //hiding the progressbar after completion
-                        //progressBar.setVisibility(View.INVISIBLE);
+        rootRef.child("events").child(id).removeValue();
 
-                        try {
-
-                            //getting the whole json object from the response
-                            JSONObject obj = new JSONObject(response);
-                            //titleText.setText(obj.toString());
-
-                            //we have the array named hero inside the object
-                            //so here we are getting that json array
-                            JSONArray result = obj.getJSONArray("events");
-
-
-                            //now looping through all the elements of the json array
-                            for (int i = 0; i < result.length(); i++) {
-
-                                //JSONObject obj1 = new JSONObject(test4);
-                                //JSONArray result = obj1.getJSONArray("events");
-                                String startString = "{\"-";
-                                //String temp = result.toString();
-                                String temp = result.getJSONObject(i).toString();
-                                int num = temp.indexOf(startString);
-                                String endString ="\"";
-                                int num1 = temp.indexOf(endString,temp.indexOf(endString)+1);
-
-                                String key = temp.substring(num+startString.length(),num1);
-                                JSONObject eventObj = result.getJSONObject(i).getJSONObject("-" + key);
-                                temp = eventObj.getString("eventDescription");
-
-
-                                eventDoc event = new eventDoc(eventObj.getString("id"),eventObj.getString("eventName"),eventObj.getString("eventAuthor"),eventObj.getString("eventAuthorID"),
-                                        eventObj.getString("eventDescription"),eventObj.getString("eventCategory"),eventObj.getString("eventLocation"),eventObj.getString("eventDate"),
-                                        eventObj.getString("eventTime"));
-
-                                databaseManager.this.eventList.add(event);
-
-
-                            }
-
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        //displaying the error in toast if occurrs
-                        Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-        //creating a request queue
-        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-
-        //adding the string request to request queue
-        requestQueue.add(stringRequest);
-
-        Toast.makeText(getApplicationContext(),"" + eventList.toString(),Toast.LENGTH_LONG).show();
-
-        return eventList;
     }
 
-    public void readEvent(String id){
 
-        Toast.makeText(getApplicationContext(),id,Toast.LENGTH_LONG).show();
+//    public ArrayList<eventDoc> retrieveAllEvents(){
+//        eventList = new ArrayList<eventDoc>();
+//    //creating a string request to send request to the url
+//        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+//                new Response.Listener<String>() {
+//                    @Override
+//                    public void onResponse(String response) {
+//                        //hiding the progressbar after completion
+//                        //progressBar.setVisibility(View.INVISIBLE);
+//
+//                        try {
+//
+//                            //getting the whole json object from the response
+//                            JSONObject obj = new JSONObject(response);
+//                            //titleText.setText(obj.toString());
+//
+//                            //we have the array named hero inside the object
+//                            //so here we are getting that json array
+//                            JSONArray result = obj.getJSONArray("events");
+//
+//
+//                            //now looping through all the elements of the json array
+//                            for (int i = 0; i < result.length(); i++) {
+//
+//                                //JSONObject obj1 = new JSONObject(test4);
+//                                //JSONArray result = obj1.getJSONArray("events");
+//                                String startString = "{\"-";
+//                                //String temp = result.toString();
+//                                String temp = result.getJSONObject(i).toString();
+//                                int num = temp.indexOf(startString);
+//                                String endString ="\"";
+//                                int num1 = temp.indexOf(endString,temp.indexOf(endString)+1);
+//
+//                                String key = temp.substring(num+startString.length(),num1);
+//                                JSONObject eventObj = result.getJSONObject(i).getJSONObject("-" + key);
+//                                temp = eventObj.getString("eventDescription");
+//
+//
+//                                eventDoc event = new eventDoc(eventObj.getString("id"),eventObj.getString("eventName"),eventObj.getString("eventAuthor"),eventObj.getString("eventAuthorID"),
+//                                        eventObj.getString("eventDescription"),eventObj.getString("eventCategory"),eventObj.getString("eventLocation"),eventObj.getString("eventDate"),
+//                                        eventObj.getString("eventTime"));
+//
+//                                databaseManager.this.eventList.add(event);
+//
+//
+//                            }
+//
+//
+//                        } catch (JSONException e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
+//                },
+//                new Response.ErrorListener() {
+//                    @Override
+//                    public void onErrorResponse(VolleyError error) {
+//                        //displaying the error in toast if occurrs
+//                        Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
+//                    }
+//                });
+//
+//        //creating a request queue
+//        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+//
+//        //adding the string request to request queue
+//        requestQueue.add(stringRequest);
+//
+//        Toast.makeText(getApplicationContext(),"" + eventList.toString(),Toast.LENGTH_LONG).show();
+//
+//        return eventList;
+//    }
+
+//    public void readEvent(String id){
+//
+//        Toast.makeText(getApplicationContext(),id,Toast.LENGTH_LONG).show();
+//
+//
+//        rootRef.child(id).addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot snapshot) {
+//
+//                //get event class
+//                databaseManager.this.event = snapshot.getValue(eventDoc.class);
+//
+//            }
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//            }
+//        });
+//
+//        Toast.makeText(getApplicationContext(),databaseManager.this.event.getEventName(),Toast.LENGTH_LONG).show();
+//
+//        //return event;
+//    }
 
 
-        rootRef.child(id).addValueEventListener(new ValueEventListener() {
+
+    public void getContactToken(final String id){
+
+        Cursor results;
+        final DatabaseHelper dbm;
+
+        dbm = new DatabaseHelper(getApplicationContext());
+        SQLiteDatabase db = dbm.getReadableDatabase();
+
+
+        rootRef.child("users").child(id).child("Token").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
 
                 //get event class
-                databaseManager.this.event = snapshot.getValue(eventDoc.class);
+
+                String contactToken= snapshot.getValue().toString();
+
+                MessagingManager mm = new MessagingManager(getApplicationContext());
+                mm.initiateChat(contactToken);
+
 
             }
             @Override
@@ -250,15 +273,8 @@ public class databaseManager {
             }
         });
 
-        Toast.makeText(getApplicationContext(),databaseManager.this.event.getEventName(),Toast.LENGTH_LONG).show();
-
-        //return event;
-    }
-
-    public void deleteEvent(String id,Context con){
-        //((Activity)con).finish();
-
-        rootRef.child("events").child(id).removeValue();
 
     }
+
+
 }

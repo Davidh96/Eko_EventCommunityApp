@@ -6,6 +6,7 @@
     <string name="serverURL">http://188.166.98.100/</string>
     <string name="serverURLGetEvents">http://188.166.98.100/getEvents</string>
     <string name="serverURLrecieve">http://188.166.98.100/retrieveEvent/</string>
+    <string name="serverURLsendmsg">http://188.166.98.100/sendMsg</string>
     <string name="guestViewEventToast">You must sign in to view events</string>
     <string name="positiveActionText">Sure</string>
     <string name="negativeActionText">Nope</string>

@@ -92,6 +92,14 @@ public class DatabaseHelper extends SQLiteOpenHelper{
         return  true;
     }
 
+    public boolean addContact(String contactID){
+        databaseManager dbm = new databaseManager();
+        dbm.getContactToken(contactID);
+
+
+        return true;
+    }
+
     public Cursor retrieveContacts(SQLiteDatabase db){
         String[] columns = {fromID,fromToken,fromName};
 
@@ -116,11 +124,16 @@ public class DatabaseHelper extends SQLiteOpenHelper{
         return cursor;
     }
 
-    public Cursor retrieveToken(SQLiteDatabase db, String myID){
+    public String retrieveToken(SQLiteDatabase db, String myID){
         String[] columns = {tokenID,tokenValue};
+        String myToken="";
 
         Cursor cursor = db.query(TOKEN_TABLE_NAME,columns,"TokenID = " + "'" + myID + "'",null,null,null,null);
 
-        return cursor;
+        while(cursor.moveToNext()){
+            myToken = cursor.getString(cursor.getColumnIndex("TokenValue"));
+        }
+
+        return myToken;
     }
 }

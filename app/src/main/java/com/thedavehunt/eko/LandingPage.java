@@ -83,7 +83,6 @@ public class LandingPage extends Activity {
         setContentView(R.layout.activity_landing_page);
 
         DatabaseHelper dbHelper = new DatabaseHelper(getApplicationContext());
-        //dbHelper.
 
         //get url for retrieving events
         url=getResources().getString(R.string.serverURLGetEvents);
@@ -93,15 +92,9 @@ public class LandingPage extends Activity {
         DatabaseHelper dbm = new DatabaseHelper(getApplicationContext());
         SQLiteDatabase db = dbm.getWritableDatabase();
 
-        Cursor results = dbm.retrieveToken(db,"temp");
 
-        while(results.moveToNext()){
-            myToken = results.getString(results.getColumnIndex("TokenValue"));
-//            senderToken = results.getString(results.getColumnIndex("fromToken"));
-//            senderID = results.getString(results.getColumnIndex("fromID"));
-//            contact = new ContactDoc(senderToken, senderID, senderName);
-            //contactList.add(message);
-        }
+        myToken = dbm.retrieveToken(db,"temp");
+
 
         databaseManager dbm1 = new databaseManager();
         dbm1.updateToken(user.getUid(),myToken);

@@ -1,10 +1,13 @@
 package com.thedavehunt.eko;
 
-import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -12,38 +15,24 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
-public class ContactDisplay extends Activity {
+public class ContactDisplay extends FragmentActivity implements AddContactFragment.AddContactDialogListener {
+
     DatabaseHelper dbm;
     SQLiteDatabase db;
 
-    ArrayList<ContactDoc> contactList;
+    private ArrayList<ContactDoc> contactList;
     private ContactListAdapter listAdapter;
+    private BroadcastReceiver mReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_chat_display);
+        setContentView(R.layout.activity_contact_display);
 
-        dbm = new DatabaseHelper(getApplicationContext());
-        db = dbm.getReadableDatabase();
-        Cursor results = dbm.retrieveContacts(db);
-
-        String senderName;
-        String senderMessage;
-        String senderToken;
-        String senderID;
-
-        //create event list to display in list view
-        //needs to be cleared everytime
+        //create contact list to display in list view
         contactList = new ArrayList<ContactDoc>();
 
-        while(results.moveToNext()){
-            senderName = results.getString(results.getColumnIndex("fromName"));
-            senderToken = results.getString(results.getColumnIndex("fromToken"));
-            senderID = results.getString(results.getColumnIndex("fromID"));
-            ContactDoc message = new ContactDoc(senderToken, senderID, senderName);
-            contactList.add(message);
-        }
+        retrieveContactList();
 
         //initialise adapter
         listAdapter = new ContactListAdapter(ContactDisplay.this,contactList);
@@ -59,13 +48,77 @@ public class ContactDisplay extends Activity {
 
                 Intent viewChat = new Intent(ContactDisplay.this, ViewChat.class);
 
-                //eventDoc evnt = (eventDoc) eventList.get(i);
-                Toast.makeText(getApplicationContext(), "Hello " + i, Toast.LENGTH_LONG);
                 viewChat.putExtra("id", contactList.get(i).getContactID() );
 
                 startActivity(viewChat);
 
             }
         });
+    }
+
+    private void retrieveContactList(){
+
+        dbm = new DatabaseHelper(getApplicationContext());
+        db = dbm.getReadableDatabase();
+
+        Cursor results = dbm.retrieveContacts(db);
+
+        String senderName;
+        String senderToken;
+        String senderID;
+
+        while(results.moveToNext()){
+            senderName = results.getString(results.getColumnIndex("fromName"));
+            senderToken = results.getString(results.getColumnIndex("fromToken"));
+            senderID = results.getString(results.getColumnIndex("fromID"));
+            ContactDoc message = new ContactDoc(senderToken, senderID, senderName);
+            contactList.add(message);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        //when new contact has been added
+        IntentFilter intentFilter = new IntentFilter(
+                "ContactAdded");
+
+        mReceiver = new BroadcastReceiver() {
+
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                //update contact list
+
+                listAdapter.clear();
+
+                //get new list
+                retrieveContactList();
+
+                //update list
+                listAdapter.notifyDataSetChanged();
+            }
+        };
+        //register receiver
+        this.registerReceiver(mReceiver, intentFilter);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        //unregister receiver
+        this.unregisterReceiver(this.mReceiver);
+    }
+
+    //shows time fragment
+    public void showAddContactFragment(View v){
+        AddContactFragment addContactFragment = new AddContactFragment();
+        addContactFragment.show(getSupportFragmentManager(),"tag");
+    }
+
+    public void returnContactID(String contactID) {
+        Toast.makeText(getApplicationContext(),"Contact has been sent a request",Toast.LENGTH_SHORT).show();
+        DatabaseHelper dbm = new DatabaseHelper(getApplicationContext());
+        dbm.addContact(contactID);
     }
 }
