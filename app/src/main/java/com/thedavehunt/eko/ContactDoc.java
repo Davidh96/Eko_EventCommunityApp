@@ -5,6 +5,7 @@ public class ContactDoc {
     private String contactToken;
     private String contactID;
     private String contactName;
+    private String contactPublicKey;
 
     public ContactDoc(String contactToken, String contactID, String contactName) {
         this.contactToken = contactToken;
@@ -34,5 +35,13 @@ public class ContactDoc {
 
     public void setContactName(String contactName) {
         this.contactName = contactName;
+    }
+
+    public String getContactPublicKey() {
+        return contactPublicKey;
+    }
+
+    public void setContactPublicKey(String contactPublicKey) {
+        this.contactPublicKey = contactPublicKey;
     }
 }

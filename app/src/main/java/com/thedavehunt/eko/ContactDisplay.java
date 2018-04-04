@@ -15,6 +15,8 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
+import static com.facebook.FacebookSdk.getApplicationContext;
+
 public class ContactDisplay extends FragmentActivity implements AddContactFragment.AddContactDialogListener {
 
     DatabaseHelper dbm;
@@ -120,5 +122,7 @@ public class ContactDisplay extends FragmentActivity implements AddContactFragme
         Toast.makeText(getApplicationContext(),"Contact has been sent a request",Toast.LENGTH_SHORT).show();
         DatabaseHelper dbm = new DatabaseHelper(getApplicationContext());
         dbm.addContact(contactID);
+        MessagingManager mm = new MessagingManager(getApplicationContext());
+        mm.initiateChat(contactID);
     }
 }

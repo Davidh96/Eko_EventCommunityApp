@@ -24,6 +24,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -132,6 +133,7 @@ public class ViewChat extends AppCompatActivity {
         this.unregisterReceiver(this.mReceiver);
     }
 
+    EncryptionManager em = new EncryptionManager();
     public void retrieveMessages(){
 
         results = dbm.retrieveChat(db,id);
@@ -145,7 +147,11 @@ public class ViewChat extends AppCompatActivity {
             senderID = results.getString(results.getColumnIndex("SenderID"));
             messageData = results.getString(results.getColumnIndex("Data"));
             messageType = results.getString(results.getColumnIndex("MessageType"));
+            //decrypt message
+            //messageData = em.decrypt(messageData.getBytes(),em.convertStringToPriv(em.getPrivateKey()));
+            messageData = new String(messageData.getBytes());
             MessageDoc message = new MessageDoc("temp",timestamp,senderID,messageData,messageType);
+
             messageList.add(message);
         }
 
@@ -172,7 +178,11 @@ public class ViewChat extends AppCompatActivity {
     private void sendMessage(){
 
         MessagingManager mm = new MessagingManager(getApplicationContext());
-        mm.sendMessage(contact,myToken,messageTextEdit.getText().toString());
+        try {
+            mm.sendMessage(contact,myToken,messageTextEdit.getText().toString());
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
 
         listAdapter.clear();
 

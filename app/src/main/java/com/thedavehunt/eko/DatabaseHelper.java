@@ -7,6 +7,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import static com.facebook.FacebookSdk.getApplicationContext;
+
 public class DatabaseHelper extends SQLiteOpenHelper{
 
     public static final String DATABASE_NAME = "message.db";
@@ -23,6 +25,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
     public static final String  fromToken= "fromToken";
     public static final String  fromID= "fromID";
     public static final String  fromName= "fromName";
+    public static final String  fromPublicKey="fromPublicKey";
 
     public static final String  TOKEN_TABLE_NAME = "fcmToken";
     public static final String  tokenID= "TokenID";
@@ -46,7 +49,8 @@ public class DatabaseHelper extends SQLiteOpenHelper{
         sqLiteDatabase.execSQL("create table " + CONT_TABLE_NAME +
                 " ( " + fromID +" TEXT PRIMARY KEY," +
                 " " + fromToken +" TEXT, "+
-                fromName +" TEXT)");
+                fromName +" TEXT,"+
+                fromPublicKey +" TEXT)");
 
         sqLiteDatabase.execSQL("create table " + TOKEN_TABLE_NAME +
                 " ( " + tokenID +" TEXT PRIMARY KEY," +
@@ -82,26 +86,50 @@ public class DatabaseHelper extends SQLiteOpenHelper{
         return  true;
     }
 
-    public boolean insertContact(String ID, String fromToken, String fromName){
+    public boolean insertContact(ContactDoc contact){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        contentValues.put(this.fromID,ID);
-        contentValues.put(this.fromToken,fromToken);
-        contentValues.put(this.fromName,fromName);
+        contentValues.put(this.fromID,contact.getContactID());
+        contentValues.put(this.fromToken,contact.getContactToken());
+        contentValues.put(this.fromName,contact.getContactName());
+        contentValues.put(this.fromPublicKey,contact.getContactPublicKey());
         db.insert(CONT_TABLE_NAME,null,contentValues);
         return  true;
     }
 
     public boolean addContact(String contactID){
+        this.insertContact(new ContactDoc("unknown",contactID,"unknown"));
         databaseManager dbm = new databaseManager();
+
         dbm.getContactToken(contactID);
+        String contactToken2 = retrieveContactToken(this.getWritableDatabase(),contactID);
+        Log.d("contactToken12",contactToken2);
+        dbm.getContactKey(contactID);
+        String contactToken = retrieveContactToken(this.getWritableDatabase(),contactID);
+
+        Log.d("contactToken1",contactToken);
+
+
 
 
         return true;
     }
 
+    public boolean updateContact(ContactDoc contact){
+        Log.d("UpdateContact1",contact.getContactID());
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(this.fromID,contact.getContactID());
+        contentValues.put(this.fromToken,contact.getContactToken());
+        contentValues.put(this.fromName,contact.getContactName());
+        contentValues.put(this.fromPublicKey,contact.getContactPublicKey());
+
+        db.update(CONT_TABLE_NAME,contentValues,"fromID = " + "'" + contact.getContactID() + "'",null);
+        return true;
+    }
+
     public Cursor retrieveContacts(SQLiteDatabase db){
-        String[] columns = {fromID,fromToken,fromName};
+        String[] columns = {fromID,fromToken,fromName,fromPublicKey};
 
         Cursor cursor = db.query(CONT_TABLE_NAME,columns,null,null,null,null,null);
 
@@ -109,7 +137,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
     }
 
     public Cursor retrieveContact(SQLiteDatabase db,String contactID){
-        String[] columns = {fromID,fromToken,fromName};
+        String[] columns = {fromID,fromToken,fromName,fromPublicKey};
 
         Cursor cursor = db.query(CONT_TABLE_NAME,columns,"fromID = " + "'" + contactID + "'",null,null,null,null);
 
@@ -135,5 +163,34 @@ public class DatabaseHelper extends SQLiteOpenHelper{
         }
 
         return myToken;
+    }
+
+    public String retrieveContactPublicKey(SQLiteDatabase db,String contactID){
+
+        databaseManager dbm = new databaseManager();
+        dbm.getContactKey(contactID);
+        String[] columns = {fromID,fromToken,fromName,fromPublicKey};
+
+        Cursor cursor = db.query(CONT_TABLE_NAME,columns,"fromID = " + "'" + contactID + "'",null,null,null,null);
+
+        String key= null;
+        while(cursor.moveToNext()){
+            key = cursor.getString(cursor.getColumnIndex("fromPublicKey"));
+        }
+
+        return key;
+    }
+
+    public String retrieveContactToken(SQLiteDatabase db, String contactID){
+        String[] columns = {fromID,fromToken,fromName,fromPublicKey};
+        String contactToken="";
+
+        Cursor cursor = db.query(CONT_TABLE_NAME,columns,"fromID = " + "'" + contactID + "'",null,null,null,null);
+
+        while(cursor.moveToNext()){
+            contactToken = cursor.getString(cursor.getColumnIndex("fromToken"));
+        }
+
+        return contactToken;
     }
 }

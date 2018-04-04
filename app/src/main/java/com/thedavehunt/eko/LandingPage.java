@@ -16,6 +16,7 @@ import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -42,6 +43,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -81,6 +83,24 @@ public class LandingPage extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_landing_page);
+
+        EncryptionManager em = new EncryptionManager();
+
+        File file = new File("/data/data/com.thedavehunt.eko/files/privateKey.txt");
+        if(!file.exists()){
+
+            em.generateKeys();
+        }
+
+
+
+
+
+        //em.keys.getPublic().toString();
+
+        Log.d("PrivateKey",em.getPrivateKey());
+        Log.d("PublicoeKey",em.getPublicKey());
+        //Log.d("PublicKey",em.convertPubToString(em.keys.getPublic()));
 
         DatabaseHelper dbHelper = new DatabaseHelper(getApplicationContext());
 

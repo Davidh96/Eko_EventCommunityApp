@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
+import android.util.Log;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -94,6 +95,11 @@ public class databaseManager {
     //send updated token to firebase db
     public void updateToken(String userID,String userToken){
         rootRef.child("users").child(userID).child("Token").setValue(userToken);
+    }
+
+    //send updated token to firebase db
+    public void updatePublicKey(String userID,String publicKey){
+        rootRef.child("users").child(userID).child("PublicKey").setValue(publicKey);
     }
 
     //add member to event
@@ -263,8 +269,9 @@ public class databaseManager {
 
                 String contactToken= snapshot.getValue().toString();
 
-                MessagingManager mm = new MessagingManager(getApplicationContext());
-                mm.initiateChat(contactToken);
+                DatabaseHelper db = new DatabaseHelper(getApplicationContext());
+                ContactDoc contact = new ContactDoc(contactToken,id,"unknown");
+                db.updateContact(contact);
 
 
             }
@@ -273,6 +280,48 @@ public class databaseManager {
             }
         });
 
+
+    }
+
+    public void getContactKey(final String id){
+
+        Cursor results;
+        final DatabaseHelper dbm;
+
+        dbm = new DatabaseHelper(getApplicationContext());
+        SQLiteDatabase db = dbm.getReadableDatabase();
+
+
+        rootRef.child("users").child(id).child("PublicKey").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+
+                DatabaseHelper dbm = new DatabaseHelper(getApplicationContext());
+                Cursor result = dbm.retrieveContact(dbm.getWritableDatabase(),id);
+
+                ContactDoc contact=null;
+
+                while(result.moveToNext()){
+                    //cursor.getString(cursor.getColumnIndex("TokenValue"));
+                    String name = result.getString(result.getColumnIndex("fromName"));
+                    String token = result.getString(result.getColumnIndex("fromToken"));
+                    contact = new ContactDoc(token,id,name);
+                }
+
+                //get event class
+
+                String contactKey= snapshot.getValue().toString();
+                contact.setContactPublicKey(contactKey);
+
+                dbm.updateContact(contact);
+
+                Log.d("contactID",contact.getContactID());
+
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
 
     }
 
