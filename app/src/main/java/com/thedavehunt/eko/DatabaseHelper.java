@@ -98,7 +98,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
     }
 
     public boolean addContact(String contactID){
-        this.insertContact(new ContactDoc("unknown",contactID,"unknown"));
+        this.insertContact(new ContactDoc(contactID));
         databaseManager dbm = new databaseManager();
 
         dbm.getContactToken(contactID);

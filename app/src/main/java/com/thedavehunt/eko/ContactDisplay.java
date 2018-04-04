@@ -68,12 +68,14 @@ public class ContactDisplay extends FragmentActivity implements AddContactFragme
         String senderName;
         String senderToken;
         String senderID;
+        String senderKey;
 
         while(results.moveToNext()){
             senderName = results.getString(results.getColumnIndex("fromName"));
             senderToken = results.getString(results.getColumnIndex("fromToken"));
             senderID = results.getString(results.getColumnIndex("fromID"));
-            ContactDoc message = new ContactDoc(senderToken, senderID, senderName);
+            senderKey = results.getString(results.getColumnIndex("fromPublicKey"));
+            ContactDoc message = new ContactDoc(senderToken, senderID, senderName,senderKey);
             contactList.add(message);
         }
     }
@@ -119,10 +121,10 @@ public class ContactDisplay extends FragmentActivity implements AddContactFragme
     }
 
     public void returnContactID(String contactID) {
-        Toast.makeText(getApplicationContext(),"Contact has been sent a request",Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(),"Contact Added",Toast.LENGTH_SHORT).show();
         DatabaseHelper dbm = new DatabaseHelper(getApplicationContext());
         dbm.addContact(contactID);
-        MessagingManager mm = new MessagingManager(getApplicationContext());
+        MessagingManager mm = new MessagingManager();
         mm.initiateChat(contactID);
     }
 }

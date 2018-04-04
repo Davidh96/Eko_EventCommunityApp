@@ -270,7 +270,7 @@ public class databaseManager {
                 String contactToken= snapshot.getValue().toString();
 
                 DatabaseHelper db = new DatabaseHelper(getApplicationContext());
-                ContactDoc contact = new ContactDoc(contactToken,id,"unknown");
+                ContactDoc contact = new ContactDoc(contactToken,id);
                 db.updateContact(contact);
 
 
@@ -301,17 +301,20 @@ public class databaseManager {
 
                 ContactDoc contact=null;
 
+                String name=null;
+                String token=null;
+
                 while(result.moveToNext()){
                     //cursor.getString(cursor.getColumnIndex("TokenValue"));
-                    String name = result.getString(result.getColumnIndex("fromName"));
-                    String token = result.getString(result.getColumnIndex("fromToken"));
-                    contact = new ContactDoc(token,id,name);
+                    name = result.getString(result.getColumnIndex("fromName"));
+                    token = result.getString(result.getColumnIndex("fromToken"));
                 }
 
                 //get event class
 
                 String contactKey= snapshot.getValue().toString();
-                contact.setContactPublicKey(contactKey);
+                contact = new ContactDoc(token,id,name,contactKey);
+                //contact.setContactPublicKey(contactKey);
 
                 dbm.updateContact(contact);
 

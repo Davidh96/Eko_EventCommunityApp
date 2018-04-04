@@ -7,10 +7,25 @@ public class ContactDoc {
     private String contactName;
     private String contactPublicKey;
 
-    public ContactDoc(String contactToken, String contactID, String contactName) {
+    public ContactDoc(String contactToken, String contactID, String contactName, String contactPublicKey) {
         this.contactToken = contactToken;
         this.contactID = contactID;
         this.contactName = contactName;
+        this.contactPublicKey = contactPublicKey;
+    }
+
+    public ContactDoc(String contactID) {
+        this.contactToken = "unknwon";
+        this.contactID = contactID;
+        this.contactName = "unknown";
+        this.contactPublicKey = "unknown";
+    }
+
+    public ContactDoc(String contactToken,String contactID) {
+        this.contactToken = contactToken;
+        this.contactID = contactID;
+        this.contactName = "unknown";
+        this.contactPublicKey = "unknown";
     }
 
     public String getContactToken() {

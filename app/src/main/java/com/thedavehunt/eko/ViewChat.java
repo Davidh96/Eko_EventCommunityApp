@@ -133,7 +133,6 @@ public class ViewChat extends AppCompatActivity {
         this.unregisterReceiver(this.mReceiver);
     }
 
-    EncryptionManager em = new EncryptionManager();
     public void retrieveMessages(){
 
         results = dbm.retrieveChat(db,id);
@@ -147,10 +146,8 @@ public class ViewChat extends AppCompatActivity {
             senderID = results.getString(results.getColumnIndex("SenderID"));
             messageData = results.getString(results.getColumnIndex("Data"));
             messageType = results.getString(results.getColumnIndex("MessageType"));
-            //decrypt message
-            //messageData = em.decrypt(messageData.getBytes(),em.convertStringToPriv(em.getPrivateKey()));
             messageData = new String(messageData.getBytes());
-            MessageDoc message = new MessageDoc("temp",timestamp,senderID,messageData,messageType);
+            MessageDoc message = new MessageDoc(timestamp,senderID,messageData,messageType);
 
             messageList.add(message);
         }
@@ -163,6 +160,7 @@ public class ViewChat extends AppCompatActivity {
         String senderName;
         String senderToken;
         String senderID;
+        String senderKey;
 
 
 
@@ -170,17 +168,18 @@ public class ViewChat extends AppCompatActivity {
             senderName = results.getString(results.getColumnIndex("fromName"));
             senderToken = results.getString(results.getColumnIndex("fromToken"));
             senderID = results.getString(results.getColumnIndex("fromID"));
-            contact = new ContactDoc(senderToken, senderID, senderName);
+            senderKey = results.getString(results.getColumnIndex("fromPublicKey"));
+            contact = new ContactDoc(senderToken, senderID, senderName,senderKey);
         }
 
     }
 
     private void sendMessage(){
 
-        MessagingManager mm = new MessagingManager(getApplicationContext());
+        MessagingManager mm = new MessagingManager();
         try {
             mm.sendMessage(contact,myToken,messageTextEdit.getText().toString());
-        } catch (UnsupportedEncodingException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 

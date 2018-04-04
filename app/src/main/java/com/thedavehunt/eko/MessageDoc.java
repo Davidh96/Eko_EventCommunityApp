@@ -2,26 +2,16 @@ package com.thedavehunt.eko;
 
 public class MessageDoc {
 
-    private String messageID;
     private String timestamp;
     private String senderID;
     private  String messageData;
     private String messageType;
 
-    public MessageDoc(String messageID, String timestamp, String senderID, String messageData, String messageType) {
-        this.messageID = messageID;
+    public MessageDoc(String timestamp, String senderID, String messageData, String messageType) {
         this.timestamp = timestamp;
         this.senderID = senderID;
         this.messageData = messageData;
         this.messageType = messageType;
-    }
-
-    public String getMessageID() {
-        return messageID;
-    }
-
-    public void setMessageID(String messageID) {
-        this.messageID = messageID;
     }
 
     public String getTimestamp() {
