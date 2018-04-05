@@ -4,30 +4,51 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".AddContactFragment"
-    android:orientation="vertical">
+    android:orientation="vertical"
+>
+
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Your friend code:"
+        android:text="Your ID:"
+        android:textSize="@dimen/textSizeLarge"
+        android:layout_marginLeft="@dimen/marginLR"
+        android:layout_marginRight="@dimen/marginLR"
         />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textIsSelectable="true"
-        android:text="test"/>
+        android:id="@+id/textUserIDContact"
+        android:textSize="@dimen/textSizeMedium"
+        android:layout_marginTop="@dimen/marginRelatedTB"
+        android:layout_marginBottom="@dimen/marginTB"
+        android:layout_marginLeft="@dimen/marginLR"
+        android:layout_marginRight="@dimen/marginLR"
+        android:text="12345678910"
+        android:textColor="@color/colorAccent"
+        />
 
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Enter friend code here:"/>
+        android:text="Enter Contact ID here:"
+        android:textSize="@dimen/textSizeLarge"
+
+        android:layout_marginBottom="@dimen/marginRelatedTB"
+        android:layout_marginLeft="@dimen/marginLR"
+        android:layout_marginRight="@dimen/marginLR"/>
 
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/editAddContact"/>
+        android:id="@+id/editAddContact"
+        android:textSize="@dimen/textSizeMedium"
+        android:layout_marginLeft="@dimen/marginLR"
+        android:layout_marginRight="@dimen/marginLR"/>
 
 
 

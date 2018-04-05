@@ -33,7 +33,7 @@ public class mFirebaseMessagingService extends FirebaseMessagingService {
             byte []enc=convertDataToByte(msgData);
 
             EncryptionManager em = new EncryptionManager();
-            msgData = em.decrypt(enc,em.convertStringToPriv(em.getPrivateKey()));
+            msgData = em.decrypt(enc,em.convertStringToPriv(em.getKeyFromFile("privateKey.txt")));
 
             db.insertData(msgData,currentTime.toString(),msgFromID,"Received");
 

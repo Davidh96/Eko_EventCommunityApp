@@ -84,25 +84,18 @@ public class LandingPage extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_landing_page);
 
-        EncryptionManager em = new EncryptionManager();
 
-        File file = new File("/data/data/com.thedavehunt.eko/files/privateKey.txt");
-        if(!file.exists()){
 
+        //check if private and public keys have already been created
+        File privKeyFile = new File("/data/data/com.thedavehunt.eko/files/privateKey.txt");
+        File pubKeyFile = new File("/data/data/com.thedavehunt.eko/files/publicKey.txt");
+        if(!privKeyFile.exists() && !pubKeyFile.exists()){
+            //if not present, generate keys
+            EncryptionManager em = new EncryptionManager();
             em.generateKeys();
         }
 
-
-
-
-
-        //em.keys.getPublic().toString();
-
-        Log.d("PrivateKey",em.getPrivateKey());
-        Log.d("PublicoeKey",em.getPublicKey());
-        //Log.d("PublicKey",em.convertPubToString(em.keys.getPublic()));
-
-        DatabaseHelper dbHelper = new DatabaseHelper(getApplicationContext());
+        //DatabaseHelper dbHelper = new DatabaseHelper(getApplicationContext());
 
         //get url for retrieving events
         url=getResources().getString(R.string.serverURLGetEvents);

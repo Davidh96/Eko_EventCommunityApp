@@ -36,8 +36,10 @@ public class MessageListAdpater extends ArrayAdapter {
 
         MessageDoc message = messageList.get(position);
         TextView messageDta =(TextView)custom.findViewById(R.id.textMessageRow);
+        TextView messageTime = (TextView)custom.findViewById(R.id.textDateTimeChat);
 
         messageDta.setText(message.getMessageData());
+        messageTime.setText(message.getTimestamp());
 
         if(message.getMessageType().equals("Sent")){
 

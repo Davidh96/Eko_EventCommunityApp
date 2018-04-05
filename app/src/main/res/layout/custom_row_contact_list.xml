@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:layout_marginRight="@dimen/marginLR"
     android:layout_marginLeft="@dimen/marginLR"
     android:paddingTop="@dimen/marginTB"
@@ -10,21 +11,14 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/textDateTimeChat"
-        android:text="da:ti da-ti-me"
-        android:textSize="@dimen/textSizeSmall"
-        android:textAlignment="center"
-        android:layout_marginBottom="@dimen/marginRelatedTB"/>
+        android:id="@+id/textSenderName"
+        android:textSize="@dimen/textSizeMedium"/>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/textMessageRow"
-        android:text="Hello World"
-        android:textSize="@dimen/textSizeMedium"
-        android:layout_marginRight="@dimen/marginLR"
-        android:layout_marginLeft="@dimen/marginLR"
-        android:layout_below="@id/textDateTimeChat"
-        />
+        android:id="@+id/textMessageData"
+        android:textSize="@dimen/textSizeSmall"
+        android:text="No messages"/>
 
-</RelativeLayout>
+</LinearLayout>

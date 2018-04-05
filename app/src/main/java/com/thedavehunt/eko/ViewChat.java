@@ -1,17 +1,20 @@
 package com.thedavehunt.eko;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -30,7 +33,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 
-public class ViewChat extends AppCompatActivity {
+public class ViewChat extends Activity {
 
     DatabaseHelper dbm;
     SQLiteDatabase db;
@@ -38,8 +41,9 @@ public class ViewChat extends AppCompatActivity {
     private ArrayList<MessageDoc> messageList;
     public MessageListAdpater listAdapter;
 
-    Button sendMessageBtn;
+    FloatingActionButton sendMessageBtn;
     EditText messageTextEdit;
+    TextView chatTitleBar;
 
     private FirebaseUser user;
     ContactDoc contact=null;
@@ -59,7 +63,8 @@ public class ViewChat extends AppCompatActivity {
 
         //set views
         messageTextEdit = (EditText)findViewById(R.id.editMessageChat);
-        sendMessageBtn = (Button)findViewById(R.id.buttonSendChat);
+        sendMessageBtn = (FloatingActionButton)findViewById(R.id.buttonSendChat);
+        chatTitleBar = (TextView)findViewById(R.id.textTitleBarChat);
         list = (ListView)findViewById(R.id.listChatView);
 
         Intent i = getIntent();
@@ -157,7 +162,7 @@ public class ViewChat extends AppCompatActivity {
     private void retrieveContactDetails(){
         results = dbm.retrieveContact(db,id);
 
-        String senderName;
+        String senderName="";
         String senderToken;
         String senderID;
         String senderKey;
@@ -171,6 +176,8 @@ public class ViewChat extends AppCompatActivity {
             senderKey = results.getString(results.getColumnIndex("fromPublicKey"));
             contact = new ContactDoc(senderToken, senderID, senderName,senderKey);
         }
+
+        chatTitleBar.setText(senderName);
 
     }
 

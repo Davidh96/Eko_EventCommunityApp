@@ -9,16 +9,22 @@ import android.support.v7.app.AppCompatDialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 
-
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 
 public class AddContactFragment extends AppCompatDialogFragment {
     private EditText addContactEdit;
+    private TextView userIDContactText;
     private AddContactFragment.AddContactDialogListener listener;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+
+        //get current user
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
@@ -26,6 +32,10 @@ public class AddContactFragment extends AppCompatDialogFragment {
         View view = inflater.inflate(R.layout.fragment_add_contact,null);
 
         addContactEdit = (EditText) view.findViewById(R.id.editAddContact);
+        userIDContactText = (TextView)view.findViewById(R.id.textUserIDContact);
+
+        //display user id, used to add contacts
+        userIDContactText.setText(user.getUid());
 
         //create view in front of current activity
         builder.setView(view)
@@ -43,8 +53,6 @@ public class AddContactFragment extends AppCompatDialogFragment {
                         listener.returnContactID(contactID);
                     }
                 });
-
-
 
         return builder.create();
     }

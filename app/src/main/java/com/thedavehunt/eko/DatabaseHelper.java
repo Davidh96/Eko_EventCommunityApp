@@ -80,9 +80,6 @@ public class DatabaseHelper extends SQLiteOpenHelper{
         contentValues.put(this.messageSenderID,messageSenderID);
         contentValues.put(this.messageType,messageType);
         db.insert(MSG_TABLE_NAME,null,contentValues);
-
-
-
         return  true;
     }
 
@@ -108,9 +105,6 @@ public class DatabaseHelper extends SQLiteOpenHelper{
         String contactToken = retrieveContactToken(this.getWritableDatabase(),contactID);
 
         Log.d("contactToken1",contactToken);
-
-
-
 
         return true;
     }

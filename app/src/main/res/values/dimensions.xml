@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="textSizeLarge">24dp</dimen>
+    <dimen name="textSizeMedium">18dp</dimen>
+    <dimen name="textSizeSmall">14dp</dimen>
+    <dimen name="marginLR">16dp</dimen>
+    <dimen name="marginTB">16dp</dimen>
+    <dimen name="marginRelatedTB">10dp</dimen>
+    <dimen name="marginRelatedLR">10dp</dimen>
+    <dimen name="marginTitleLR">12dp</dimen>
+</resources>

@@ -37,7 +37,7 @@ public class MessagingManager {
         req.put("fromToken",myToken);
         req.put("fromID", user.getUid());
         req.put("fromName", user.getDisplayName());
-        req.put("fromKey", em.getPublicKey());
+        req.put("fromKey", em.getKeyFromFile("privateKey.txt"));
 
         String publicKey = getPublicKey(contact.getContactID());
 

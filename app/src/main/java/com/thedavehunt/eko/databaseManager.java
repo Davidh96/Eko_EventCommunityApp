@@ -316,7 +316,9 @@ public class databaseManager {
                 contact = new ContactDoc(token,id,name,contactKey);
                 //contact.setContactPublicKey(contactKey);
 
+
                 dbm.updateContact(contact);
+
 
                 Log.d("contactID",contact.getContactID());
 

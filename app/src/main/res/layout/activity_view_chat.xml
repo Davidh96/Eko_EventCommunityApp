@@ -6,11 +6,27 @@
     android:layout_height="match_parent"
     tools:context=".ViewChat">
 
+    <TextView
+        android:id="@+id/textTitleBarChat"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight=".15"
+        android:background="@color/colorPrimary"
+        android:fontFamily="sans-serif-regular"
+        android:paddingRight="@dimen/marginTitleLR"
+        android:paddingLeft="@dimen/marginTitleLR"
+        android:paddingTop="@dimen/marginTB"
+        android:paddingBottom="@dimen/marginTB"
+        android:text="Chat"
+        android:textColor="@color/white"
+        android:textSize="@dimen/textSizeLarge" />
+
     <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/listChatView"
-        android:layout_above="@+id/layoutChatBox"></ListView>
+        android:layout_above="@+id/layoutChatBox"
+        android:layout_below="@id/textTitleBarChat"></ListView>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -23,15 +39,26 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/editMessageChat"
-        android:layout_weight=".7"
+        android:layout_weight=".95"
         />
 
-        <Button
+        <!--<Button-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="SND"-->
+            <!--android:layout_weight=".3"-->
+            <!--android:id="@+id/buttonSendChat"/>-->
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/buttonSendChat"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="SND"
-            android:layout_weight=".3"
-            android:id="@+id/buttonSendChat"/>
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_weight=".05"
+            android:src="@drawable/ic_send_black_24dp"
+            />
+
     </LinearLayout>
 
 </RelativeLayout>

@@ -13,6 +13,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.security.Key;
 import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -39,38 +40,47 @@ public class EncryptionManager {
             KeyPairGenerator kpg = KeyPairGenerator.getInstance(algo);
             kpg.initialize(keySize);
 
+            //generate keys
             keys = kpg.generateKeyPair();
 
+            //save keys to file
+            //files stored in files folder
             File root = new File("/data/data/com.thedavehunt.eko/files");
-            File gpxfile = new File(root, "privateKey.txt");
-            FileWriter writer = new FileWriter(gpxfile);
-            writer.append(this.convertPrivToString(keys.getPrivate()));
+
+            //write private key to file
+            File keyFile = new File(root, "privateKey.txt");
+            FileWriter writer = new FileWriter(keyFile);
+            writer.write(this.convertKeyToString(keys.getPrivate()));
             writer.flush();
 
-            root = new File("/data/data/com.thedavehunt.eko/files");
-            gpxfile = new File(root, "publicKey.txt");
-            writer = new FileWriter(gpxfile);
-            writer.append(this.convertPubToString(keys.getPublic()));
+            //write public key to file
+            keyFile = new File(root, "publicKey.txt");
+            writer = new FileWriter(keyFile);
+            writer.write(this.convertKeyToString(keys.getPublic()));
             writer.flush();
+
             writer.close();
 
+            //update key on Firebase
             databaseManager dbm = new databaseManager();
-            dbm.updatePublicKey(user.getUid(),this.convertPubToString(keys.getPublic()));
+            dbm.updatePublicKey(user.getUid(),this.convertKeyToString(keys.getPublic()));
 
         }catch(Exception e){
             Log.d("Key Gen error",e.toString());
         }
     }
 
-    public String getPrivateKey(){
+    public String getKeyFromFile(String Filename){
 
        File root = new File("/data/data/com.thedavehunt.eko/files");
-       File gpxfile = new File(root, "privateKey.txt");
+       File keyFile = new File(root, Filename);
 
         StringBuilder text = new StringBuilder();
 
+
+        //read in Key from file
         try {
-            BufferedReader br = new BufferedReader(new FileReader(gpxfile));
+            BufferedReader br = new BufferedReader(new FileReader(keyFile));
             String line;
 
             while ((line = br.readLine()) != null) {
@@ -80,41 +90,40 @@ public class EncryptionManager {
             br.close();
         }
         catch (Exception e) {
-            //You'll need to add proper error handling here
         }
 
         return new String(text);
     }
 
-    public String getPublicKey(){
-
-        File root = new File("/data/data/com.thedavehunt.eko/files");
-        File gpxfile = new File(root, "publicKey.txt");
-
-        StringBuilder text = new StringBuilder();
-
-        try {
-            BufferedReader br = new BufferedReader(new FileReader(gpxfile));
-            String line;
-
-            while ((line = br.readLine()) != null) {
-                text.append(line);
-                text.append('\n');
-            }
-            br.close();
-        }
-        catch (Exception e) {
-            //You'll need to add proper error handling here
-        }
-
-        return new String(text);
-    }
+//    public String getPublicKey(){
+//
+//        File pubKeyFile = new File("/data/data/com.thedavehunt.eko/files/publicKey.txt");
+//        //File pubKeyFile = new File(root, "");
+//
+//        StringBuilder text = new StringBuilder();
+//
+//        try {
+//            BufferedReader br = new BufferedReader(new FileReader(pubKeyFile));
+//            String line;
+//
+//            while ((line = br.readLine()) != null) {
+//                text.append(line);
+//                text.append('\n');
+//            }
+//            br.close();
+//        }
+//        catch (Exception e) {
+//        }
+//
+//        return new String(text);
+//    }
 
     public byte[] encrypt(String text, PublicKey key){
         byte[] cipherText = null;
         try {
-            // get an RSA cipher object and print the provider
+            //set encryption algorithm
             Cipher cipher = Cipher.getInstance(algo);
+
             // encrypt the plain text using the public key
             cipher.init(Cipher.ENCRYPT_MODE, key);
             cipherText = cipher.doFinal(text.getBytes());
@@ -127,7 +136,7 @@ public class EncryptionManager {
     public String decrypt(byte[] text, PrivateKey key) {
         byte[] dectyptedText = null;
         try {
-            // get an RSA cipher object and print the provider
+            //set encryption algorithm
             final Cipher cipher = Cipher.getInstance(algo);
 
             // decrypt the text using the private key
@@ -141,25 +150,25 @@ public class EncryptionManager {
         return new String(dectyptedText);
     }
 
-    public String convertPrivToString(PrivateKey privateKey){
+    public String convertKeyToString(Key key){
 
-        byte[] privByte = privateKey.getEncoded();
+        byte[] keyByte = key.getEncoded();
 
-        String privString = Base64.encodeToString(privByte, Base64.DEFAULT);
+        String keyString = Base64.encodeToString(keyByte, Base64.DEFAULT);
 
-        return privString;
-
-    }
-
-    public String convertPubToString(PublicKey publicKey){
-
-        byte[] pubByte = publicKey.getEncoded();
-
-        String pubString = Base64.encodeToString(pubByte, Base64.DEFAULT);
-
-        return pubString;
+        return keyString;
 
     }
+
+//    public String convertPubToString(PublicKey publicKey){
+//
+//        byte[] pubByte = publicKey.getEncoded();
+//
+//        String pubString = Base64.encodeToString(pubByte, Base64.DEFAULT);
+//
+//        return pubString;
+//
+//    }
 
     public PrivateKey convertStringToPriv(String privString){
         PrivateKey privateKey=null;
@@ -207,8 +216,4 @@ public class EncryptionManager {
 
     }
 
-//    public String getContactPublicKey()
-//    {
-//
-//    }
 }

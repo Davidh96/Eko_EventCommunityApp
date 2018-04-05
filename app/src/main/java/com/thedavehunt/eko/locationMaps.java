@@ -91,7 +91,6 @@ public class locationMaps extends FragmentActivity implements OnMapReadyCallback
     }
 
     public void returnLocation(View v){
-        //Toast.makeText(getApplicationContext(),"" + locationMaps.this.locLat + "," + locationMaps.this.locLong, Toast.LENGTH_SHORT).show();
         Intent i = new Intent();
         i.putExtra("eLat",locLat);
         i.putExtra("eLong",locLong);
