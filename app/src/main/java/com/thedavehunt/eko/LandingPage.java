@@ -51,7 +51,7 @@ import java.util.List;
 
 public class LandingPage extends Activity {
 
-    private List<eventDoc> eventList;
+    private List<EventDoc> eventList;
     private ListAdapter listAdapter;
 
     private ProgressBar loadingCircle;
@@ -89,7 +89,7 @@ public class LandingPage extends Activity {
         //check if private and public keys have already been created
         File privKeyFile = new File("/data/data/com.thedavehunt.eko/files/privateKey.txt");
         File pubKeyFile = new File("/data/data/com.thedavehunt.eko/files/publicKey.txt");
-        if(!privKeyFile.exists() && !pubKeyFile.exists()){
+        if(!privKeyFile.exists() || !pubKeyFile.exists()){
             //if not present, generate keys
             EncryptionManager em = new EncryptionManager();
             em.generateKeys();
@@ -102,14 +102,14 @@ public class LandingPage extends Activity {
         //get current user
         user = FirebaseAuth.getInstance().getCurrentUser();
 
-        DatabaseHelper dbm = new DatabaseHelper(getApplicationContext());
+        LocalDatabaseManager dbm = new LocalDatabaseManager(getApplicationContext());
         SQLiteDatabase db = dbm.getWritableDatabase();
 
 
         myToken = dbm.retrieveToken(db,"temp");
 
 
-        databaseManager dbm1 = new databaseManager();
+        CloudDatabaseManager dbm1 = new CloudDatabaseManager();
         dbm1.updateToken(user.getUid(),myToken);
 
 
@@ -228,12 +228,12 @@ public class LandingPage extends Activity {
 
         //create event list to display in list view
         //needs to be cleared everytime
-        eventList = new ArrayList<eventDoc>();
+        eventList = new ArrayList<EventDoc>();
 
         getEvents(filterCategory);
 
         //initialise adapter
-        listAdapter = new landingListAdapter(LandingPage.this,eventList);
+        listAdapter = new LandingListAdapter(LandingPage.this,eventList);
 
         ListView list = (ListView)findViewById(R.id.listEventLanding);
         //set adapter for list view
@@ -248,7 +248,7 @@ public class LandingPage extends Activity {
 
                     Intent viewTask = new Intent(LandingPage.this, ViewEvent.class);
 
-                    eventDoc evnt = (eventDoc) eventList.get(i);
+                    EventDoc evnt = (EventDoc) eventList.get(i);
                     Toast.makeText(getApplicationContext(), evnt.getId(), Toast.LENGTH_LONG);
                     viewTask.putExtra("id", evnt.getId());
 
@@ -298,7 +298,7 @@ public class LandingPage extends Activity {
                             JSONObject eventObj = obj.getJSONObject("-" + id);
 
                             //place event details into an eventDoc
-                            eventDoc event = new eventDoc(eventObj.getString("id"), eventObj.getString("eventName"), eventObj.getString("eventAuthor"), eventObj.getString("eventAuthorID"),
+                            EventDoc event = new EventDoc(eventObj.getString("id"), eventObj.getString("eventName"), eventObj.getString("eventAuthor"), eventObj.getString("eventAuthorID"),
                                     eventObj.getString("eventDescription"), eventObj.getString("eventCategory"), eventObj.getString("eventLocation"), eventObj.getString("eventDate"),
                                     eventObj.getString("eventTime"));
 
@@ -325,7 +325,7 @@ public class LandingPage extends Activity {
                         }
 
                         //initialise adapter
-                        listAdapter = new landingListAdapter(LandingPage.this,eventList);
+                        listAdapter = new LandingListAdapter(LandingPage.this,eventList);
 
                         ListView list = (ListView)findViewById(R.id.listEventLanding);
                         //set adapter for list view

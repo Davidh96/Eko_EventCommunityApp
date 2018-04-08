@@ -38,14 +38,14 @@ import java.util.List;
 
 public class ViewEvent extends FragmentActivity implements OnMapReadyCallback, RateFragment.RatingDialogListener {
 
-    databaseManager dbm = new databaseManager();
+    CloudDatabaseManager dbm = new CloudDatabaseManager();
     private String url;
 
 
     ListAdapter tempAdapter;
-    List<eventMember> members;
+    List<EventMember> members;
 
-    public eventDoc event;
+    public EventDoc event;
 
     //get Firebase auth instance
     FirebaseAuth auth= FirebaseAuth.getInstance();
@@ -148,7 +148,7 @@ public class ViewEvent extends FragmentActivity implements OnMapReadyCallback, R
 
 
                             //place data into an eventDoc
-                            event = new eventDoc(eventObj.getString("id"),eventObj.getString("eventName"),eventObj.getString("eventAuthor"),eventObj.getString("eventAuthorID"),
+                            event = new EventDoc(eventObj.getString("id"),eventObj.getString("eventName"),eventObj.getString("eventAuthor"),eventObj.getString("eventAuthorID"),
                                     eventObj.getString("eventDescription"),eventObj.getString("eventCategory"),eventObj.getString("eventLocation"),eventObj.getString("eventDate"),
                                     eventObj.getString("eventTime"));
 
@@ -158,7 +158,7 @@ public class ViewEvent extends FragmentActivity implements OnMapReadyCallback, R
                             //place each member into event member
                             for(int i=0;i<members.length();i++){
                                 JSONObject mem = members.getJSONObject(i);
-                                eventMember member = new eventMember(mem.getString("id"),mem.getString("name"));
+                                EventMember member = new EventMember(mem.getString("id"),mem.getString("name"));
                                 event.addMembers(member);
 
                             }
@@ -230,7 +230,7 @@ public class ViewEvent extends FragmentActivity implements OnMapReadyCallback, R
         }
 
         //initialise adapter
-        tempAdapter = new memberListAdapter(ViewEvent.this,members);
+        tempAdapter = new MemberListAdapter(ViewEvent.this,members);
 
         memberList.setAdapter(tempAdapter);
 
@@ -249,7 +249,7 @@ public class ViewEvent extends FragmentActivity implements OnMapReadyCallback, R
             //create fragment for tools
             FragmentManager fragmentManager = getFragmentManager();
 
-            viewEventToolsFragment frag1 = new viewEventToolsFragment();
+            ViewEventToolsFragment frag1 = new ViewEventToolsFragment();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
             //show fragment
@@ -278,7 +278,7 @@ public class ViewEvent extends FragmentActivity implements OnMapReadyCallback, R
                 //if user clicks yes
                 .setPositiveButton(getResources().getString(R.string.positiveActionText), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        eventMember member = new eventMember(user.getUid(),user.getDisplayName());
+                        EventMember member = new EventMember(user.getUid(),user.getDisplayName());
 
                         dbm.addEventMember(id,member);
                         dbm.rateEvent(user.getUid(),id,5);
@@ -315,7 +315,7 @@ public class ViewEvent extends FragmentActivity implements OnMapReadyCallback, R
                     //if user clicks yes
                     .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
-                            eventMember member = new eventMember(user.getUid(), user.getDisplayName());
+                            EventMember member = new EventMember(user.getUid(), user.getDisplayName());
 
                             dbm.removeEventMember(id, member);
 

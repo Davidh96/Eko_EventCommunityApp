@@ -20,7 +20,7 @@ public class mFirebaseMessagingService extends FirebaseMessagingService {
             Log.d("FirebaseMessage", "Message data payload: " + remoteMessage.getData());
 
             //add message to offline db
-            DatabaseHelper db = new DatabaseHelper(getApplicationContext());
+            LocalDatabaseManager db = new LocalDatabaseManager(getApplicationContext());
 
             String msgFromToken = remoteMessage.getData().get("fromToken").toString();
             String msgFromID = remoteMessage.getData().get("fromID").toString();

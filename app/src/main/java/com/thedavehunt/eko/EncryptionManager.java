@@ -62,7 +62,7 @@ public class EncryptionManager {
             writer.close();
 
             //update key on Firebase
-            databaseManager dbm = new databaseManager();
+            CloudDatabaseManager dbm = new CloudDatabaseManager();
             dbm.updatePublicKey(user.getUid(),this.convertKeyToString(keys.getPublic()));
 
         }catch(Exception e){
@@ -160,7 +160,7 @@ public class EncryptionManager {
 
     }
 
-//    public String convertPubToString(PublicKey publicKey){
+//    public String convertPubKeyToString(PublicKey publicKey){
 //
 //        byte[] pubByte = publicKey.getEncoded();
 //

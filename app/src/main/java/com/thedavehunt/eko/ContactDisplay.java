@@ -19,7 +19,7 @@ import static com.facebook.FacebookSdk.getApplicationContext;
 
 public class ContactDisplay extends FragmentActivity implements AddContactFragment.AddContactDialogListener {
 
-    DatabaseHelper dbm;
+    LocalDatabaseManager dbm;
     SQLiteDatabase db;
 
     private ArrayList<ContactDoc> contactList;
@@ -60,7 +60,7 @@ public class ContactDisplay extends FragmentActivity implements AddContactFragme
 
     private void retrieveContactList(){
 
-        dbm = new DatabaseHelper(getApplicationContext());
+        dbm = new LocalDatabaseManager(getApplicationContext());
         db = dbm.getReadableDatabase();
 
         Cursor results = dbm.retrieveContacts(db);
@@ -71,10 +71,10 @@ public class ContactDisplay extends FragmentActivity implements AddContactFragme
         String senderKey;
 
         while(results.moveToNext()){
-            senderName = results.getString(results.getColumnIndex("fromName"));
-            senderToken = results.getString(results.getColumnIndex("fromToken"));
-            senderID = results.getString(results.getColumnIndex("fromID"));
-            senderKey = results.getString(results.getColumnIndex("fromPublicKey"));
+            senderName = results.getString(results.getColumnIndex("contactName"));
+            senderToken = results.getString(results.getColumnIndex("contactToken"));
+            senderID = results.getString(results.getColumnIndex("contactID"));
+            senderKey = results.getString(results.getColumnIndex("contactPublicKey"));
             ContactDoc message = new ContactDoc(senderToken, senderID, senderName,senderKey);
             contactList.add(message);
         }
@@ -94,13 +94,7 @@ public class ContactDisplay extends FragmentActivity implements AddContactFragme
             public void onReceive(Context context, Intent intent) {
                 //update contact list
 
-                listAdapter.clear();
-
-                //get new list
-                retrieveContactList();
-
-                //update list
-                listAdapter.notifyDataSetChanged();
+                refreshContactList();
             }
         };
         //register receiver
@@ -122,9 +116,19 @@ public class ContactDisplay extends FragmentActivity implements AddContactFragme
 
     public void returnContactID(String contactID) {
         Toast.makeText(getApplicationContext(),"Contact Added",Toast.LENGTH_SHORT).show();
-        DatabaseHelper dbm = new DatabaseHelper(getApplicationContext());
+        LocalDatabaseManager dbm = new LocalDatabaseManager(getApplicationContext());
         dbm.addContact(contactID);
-        MessagingManager mm = new MessagingManager();
-        mm.initiateChat(contactID);
+        refreshContactList();
+
+    }
+
+    private void refreshContactList(){
+        listAdapter.clear();
+
+        //get new list
+        retrieveContactList();
+
+        //update list
+        listAdapter.notifyDataSetChanged();
     }
 }

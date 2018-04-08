@@ -14,7 +14,7 @@ import android.widget.DatePicker;
  * Created by david on 05/02/18.
  */
 
-public class selectDateDialog extends AppCompatDialogFragment {
+public class SelectDateDialog extends AppCompatDialogFragment {
     private DatePicker datePicker;
     private DateDialogListener listener;
 

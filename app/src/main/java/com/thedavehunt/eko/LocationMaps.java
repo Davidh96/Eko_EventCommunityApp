@@ -15,7 +15,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-public class locationMaps extends FragmentActivity implements OnMapReadyCallback {
+public class LocationMaps extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
 
@@ -75,8 +75,8 @@ public class locationMaps extends FragmentActivity implements OnMapReadyCallback
                 float lastZoom=mMap.getCameraPosition().zoom;
                 mMap.clear();
 
-                locationMaps.this.locLat=latLng.latitude;
-                locationMaps.this.locLong=latLng.longitude;
+                LocationMaps.this.locLat=latLng.latitude;
+                LocationMaps.this.locLong=latLng.longitude;
 
                 // Add an event location marker and move the camera
                 LatLng eventLoc = new LatLng(locLat, locLong);

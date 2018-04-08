@@ -8,17 +8,16 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatDialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.DatePicker;
 import android.widget.TimePicker;
 
 /**
  * Created by david on 05/02/18.
  */
 
-public class selectTimeDialog extends AppCompatDialogFragment {
+public class SelectTimeDialog extends AppCompatDialogFragment {
 
     private TimePicker timePicker;
-    private selectTimeDialog.TimeDialogListener listener;
+    private SelectTimeDialog.TimeDialogListener listener;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -65,7 +64,7 @@ public class selectTimeDialog extends AppCompatDialogFragment {
     public void onAttach(Context context) {
         super.onAttach(context);
 
-        listener = (selectTimeDialog.TimeDialogListener)context;
+        listener = (SelectTimeDialog.TimeDialogListener)context;
     }
 
     public interface TimeDialogListener{

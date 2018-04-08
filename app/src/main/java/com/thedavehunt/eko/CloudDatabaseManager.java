@@ -44,7 +44,7 @@ import static com.facebook.FacebookSdk.getApplicationContext;
  * Created by david on 11/12/17.
  */
 
-public class databaseManager {
+public class CloudDatabaseManager {
 
     DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
     DatabaseReference eventRef = rootRef.child("event");
@@ -55,14 +55,14 @@ public class databaseManager {
 
     private String url = "http://188.166.98.100//";
 
-    public ArrayList<eventDoc> eventList;
+    public ArrayList<EventDoc> eventList;
 
-    public eventDoc event;
+    public EventDoc event;
 
     public String contactToken;
 
 
-    public void createEvent(eventDoc event){
+    public void createEvent(EventDoc event){
         this.event=event;
 
         String id = event.getId();
@@ -75,7 +75,7 @@ public class databaseManager {
 
         event.setId(id);
 
-        event.addMembers(new eventMember(user.getUid(),user.getDisplayName()));
+        event.addMembers(new EventMember(user.getUid(),user.getDisplayName()));
 
         //push event to cloud database
         rootRef.child("events").child(id).setValue(event);
@@ -95,6 +95,7 @@ public class databaseManager {
     //send updated token to firebase db
     public void updateToken(String userID,String userToken){
         rootRef.child("users").child(userID).child("Token").setValue(userToken);
+        Log.d("Updating Token","hi");
     }
 
     //send updated token to firebase db
@@ -103,9 +104,9 @@ public class databaseManager {
     }
 
     //add member to event
-    public void addEventMember(String eventId,eventMember member){
+    public void addEventMember(String eventId,EventMember member){
 
-        final eventMember member1 = member;
+        final EventMember member1 = member;
         final String id =eventId;
 
         rootRef.child("events").child(eventId).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -113,7 +114,7 @@ public class databaseManager {
             public void onDataChange(DataSnapshot snapshot) {
 
                 //get event class
-                databaseManager.this.event = snapshot.getValue(eventDoc.class);
+                event = snapshot.getValue(EventDoc.class);
                 event.addMembers(member1);
                 rootRef.child("events").child(id).setValue(event);
 
@@ -126,8 +127,8 @@ public class databaseManager {
     }
 
     //remove member from event
-    public void removeEventMember(String eventId, eventMember member){
-        final eventMember member1 = member;
+    public void removeEventMember(String eventId, EventMember member){
+        final EventMember member1 = member;
         final String id =eventId;
 
         rootRef.child("events").child(eventId).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -135,7 +136,7 @@ public class databaseManager {
             public void onDataChange(DataSnapshot snapshot) {
 
                 //get event class
-                databaseManager.this.event = snapshot.getValue(eventDoc.class);
+                CloudDatabaseManager.this.event = snapshot.getValue(EventDoc.class);
                 event.removeMembers(member1);
                 rootRef.child("events").child(id).setValue(event);
 
@@ -255,9 +256,9 @@ public class databaseManager {
     public void getContactToken(final String id){
 
         Cursor results;
-        final DatabaseHelper dbm;
+        final LocalDatabaseManager dbm;
 
-        dbm = new DatabaseHelper(getApplicationContext());
+        dbm = new LocalDatabaseManager(getApplicationContext());
         SQLiteDatabase db = dbm.getReadableDatabase();
 
 
@@ -268,8 +269,8 @@ public class databaseManager {
                 //get event class
 
                 String contactToken= snapshot.getValue().toString();
-
-                DatabaseHelper db = new DatabaseHelper(getApplicationContext());
+                Log.d("Getting token",contactToken);
+                LocalDatabaseManager db = new LocalDatabaseManager(getApplicationContext());
                 ContactDoc contact = new ContactDoc(contactToken,id);
                 db.updateContact(contact);
 
@@ -286,9 +287,9 @@ public class databaseManager {
     public void getContactKey(final String id){
 
         Cursor results;
-        final DatabaseHelper dbm;
+        final LocalDatabaseManager dbm;
 
-        dbm = new DatabaseHelper(getApplicationContext());
+        dbm = new LocalDatabaseManager(getApplicationContext());
         SQLiteDatabase db = dbm.getReadableDatabase();
 
 
@@ -296,7 +297,7 @@ public class databaseManager {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
 
-                DatabaseHelper dbm = new DatabaseHelper(getApplicationContext());
+                LocalDatabaseManager dbm = new LocalDatabaseManager(getApplicationContext());
                 Cursor result = dbm.retrieveContact(dbm.getWritableDatabase(),id);
 
                 ContactDoc contact=null;
@@ -306,8 +307,8 @@ public class databaseManager {
 
                 while(result.moveToNext()){
                     //cursor.getString(cursor.getColumnIndex("TokenValue"));
-                    name = result.getString(result.getColumnIndex("fromName"));
-                    token = result.getString(result.getColumnIndex("fromToken"));
+                    name = result.getString(result.getColumnIndex("contactName"));
+                    token = result.getString(result.getColumnIndex("contactToken"));
                 }
 
                 //get event class

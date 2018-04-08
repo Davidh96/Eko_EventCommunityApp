@@ -19,11 +19,11 @@ import java.util.List;
  * Created by david on 21/10/17.
  */
 
-public class landingListAdapter extends ArrayAdapter<eventDoc> {
+public class LandingListAdapter extends ArrayAdapter<EventDoc> {
 
-    private List<eventDoc> eventList;
+    private List<EventDoc> eventList;
 
-    public landingListAdapter(Context context, List<eventDoc> list) {
+    public LandingListAdapter(Context context, List<EventDoc> list) {
         super(context,R.layout.custom_row, list);
         eventList=list;
     }
@@ -34,7 +34,7 @@ public class landingListAdapter extends ArrayAdapter<eventDoc> {
         LayoutInflater infl = LayoutInflater.from(getContext());
         View custom = infl.inflate(R.layout.custom_row,null,true);
 
-        eventDoc event = eventList.get(position);
+        EventDoc event = eventList.get(position);
         TextView eventNameText =(TextView)custom.findViewById(R.id.textEventName);
         TextView eventDescriptionText =(TextView)custom.findViewById(R.id.textEventDescription);
         TextView eventCategoryText =(TextView)custom.findViewById(R.id.textEventCategory);

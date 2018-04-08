@@ -4,14 +4,14 @@ package com.thedavehunt.eko;
  * Created by david on 19/12/17.
  */
 
-public class eventMember {
+public class EventMember {
     String id;
     String name;
 
-    public  eventMember(){
+    public  EventMember(){
     }
 
-    public eventMember(String id, String name){
+    public EventMember(String id, String name){
         this.id=id;
         this.name=name;
     }

@@ -14,7 +14,7 @@ import java.util.Map;
  * Created by david on 25/10/17.
  */
 
-public class eventDoc {
+public class EventDoc {
     String id;
     String eventName;
     String eventAuthor;
@@ -25,12 +25,12 @@ public class eventDoc {
     String eventDate;
     String eventTime;
 
-    List<eventMember> members = new ArrayList<eventMember>();
+    List<EventMember> members = new ArrayList<EventMember>();
 
-    public eventDoc() {
+    public EventDoc() {
     }
 
-    public eventDoc(String id, String eventName, String eventAuthor, String eventAuthorID,  String eventDescription,String eventCategory, String eventLocation, String eventDate, String eventTime) {
+    public EventDoc(String id, String eventName, String eventAuthor, String eventAuthorID,  String eventDescription,String eventCategory, String eventLocation, String eventDate, String eventTime) {
         this.id = id;
         this.eventName = eventName;
         this.eventAuthor = eventAuthor;
@@ -40,8 +40,6 @@ public class eventDoc {
         this.eventLocation = eventLocation;
         this.eventDate=eventDate;
         this.eventTime=eventTime;
-//        eventMember mem = new eventMember("test","test");
-//        members.add(mem);
     }
 
     public String getId() {
@@ -117,19 +115,19 @@ public class eventDoc {
         this.eventTime = eventTime;
     }
 
-    public List<eventMember> getMembers() {
+    public List<EventMember> getMembers() {
         return members;
     }
 
-    public void setMembers(List<eventMember> members) {
+    public void setMembers(List<EventMember> members) {
         this.members = members;
     }
 
-    public void addMembers(eventMember member) {
+    public void addMembers(EventMember member) {
         this.members.add(member);
     }
 
-    public void removeMembers(eventMember member){
+    public void removeMembers(EventMember member){
         for(int i=0;i < members.size();i++){
             if(members.get(i).getId().equals(member.getId())){
                 members.remove(i);

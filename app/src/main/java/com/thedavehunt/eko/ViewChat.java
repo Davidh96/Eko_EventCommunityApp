@@ -35,7 +35,7 @@ import java.util.HashMap;
 
 public class ViewChat extends Activity {
 
-    DatabaseHelper dbm;
+    LocalDatabaseManager dbm;
     SQLiteDatabase db;
 
     private ArrayList<MessageDoc> messageList;
@@ -75,7 +75,7 @@ public class ViewChat extends Activity {
         user = FirebaseAuth.getInstance().getCurrentUser();
 
 
-        dbm = new DatabaseHelper(getApplicationContext());
+        dbm = new LocalDatabaseManager(getApplicationContext());
         db = dbm.getReadableDatabase();
 
         messageList = new ArrayList<MessageDoc>();
@@ -89,6 +89,7 @@ public class ViewChat extends Activity {
         sendMessageBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Toast.makeText(getApplicationContext(),"CLICKED!",Toast.LENGTH_SHORT).show();
                 String messNospc = messageTextEdit.getText().toString().replaceAll("\\s+","");
                 if(messNospc.length()>0) {
                     sendMessage();
@@ -170,10 +171,10 @@ public class ViewChat extends Activity {
 
 
         while(results.moveToNext()){
-            senderName = results.getString(results.getColumnIndex("fromName"));
-            senderToken = results.getString(results.getColumnIndex("fromToken"));
-            senderID = results.getString(results.getColumnIndex("fromID"));
-            senderKey = results.getString(results.getColumnIndex("fromPublicKey"));
+            senderName = results.getString(results.getColumnIndex("contactName"));
+            senderToken = results.getString(results.getColumnIndex("contactToken"));
+            senderID = results.getString(results.getColumnIndex("contactID"));
+            senderKey = results.getString(results.getColumnIndex("contactPublicKey"));
             contact = new ContactDoc(senderToken, senderID, senderName,senderKey);
         }
 
@@ -184,11 +185,9 @@ public class ViewChat extends Activity {
     private void sendMessage(){
 
         MessagingManager mm = new MessagingManager();
-        try {
-            mm.sendMessage(contact,myToken,messageTextEdit.getText().toString());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        mm.sendMessage(contact,myToken,messageTextEdit.getText().toString());
+        Toast.makeText(getApplicationContext(),messageTextEdit.getText().toString(),Toast.LENGTH_SHORT).show();
+
 
         listAdapter.clear();
 

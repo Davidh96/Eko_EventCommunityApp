@@ -31,18 +31,18 @@ public class ContactListAdapter extends ArrayAdapter {
         TextView senderNameText =(TextView)custom.findViewById(R.id.textSenderName);
         TextView senderMessageText =(TextView)custom.findViewById(R.id.textMessageData);
 
-        DatabaseHelper db = new DatabaseHelper(getContext());
+        LocalDatabaseManager db = new LocalDatabaseManager(getContext());
         Cursor results =db.retrieveChat(db.getWritableDatabase(),contact.getContactID());
 
         //get the last message from this chat
         results.moveToLast();
-        String message = results.getString(results.getColumnIndex("Data"));
-        String messageType = results.getString(results.getColumnIndex("MessageType"));
+        //String message = results.getString(results.getColumnIndex("Data"));
+        //String messageType = results.getString(results.getColumnIndex("MessageType"));
 
 
         //set event information
         senderNameText.setText(contact.getContactName());
-        senderMessageText.setText(messageType + ": " + message);
+        //senderMessageText.setText(messageType + ": " + message);
 
         return custom;
     }

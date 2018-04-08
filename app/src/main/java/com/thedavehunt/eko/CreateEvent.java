@@ -38,7 +38,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 
-public class CreateEvent extends FragmentActivity implements selectDateDialog.DateDialogListener, selectTimeDialog.TimeDialogListener {
+public class CreateEvent extends FragmentActivity implements SelectDateDialog.DateDialogListener, SelectTimeDialog.TimeDialogListener {
 
     private LocationManager locationManager;
     private LocationListener locationListener;
@@ -75,7 +75,7 @@ public class CreateEvent extends FragmentActivity implements selectDateDialog.Da
     public static double locLat;
 
     private ArrayAdapter<CharSequence> adapter;
-    private databaseManager dbm = new databaseManager();
+    private CloudDatabaseManager dbm = new CloudDatabaseManager();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -251,7 +251,7 @@ public class CreateEvent extends FragmentActivity implements selectDateDialog.Da
     private void createEventDoc(){
 
         // create an event
-        eventDoc event = new eventDoc(id, name, author, authorID, description, category, location,date,time);
+        EventDoc event = new EventDoc(id, name, author, authorID, description, category, location,date,time);
 
         dbm.createEvent(event);
     }
@@ -272,7 +272,7 @@ public class CreateEvent extends FragmentActivity implements selectDateDialog.Da
 
 
 
-                            eventDoc event = new eventDoc(eventObj.getString("id"),eventObj.getString("eventName"),eventObj.getString("eventAuthor"),eventObj.getString("eventAuthorID"),
+                            EventDoc event = new EventDoc(eventObj.getString("id"),eventObj.getString("eventName"),eventObj.getString("eventAuthor"),eventObj.getString("eventAuthorID"),
                                     eventObj.getString("eventDescription"),eventObj.getString("eventCategory"),eventObj.getString("eventLocation"),eventObj.getString("eventDate"),
                                     eventObj.getString("eventTime"));
 
@@ -281,7 +281,7 @@ public class CreateEvent extends FragmentActivity implements selectDateDialog.Da
 
                             for(int i=0;i<members.length();i++){
                                 JSONObject mem = members.getJSONObject(i);
-                                eventMember member = new eventMember(mem.getString("id"),mem.getString("name"));
+                                EventMember member = new EventMember(mem.getString("id"),mem.getString("name"));
                                 event.addMembers(member);
 
                             }
@@ -326,7 +326,7 @@ public class CreateEvent extends FragmentActivity implements selectDateDialog.Da
     }
 
     public void setLocation(View v){
-        Intent i = new Intent(CreateEvent.this,locationMaps.class);
+        Intent i = new Intent(CreateEvent.this,LocationMaps.class);
         i.putExtra("lat",locLat);
         i.putExtra("long",locLong);
         //to get location result
@@ -381,13 +381,13 @@ public class CreateEvent extends FragmentActivity implements selectDateDialog.Da
     //shows date fragment
     public void showDateFragment(View v){
 
-        selectDateDialog dateDialog = new selectDateDialog();
+        SelectDateDialog dateDialog = new SelectDateDialog();
         dateDialog.show(getSupportFragmentManager(),"tag");
     }
 
     //shows time fragment
     public void showTimeFragment(View v){
-        selectTimeDialog timeDialog = new selectTimeDialog();
+        SelectTimeDialog timeDialog = new SelectTimeDialog();
         timeDialog.show(getSupportFragmentManager(),"tag");
     }
 

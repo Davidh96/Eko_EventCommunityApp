@@ -1,6 +1,8 @@
 package com.thedavehunt.eko;
 
 import android.database.Cursor;
+import android.util.Log;
+
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -20,12 +22,12 @@ import static com.facebook.FacebookSdk.getApplicationContext;
 public class MessagingManager {
 
     private FirebaseUser user;
-    private  DatabaseHelper dbm;
+    private  LocalDatabaseManager dbm;
     private String url;
 
     public MessagingManager(){
         user = FirebaseAuth.getInstance().getCurrentUser();
-        dbm = new DatabaseHelper(getApplicationContext());
+        dbm = new LocalDatabaseManager(getApplicationContext());
         url= getApplicationContext().getResources().getString(R.string.serverURLsendmsg);
     }
 
@@ -37,15 +39,17 @@ public class MessagingManager {
         req.put("fromToken",myToken);
         req.put("fromID", user.getUid());
         req.put("fromName", user.getDisplayName());
-        req.put("fromKey", em.getKeyFromFile("privateKey.txt"));
+        req.put("fromKey", em.getKeyFromFile("publicKey.txt"));
 
         String publicKey = getPublicKey(contact.getContactID());
-
-        while(publicKey!=null) {
+        Log.d("pibicKey",publicKey);
+//
+//        while(publicKey!=null) {
 
             //encrypt the message with public key
-            byte[] encrypted = em.encrypt(message, em.convertStringToPub(publicKey));
 
+            byte[] encrypted = em.encrypt(message, em.convertStringToPub(publicKey));
+        Log.d("message1",encrypted.toString());
             //snend bytes array as string
             req.put("data", Arrays.toString(encrypted));
 
@@ -70,14 +74,16 @@ public class MessagingManager {
                     });
 
             requestQueue.add(jsonObjectRequest);
-
-            publicKey=null;
-        }
+//
+//            publicKey=null;
+//        }
     }
 
     public void initiateChat(String contactID){
 
-        DatabaseHelper db = new DatabaseHelper(getApplicationContext());
+        Log.d("Init","1");
+
+        LocalDatabaseManager db = new LocalDatabaseManager(getApplicationContext());
         Cursor result = db.retrieveContact(db.getWritableDatabase(),contactID);
 
         ContactDoc contact=null;
@@ -86,15 +92,17 @@ public class MessagingManager {
             String senderName = result.getString(result.getColumnIndex("fromName"));
             String id = result.getString(result.getColumnIndex("fromID"));
             String token = result.getString(result.getColumnIndex("fromToken"));
-            String publicKey = null;
+            Log.d("toke",token);
+            String publicKey = result.getString(result.getColumnIndex("fromPublicKey"));
             contact = new ContactDoc(token,id,senderName,publicKey);
         }
 
-
+        Log.d("Init2",contact.getContactToken());
         String myToken = db.retrieveToken(db.getWritableDatabase(),"temp");
 
         try {
             this.sendMessage(contact,myToken,"Initiate Conversation");
+            Log.d("Init3","sending");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -103,8 +111,10 @@ public class MessagingManager {
 
     public String getPublicKey(String contactID){
         String publicKey=null;
-        DatabaseHelper db = new DatabaseHelper(getApplicationContext());
+        LocalDatabaseManager db = new LocalDatabaseManager(getApplicationContext());
+
         publicKey = db.retrieveContactPublicKey(db.getWritableDatabase(), contactID);
+
 
         return publicKey;
     }

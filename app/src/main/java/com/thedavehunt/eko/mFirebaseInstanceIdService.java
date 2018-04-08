@@ -7,7 +7,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.FirebaseInstanceIdService;
 
-public class mFirebaseInstanceIdService extends FirebaseInstanceIdService {
+public class mFirebaseInstanceIdService extends com.google.firebase.iid.FirebaseInstanceIdService {
 
 
 
@@ -17,7 +17,7 @@ public class mFirebaseInstanceIdService extends FirebaseInstanceIdService {
         String refreshedToken = FirebaseInstanceId.getInstance().getToken();
         Log.d("FirebaseToken", "Refreshed token: " + refreshedToken);
         //save token to local database
-        DatabaseHelper dbm = new DatabaseHelper(getApplicationContext());
+        LocalDatabaseManager dbm = new LocalDatabaseManager(getApplicationContext());
         dbm.insertToken("temp",refreshedToken);
 
     }
