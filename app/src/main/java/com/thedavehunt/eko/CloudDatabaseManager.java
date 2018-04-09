@@ -75,7 +75,7 @@ public class CloudDatabaseManager {
 
         event.setId(id);
 
-        event.addMembers(new EventMember(user.getUid(),user.getDisplayName()));
+        event.addMembers(new EventMember(user.getUid()));
 
         //push event to cloud database
         rootRef.child("events").child(id).setValue(event);
@@ -90,6 +90,10 @@ public class CloudDatabaseManager {
 
         rootRef.child("users").child(userID).child("rated").child(eventID).child("rating").setValue(rating);
 
+    }
+
+    public void updateUserDisplayName(String userID,String Dsiplayname){
+        rootRef.child("users").child(userID).child("DisplayName").setValue(Dsiplayname);
     }
 
     //send updated token to firebase db

@@ -5,10 +5,13 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -29,12 +32,18 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.List;
+
+import static com.facebook.FacebookSdk.getApplicationContext;
 
 public class ViewEvent extends FragmentActivity implements OnMapReadyCallback, RateFragment.RatingDialogListener {
 
@@ -158,8 +167,25 @@ public class ViewEvent extends FragmentActivity implements OnMapReadyCallback, R
                             //place each member into event member
                             for(int i=0;i<members.length();i++){
                                 JSONObject mem = members.getJSONObject(i);
-                                EventMember member = new EventMember(mem.getString("id"),mem.getString("name"));
+                                final EventMember member = new EventMember(mem.getString("id"));
+                                Log.d("MemberName1",mem.getString("id"));
+                                member.setName("");
+
+                                FirebaseDatabase.getInstance().getReference().child("users").child(mem.getString("id")).child("DisplayName").addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot snapshot) {
+                                        Log.d("MemberName",snapshot + "");
+                                        member.setName(snapshot.getValue().toString());
+
+
+                                    }
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+                                    }
+                                });
+
                                 event.addMembers(member);
+
 
                             }
 
@@ -234,6 +260,18 @@ public class ViewEvent extends FragmentActivity implements OnMapReadyCallback, R
 
         memberList.setAdapter(tempAdapter);
 
+        memberList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                LocalDatabaseManager ldb = new LocalDatabaseManager(getApplicationContext());
+                EventMember member = (EventMember)members.get(i);
+                ldb.addContact(member.getId());
+
+                Intent intent = new Intent(ViewEvent.this,ContactDisplay.class);
+                startActivity(intent);
+            }
+        });
+
         ViewEvent.this.location=event.getEventLocation();
 
         //seperator for lat and long
@@ -278,7 +316,7 @@ public class ViewEvent extends FragmentActivity implements OnMapReadyCallback, R
                 //if user clicks yes
                 .setPositiveButton(getResources().getString(R.string.positiveActionText), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        EventMember member = new EventMember(user.getUid(),user.getDisplayName());
+                        EventMember member = new EventMember(user.getUid());
 
                         dbm.addEventMember(id,member);
                         dbm.rateEvent(user.getUid(),id,5);
@@ -315,7 +353,7 @@ public class ViewEvent extends FragmentActivity implements OnMapReadyCallback, R
                     //if user clicks yes
                     .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
-                            EventMember member = new EventMember(user.getUid(), user.getDisplayName());
+                            EventMember member = new EventMember(user.getUid());
 
                             dbm.removeEventMember(id, member);
 

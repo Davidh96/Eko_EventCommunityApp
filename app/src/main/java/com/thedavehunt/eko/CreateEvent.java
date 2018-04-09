@@ -281,7 +281,7 @@ public class CreateEvent extends FragmentActivity implements SelectDateDialog.Da
 
                             for(int i=0;i<members.length();i++){
                                 JSONObject mem = members.getJSONObject(i);
-                                EventMember member = new EventMember(mem.getString("id"),mem.getString("name"));
+                                EventMember member = new EventMember(mem.getString("id"));
                                 event.addMembers(member);
 
                             }

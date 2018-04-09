@@ -11,8 +11,14 @@ public class EventMember {
     public  EventMember(){
     }
 
-    public EventMember(String id, String name){
+    public EventMember(String id){
         this.id=id;
+        //, String name
+        //this.name=name;
+    }
+    public EventMember(String id,String name){
+        this.id=id;
+        //,
         this.name=name;
     }
 
