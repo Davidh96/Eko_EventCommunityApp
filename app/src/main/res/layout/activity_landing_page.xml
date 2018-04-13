@@ -83,6 +83,31 @@
             android:textSize="@dimen/textSizeMedium"/>
     </LinearLayout>
 
+    <!--<LinearLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:orientation="horizontal"-->
+        <!--android:id="@+id/layoutRecommendedLanding"-->
+        <!--android:layout_below="@+id/layoutDistanceLanding"-->
+        <!--android:clickable="true">-->
+        <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="Recommended: "/>-->
+
+        <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:id="@+id/titleRecommendationLanding"/>-->
+
+        <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:id="@+id/descRecommendationLanding"/>-->
+    <!--</LinearLayout>-->
+
+
+
     <Spinner
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -95,11 +120,109 @@
         android:layout_marginTop="@dimen/marginTB"/>
 
 
+    <!--<RelativeLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:id="@+id/layoutRecommendedLanding"-->
+        <!--android:layout_below="@+id/spinnerCategoryLanding"-->
+        <!--android:background="@color/colorAccent">-->
+
+        <!--<LinearLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:orientation="horizontal"-->
+            <!--android:id="@+id/header"-->
+            <!--android:weightSum="1"-->
+            <!--&gt;-->
+            <!--<TextView-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:id="@+id/textEventName"-->
+                <!--android:text="Event Name"-->
+                <!--android:textSize="20dp"-->
+                <!--android:paddingTop="12dp"-->
+                <!--android:paddingBottom="12dp"-->
+                <!--android:fontFamily="sans-serif-medium"-->
+                <!--android:layout_weight=".4"/>-->
+
+            <!--<TextView-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:id="@+id/textEventPopular"-->
+                <!--android:layout_weight=".6"-->
+                <!--android:textAlignment="textEnd"/>-->
+        <!--</LinearLayout>-->
+
+        <!--<LinearLayout-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_below="@+id/header"-->
+            <!--android:orientation="vertical">-->
+
+            <!--<LinearLayout-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:orientation="vertical"-->
+                <!--&gt;-->
+                <!--<TextView-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="match_parent"-->
+                    <!--android:id="@+id/textEventDescription"-->
+                    <!--android:text="Description"-->
+                    <!--android:textSize="14dp"-->
+                    <!--android:paddingTop="12dp"-->
+                    <!--android:paddingBottom="12dp"-->
+                    <!--android:fontFamily="sans-serif-regular"/>-->
+            <!--</LinearLayout>-->
+
+            <!--<LinearLayout-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:orientation="horizontal"-->
+
+                <!--&gt;-->
+                <!--<TextView-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="match_parent"-->
+                    <!--android:id="@+id/textEventAuthor"-->
+                    <!--android:text="Author"-->
+                    <!--android:textSize="16dp"-->
+                    <!--android:paddingTop="12dp"-->
+                    <!--android:paddingBottom="12dp"-->
+                    <!--android:paddingRight="16dp"-->
+                    <!--android:fontFamily="sans-serif-light"/>-->
+
+                <!--<TextView-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="match_parent"-->
+                    <!--android:id="@+id/textEventCategory"-->
+                    <!--android:text="Category"-->
+                    <!--android:textSize="16dp"-->
+                    <!--android:paddingTop="12dp"-->
+                    <!--android:paddingBottom="12dp"-->
+                    <!--android:fontFamily="sans-serif-light"/>-->
+
+            <!--</LinearLayout>-->
+
+        <!--</LinearLayout>-->
+
+    <!--</RelativeLayout>-->
+
+
+
+
+
     <android.support.v4.widget.SwipeRefreshLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/layoutRefreshLanding"
         android:layout_below="@+id/spinnerCategoryLanding">
+
+
+
+
+
+
 
 
     <ListView
@@ -109,6 +232,9 @@
         ></ListView>
 
     </android.support.v4.widget.SwipeRefreshLayout>
+
+
+
 
 
     <RelativeLayout

@@ -42,6 +42,7 @@ public class MainActivity extends Activity {
     private CallbackManager mCallbackManager;
 
     private static final int RC_SIGN_IN =1;
+    private int requestCode=1;
     private GoogleSignInClient mGoogleSignInClient;
 
     private ProgressBar loadingCircle;
@@ -52,9 +53,6 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
-        //dbHelper.insertData("Hello David my man");
 
         //get views
         loadingCircle = (ProgressBar)findViewById(R.id.loadingCircle);
@@ -129,7 +127,7 @@ public class MainActivity extends Activity {
                         android.Manifest.permission.ACCESS_COARSE_LOCATION,
                         android.Manifest.permission.ACCESS_FINE_LOCATION,
                         android.Manifest.permission.INTERNET
-                },10);
+                },requestCode);
                 return;
             }
         }

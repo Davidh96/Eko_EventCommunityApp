@@ -14,6 +14,7 @@ import android.widget.DatePicker;
  * Created by david on 05/02/18.
  */
 
+//displaya calander and returns a chosen date
 public class SelectDateDialog extends AppCompatDialogFragment {
     private DatePicker datePicker;
     private DateDialogListener listener;

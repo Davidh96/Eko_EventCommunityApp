@@ -14,6 +14,7 @@ import android.widget.TimePicker;
  * Created by david on 05/02/18.
  */
 
+//diplays a clockl and returns time
 public class SelectTimeDialog extends AppCompatDialogFragment {
 
     private TimePicker timePicker;
@@ -55,6 +56,7 @@ public class SelectTimeDialog extends AppCompatDialogFragment {
                     }
                 });
 
+        //get views
         timePicker = (TimePicker)view.findViewById(R.id.timePickerFragment);
 
         return builder.create();

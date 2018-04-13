@@ -12,6 +12,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -47,7 +49,6 @@ import static com.facebook.FacebookSdk.getApplicationContext;
 
 public class ViewEvent extends FragmentActivity implements OnMapReadyCallback, RateFragment.RatingDialogListener {
 
-    CloudDatabaseManager dbm = new CloudDatabaseManager();
     private String url;
 
 
@@ -84,6 +85,8 @@ public class ViewEvent extends FragmentActivity implements OnMapReadyCallback, R
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_event);
+
+        NetworkManager.getInstance(this);
 
         url = getResources().getString(R.string.serverURLrecieve);
 
@@ -145,66 +148,90 @@ public class ViewEvent extends FragmentActivity implements OnMapReadyCallback, R
 
         //creating a string request to send request to the url
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        loadingCircle.setVisibility(View.INVISIBLE);
+            new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    loadingCircle.setVisibility(View.INVISIBLE);
 
-                        try {
+                    try {
 
-                            //getting the whole json object from the response
-                            JSONObject eventObj = new JSONObject(response);
+                        //getting the whole json object from the response
+                        JSONObject eventObj = new JSONObject(response);
 
 
-                            //place data into an eventDoc
-                            event = new EventDoc(eventObj.getString("id"),eventObj.getString("eventName"),eventObj.getString("eventAuthor"),eventObj.getString("eventAuthorID"),
-                                    eventObj.getString("eventDescription"),eventObj.getString("eventCategory"),eventObj.getString("eventLocation"),eventObj.getString("eventDate"),
-                                    eventObj.getString("eventTime"));
+                        //place data into an eventDoc
+                        event = new EventDoc(eventObj.getString("id"),eventObj.getString("eventName"),eventObj.getString("eventAuthor"),eventObj.getString("eventAuthorID"),
+                                eventObj.getString("eventDescription"),eventObj.getString("eventCategory"),eventObj.getString("eventLocation"),eventObj.getString("eventDate"),
+                                eventObj.getString("eventTime"));
 
-                            //get members list
-                            JSONArray members = eventObj.getJSONArray("members");
+                        //get members list
+                        JSONArray members = eventObj.getJSONArray("members");
 
-                            //place each member into event member
-                            for(int i=0;i<members.length();i++){
-                                JSONObject mem = members.getJSONObject(i);
-                                final EventMember member = new EventMember(mem.getString("id"));
-                                Log.d("MemberName1",mem.getString("id"));
-                                member.setName("");
+                        //place each member into event member
+                        for(int i=0;i<members.length();i++){
+                            JSONObject mem = members.getJSONObject(i);
+                            final EventMember member = new EventMember(mem.getString("id"));
 
-                                FirebaseDatabase.getInstance().getReference().child("users").child(mem.getString("id")).child("DisplayName").addListenerForSingleValueEvent(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(DataSnapshot snapshot) {
-                                        Log.d("MemberName",snapshot + "");
-                                        member.setName(snapshot.getValue().toString());
+                            NetworkManager.getInstance().readUserDetails(member.getId(),new NetworkManager.SomeCustomListener<JSONObject>()
+                            {
+                                @Override
+                                public void getResult(JSONObject result)
+                                {
+                                    if (!result.toString().isEmpty())
+                                    {
+                                        Log.d("recHere",result.toString());
+                                        String name="";
+                                        String token="";
+                                        String key="";
+                                        try {
+                                            name = result.getString("DisplayName");
+                                            token = result.getString("Token");
+                                            key = result.getString("PublicKey");
+                                        }catch (Exception e){
+                                            Log.d("Error",e.toString());
+                                        }
+                                        member.setName(name);
+                                        member.setKey(key);
+                                        member.setToken(token);
+                                        Log.d("meberId",member.getKey());
+
+;
+                                        event.addMembers(member);
+
+                                        if(user.getUid().equals(member.getId())){
+                                            joinBtn.hide();
+                                            leaveBtn.show();
+                                            rateBtn.show();
+                                        }
+
+                                        //retrieveMessages();
+                                        ((ArrayAdapter)tempAdapter).notifyDataSetChanged();
+
+                                        memberListTitle.setText(getResources().getString(R.string.memberListTitle) + " (" + event.getMembers().size()  + ")");
 
 
                                     }
-                                    @Override
-                                    public void onCancelled(DatabaseError databaseError) {
-                                    }
-                                });
+                                }
+                            });
 
-                                event.addMembers(member);
-
-
-                            }
-
-                            //display data
-                            setData();
-
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
                         }
+
+                        //display data
+                        setData();
+
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        //displaying the error in toast if occurrs
-                        Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                });
+                }
+            },
+            new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    //displaying the error in toast if occurrs
+                    Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
 
         //creating a request queue
         RequestQueue requestQueue = Volley.newRequestQueue(this);
@@ -259,6 +286,7 @@ public class ViewEvent extends FragmentActivity implements OnMapReadyCallback, R
         tempAdapter = new MemberListAdapter(ViewEvent.this,members);
 
         memberList.setAdapter(tempAdapter);
+
 
         memberList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -316,10 +344,19 @@ public class ViewEvent extends FragmentActivity implements OnMapReadyCallback, R
                 //if user clicks yes
                 .setPositiveButton(getResources().getString(R.string.positiveActionText), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        EventMember member = new EventMember(user.getUid());
 
-                        dbm.addEventMember(id,member);
-                        dbm.rateEvent(user.getUid(),id,5);
+
+                        NetworkManager.getInstance().addMember(id,new NetworkManager.SomeCustomListener<JSONObject>()
+                        {
+                            @Override
+                            public void getResult(JSONObject result)
+                            {
+                                if (!result.toString().isEmpty())
+                                {
+                                }
+                            }
+                        });
+
 
                         joinBtn.hide();
                         leaveBtn.show();
@@ -353,9 +390,19 @@ public class ViewEvent extends FragmentActivity implements OnMapReadyCallback, R
                     //if user clicks yes
                     .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
-                            EventMember member = new EventMember(user.getUid());
 
-                            dbm.removeEventMember(id, member);
+                            NetworkManager.getInstance().deleteMember(id,new NetworkManager.SomeCustomListener<String>()
+                            {
+                                @Override
+                                public void getResult(String result)
+                                {
+                                    if (!result.toString().isEmpty())
+                                    {
+                                        Log.d("delMemHere",result.toString());
+                                    }
+                                }
+                            });
+
 
                             joinBtn.show();
                             leaveBtn.hide();
@@ -396,7 +443,20 @@ public class ViewEvent extends FragmentActivity implements OnMapReadyCallback, R
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         //delete currently selected event
-                        dbm.deleteEvent(id,ViewEvent.this);
+
+                        NetworkManager.getInstance().deleteEvent(id,new NetworkManager.SomeCustomListener<String>()
+                        {
+                            @Override
+                            public void getResult(String result)
+                            {
+                                if (!result.toString().isEmpty())
+                                {
+                                    Log.d("delHere",result.toString());
+                                    //do what you need with the result...
+                                }
+                            }
+                        });
+
                         finish();
 
                     }
@@ -420,7 +480,18 @@ public class ViewEvent extends FragmentActivity implements OnMapReadyCallback, R
 
     public void returnRating(float rating) {
             float rate= rating;
-            dbm.rateEvent(user.getUid(),id,rate);
+        NetworkManager.getInstance().addRating(id,rate,new NetworkManager.SomeCustomListener<JSONObject>()
+        {
+            @Override
+            public void getResult(JSONObject result)
+            {
+                if (!result.toString().isEmpty())
+                {
+                    Log.d("Rated",result.toString());
+                }
+            }
+        });
+
     }
 
 }

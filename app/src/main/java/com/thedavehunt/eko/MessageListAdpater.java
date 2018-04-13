@@ -35,17 +35,21 @@ public class MessageListAdpater extends ArrayAdapter {
         View custom = infl.inflate(R.layout.custom_row_message,null,true);
 
         MessageDoc message = messageList.get(position);
+        //get views
         TextView messageDta =(TextView)custom.findViewById(R.id.textMessageRow);
         TextView messageTime = (TextView)custom.findViewById(R.id.textDateTimeChat);
 
+        //set message text
         messageDta.setText(message.getMessageData());
+        //set time to time that message was recieved
         messageTime.setText(message.getTimestamp());
 
+        //if the message is sent from this device
         if(message.getMessageType().equals("Sent")){
-
+            //change background to accent
             custom.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorAccent));
+            //align message to the right
             messageDta.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
-            //messageDta.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
         }
 
         return custom;

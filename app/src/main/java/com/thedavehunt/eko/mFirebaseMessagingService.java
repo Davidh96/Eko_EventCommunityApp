@@ -39,7 +39,7 @@ public class mFirebaseMessagingService extends FirebaseMessagingService {
 
             ContactDoc contact = new ContactDoc(msgFromToken,msgFromID,msgFromName,msgFromKey);
 
-            Cursor result = db.retrieveContact(db.getWritableDatabase(),msgFromID);
+            Cursor result = db.retrieveContact(msgFromID);
 
             //check if contact is already in database
             if(result.getCount()==0) {
@@ -49,6 +49,9 @@ public class mFirebaseMessagingService extends FirebaseMessagingService {
                 //update contact details, the contact username
                 db.updateContact(contact);
             }
+
+            //close db reference
+            db.close();
 
             //send broadcast that IM was received
             Intent i = new Intent("IMReceived");
@@ -64,6 +67,7 @@ public class mFirebaseMessagingService extends FirebaseMessagingService {
 
     }
 
+    //used to convert string into byte array
     private byte[] convertDataToByte(String msgData){
         //convert string to int array
         String[] items = msgData.replaceAll("\\[", "").replaceAll("\\]", "").replaceAll("\\s", "").split(",");

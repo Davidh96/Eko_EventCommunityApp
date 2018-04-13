@@ -84,12 +84,11 @@ public class ViewChat extends Activity {
 
         retrieveContactDetails();
 
-        myToken = dbm.retrieveToken(db,"temp");
+        myToken = dbm.retrieveToken("temp");
 
         sendMessageBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getApplicationContext(),"CLICKED!",Toast.LENGTH_SHORT).show();
                 String messNospc = messageTextEdit.getText().toString().replaceAll("\\s+","");
                 if(messNospc.length()>0) {
                     sendMessage();
@@ -104,6 +103,8 @@ public class ViewChat extends Activity {
 
         //set focus on last message
         list.setSelection(list.getAdapter().getCount()-1);
+
+        //dbm.close();
 
     }
 
@@ -141,7 +142,7 @@ public class ViewChat extends Activity {
 
     public void retrieveMessages(){
 
-        results = dbm.retrieveChat(db,id);
+        results = dbm.retrieveChat(id);
         String timestamp;
         String senderID;
         String messageData;
@@ -158,10 +159,12 @@ public class ViewChat extends Activity {
             messageList.add(message);
         }
 
+        dbm.close();
+
     }
 
     private void retrieveContactDetails(){
-        results = dbm.retrieveContact(db,id);
+        results = dbm.retrieveContact(id);
 
         String senderName="";
         String senderToken;
@@ -178,6 +181,8 @@ public class ViewChat extends Activity {
             contact = new ContactDoc(senderToken, senderID, senderName,senderKey);
         }
 
+
+
         chatTitleBar.setText(senderName);
 
     }
@@ -186,7 +191,6 @@ public class ViewChat extends Activity {
 
         MessagingManager mm = new MessagingManager();
         mm.sendMessage(contact,myToken,messageTextEdit.getText().toString());
-        Toast.makeText(getApplicationContext(),messageTextEdit.getText().toString(),Toast.LENGTH_SHORT).show();
 
 
         listAdapter.clear();

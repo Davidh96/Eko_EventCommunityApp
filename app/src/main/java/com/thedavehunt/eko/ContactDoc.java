@@ -1,11 +1,12 @@
 package com.thedavehunt.eko;
 
+//used to store contact details
 public class ContactDoc {
 
-    private String contactToken;
-    private String contactID;
-    private String contactName;
-    private String contactPublicKey;
+    private String contactToken;//stores contact token
+    private String contactID;//stores contact id
+    private String contactName;//stores contact name
+    private String contactPublicKey;//stores contact public key
 
     public ContactDoc(String contactToken, String contactID, String contactName, String contactPublicKey) {
         this.contactToken = contactToken;
@@ -21,13 +22,7 @@ public class ContactDoc {
         this.contactPublicKey = "unknown";
     }
 
-    public ContactDoc(String contactToken,String contactID) {
-        this.contactToken = contactToken;
-        this.contactID = contactID;
-        this.contactName = "unknown";
-        this.contactPublicKey = "unknown";
-    }
-
+    //getters and setters
     public String getContactToken() {
         return contactToken;
     }

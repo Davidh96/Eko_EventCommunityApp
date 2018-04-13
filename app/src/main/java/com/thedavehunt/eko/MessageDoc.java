@@ -1,5 +1,6 @@
 package com.thedavehunt.eko;
 
+//stores info about a message
 public class MessageDoc {
 
     private String timestamp;
@@ -14,6 +15,7 @@ public class MessageDoc {
         this.messageType = messageType;
     }
 
+    //getters and setters
     public String getTimestamp() {
         return timestamp;
     }

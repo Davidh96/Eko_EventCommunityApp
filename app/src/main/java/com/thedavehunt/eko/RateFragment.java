@@ -14,7 +14,7 @@ import android.view.ViewGroup;
 import android.widget.RatingBar;
 import android.widget.TimePicker;
 
-
+//displays a star rating and returns rating
 public class RateFragment extends AppCompatDialogFragment {
 
     private RatingBar ratingPicker;
@@ -28,6 +28,7 @@ public class RateFragment extends AppCompatDialogFragment {
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.fragment_rate,null);
 
+        //get views
         ratingPicker = (RatingBar) view.findViewById(R.id.ratingBarFrag);
 
         builder.setView(view)
@@ -41,13 +42,10 @@ public class RateFragment extends AppCompatDialogFragment {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         float rating = ratingPicker.getRating();
-
-
-
+                        //return rating
                         listener.returnRating(rating);
                     }
                 });
-
 
 
         return builder.create();

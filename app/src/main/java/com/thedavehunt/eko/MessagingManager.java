@@ -19,21 +19,22 @@ import java.util.HashMap;
 
 import static com.facebook.FacebookSdk.getApplicationContext;
 
-public class MessagingManager {
+public class MessagingManager  {
 
     private FirebaseUser user;
-    private  LocalDatabaseManager dbm;
+    private  LocalDatabaseManager db;
     private String url;
 
     public MessagingManager(){
         user = FirebaseAuth.getInstance().getCurrentUser();
-        dbm = new LocalDatabaseManager(getApplicationContext());
+        db = new LocalDatabaseManager(getApplicationContext());
         url= getApplicationContext().getResources().getString(R.string.serverURLsendmsg);
     }
 
     public void sendMessage(ContactDoc contact,String myToken,String message) {
         EncryptionManager em = new EncryptionManager();
 
+        //set the contents of JSON to be sent
         HashMap req = new HashMap();
         req.put("to",contact.getContactToken());
         req.put("fromToken",myToken);
@@ -41,80 +42,49 @@ public class MessagingManager {
         req.put("fromName", user.getDisplayName());
         req.put("fromKey", em.getKeyFromFile("publicKey.txt"));
 
+        //get contacts public key
         String publicKey = getPublicKey(contact.getContactID());
-        Log.d("pibicKey",publicKey);
-//
-//        while(publicKey!=null) {
 
-            //encrypt the message with public key
+        //encrypt the message
+        byte[] encrypted = em.encrypt(message, em.convertStringToPub(publicKey));
 
-            byte[] encrypted = em.encrypt(message, em.convertStringToPub(publicKey));
-        Log.d("message1",encrypted.toString());
-            //snend bytes array as string
-            req.put("data", Arrays.toString(encrypted));
+        //send bytes array as string
+        req.put("data", Arrays.toString(encrypted));
 
-            Date currentTime = Calendar.getInstance().getTime();
-            dbm.insertData(message, currentTime.toString(), contact.getContactID(), "Sent");
+        //get current date/time
+        Date currentTime = Calendar.getInstance().getTime();
 
-            //send message
-            RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+        db.insertData(message, currentTime.toString(), contact.getContactID(), "Sent");
 
-            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, new JSONObject(req),
-                    new Response.Listener<JSONObject>() {
-                        @Override
-                        public void onResponse(JSONObject response) {
-                            JSONObject obj = response;
+        //send message
+        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
 
-                        }
-                    },
-                    new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                        }
-                    });
+        //send message to server
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, new JSONObject(req),
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        JSONObject obj = response;
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.d("sent1",error.toString());
+                    }
+                });
 
-            requestQueue.add(jsonObjectRequest);
-//
-//            publicKey=null;
-//        }
-    }
-
-    public void initiateChat(String contactID){
-
-        Log.d("Init","1");
-
-        LocalDatabaseManager db = new LocalDatabaseManager(getApplicationContext());
-        Cursor result = db.retrieveContact(db.getWritableDatabase(),contactID);
-
-        ContactDoc contact=null;
-
-        while(result.moveToNext()){
-            String senderName = result.getString(result.getColumnIndex("fromName"));
-            String id = result.getString(result.getColumnIndex("fromID"));
-            String token = result.getString(result.getColumnIndex("fromToken"));
-            Log.d("toke",token);
-            String publicKey = result.getString(result.getColumnIndex("fromPublicKey"));
-            contact = new ContactDoc(token,id,senderName,publicKey);
-        }
-
-        Log.d("Init2",contact.getContactToken());
-        String myToken = db.retrieveToken(db.getWritableDatabase(),"temp");
-
-        try {
-            this.sendMessage(contact,myToken,"Initiate Conversation");
-            Log.d("Init3","sending");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        requestQueue.add(jsonObjectRequest);
 
     }
 
+
+    //get contact public key
     public String getPublicKey(String contactID){
         String publicKey=null;
         LocalDatabaseManager db = new LocalDatabaseManager(getApplicationContext());
-
-        publicKey = db.retrieveContactPublicKey(db.getWritableDatabase(), contactID);
-
+        //retrieve key from database
+        publicKey = db.retrieveContactPublicKey(contactID);
 
         return publicKey;
     }

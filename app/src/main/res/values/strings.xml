@@ -6,6 +6,14 @@
     <string name="serverURL">http://188.166.98.100/</string>
     <string name="serverURLGetEvents">http://188.166.98.100/getEvents</string>
     <string name="serverURLrecieve">http://188.166.98.100/retrieveEvent/</string>
+    <string name="serverURLGetRec">http://188.166.98.100/getEventRecommendation</string>
+    <string name="serverURLUserDetails">http://188.166.98.100/updateUserDetails</string>
+    <string name="serverURLAddMember">http://188.166.98.100/addMember</string>
+    <string name="serverURLAddRating">http://188.166.98.100/addRating</string>
+    <string name="serverURLDeleteMember">http://188.166.98.100/deleteMember/</string>
+    <string name="serverURLDeleteEvent">http://188.166.98.100/deleteEvent/</string>
+    <string name="serverURLSaveEvent">http://188.166.98.100/saveEvent</string>
+    <string name="serverURLreadUserDetails">http://188.166.98.100/readUserDetails/</string>
     <string name="serverURLsendmsg">http://188.166.98.100/sendMsg</string>
     <string name="guestViewEventToast">You must sign in to view events</string>
     <string name="positiveActionText">Sure</string>

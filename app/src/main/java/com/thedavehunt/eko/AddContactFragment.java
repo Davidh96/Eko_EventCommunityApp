@@ -16,6 +16,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 
 public class AddContactFragment extends AppCompatDialogFragment {
+
     private EditText addContactEdit;
     private TextView userIDContactText;
     private AddContactFragment.AddContactDialogListener listener;
@@ -26,11 +27,14 @@ public class AddContactFragment extends AppCompatDialogFragment {
         //get current user
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
+        //create alert box
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
+        //place add contact view in alert box
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.fragment_add_contact,null);
 
+        //get views
         addContactEdit = (EditText) view.findViewById(R.id.editAddContact);
         userIDContactText = (TextView)view.findViewById(R.id.textUserIDContact);
 
@@ -64,9 +68,8 @@ public class AddContactFragment extends AppCompatDialogFragment {
         listener = (AddContactFragment.AddContactDialogListener)context;
     }
 
+    //used to communicate between activity and fragment
     public interface AddContactDialogListener{
         void returnContactID(String contactID);
-
-
     }
 }

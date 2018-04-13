@@ -14,7 +14,9 @@ import java.util.Map;
  * Created by david on 25/10/17.
  */
 
+//stores information about events
 public class EventDoc {
+
     String id;
     String eventName;
     String eventAuthor;
@@ -42,6 +44,7 @@ public class EventDoc {
         this.eventTime=eventTime;
     }
 
+    //getters and setters
     public String getId() {
         return id;
     }

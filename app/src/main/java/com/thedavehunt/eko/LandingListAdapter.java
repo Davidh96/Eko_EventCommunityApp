@@ -19,6 +19,7 @@ import java.util.List;
  * Created by david on 21/10/17.
  */
 
+//list adapter for events
 public class LandingListAdapter extends ArrayAdapter<EventDoc> {
 
     private List<EventDoc> eventList;
@@ -35,6 +36,8 @@ public class LandingListAdapter extends ArrayAdapter<EventDoc> {
         View custom = infl.inflate(R.layout.custom_row,null,true);
 
         EventDoc event = eventList.get(position);
+
+        //get views
         TextView eventNameText =(TextView)custom.findViewById(R.id.textEventName);
         TextView eventDescriptionText =(TextView)custom.findViewById(R.id.textEventDescription);
         TextView eventCategoryText =(TextView)custom.findViewById(R.id.textEventCategory);

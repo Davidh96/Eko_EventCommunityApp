@@ -19,9 +19,7 @@ import static com.facebook.FacebookSdk.getApplicationContext;
 
 public class ContactDisplay extends FragmentActivity implements AddContactFragment.AddContactDialogListener {
 
-    LocalDatabaseManager dbm;
-    SQLiteDatabase db;
-
+    private LocalDatabaseManager db;
     private ArrayList<ContactDoc> contactList;
     private ContactListAdapter listAdapter;
     private BroadcastReceiver mReceiver;
@@ -31,26 +29,33 @@ public class ContactDisplay extends FragmentActivity implements AddContactFragme
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contact_display);
 
+        final String idExtra = "id";
+
+        //get views
+        ListView list = (ListView)findViewById(R.id.listChatDisplay);
+
         //create contact list to display in list view
         contactList = new ArrayList<ContactDoc>();
 
+        //get list of contacts
         retrieveContactList();
 
         //initialise adapter
         listAdapter = new ContactListAdapter(ContactDisplay.this,contactList);
 
-        ListView list = (ListView)findViewById(R.id.listChatDisplay);
+
         //set adapter for list view
         list.setAdapter(listAdapter);
 
+        //show chat with contact
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
-
                 Intent viewChat = new Intent(ContactDisplay.this, ViewChat.class);
 
-                viewChat.putExtra("id", contactList.get(i).getContactID() );
+                //pass contact id
+                viewChat.putExtra(idExtra, contactList.get(i).getContactID() );
 
                 startActivity(viewChat);
 
@@ -58,18 +63,21 @@ public class ContactDisplay extends FragmentActivity implements AddContactFragme
         });
     }
 
+    //get list of contacts
     private void retrieveContactList(){
 
-        dbm = new LocalDatabaseManager(getApplicationContext());
-        db = dbm.getReadableDatabase();
+        //open up database
+        db = new LocalDatabaseManager(getApplicationContext());
 
-        Cursor results = dbm.retrieveContacts(db);
+        //get cursor of contacts
+        Cursor results = db.retrieveContacts();
 
         String senderName;
         String senderToken;
         String senderID;
         String senderKey;
 
+        //parse contacts list
         while(results.moveToNext()){
             senderName = results.getString(results.getColumnIndex("contactName"));
             senderToken = results.getString(results.getColumnIndex("contactToken"));
@@ -78,6 +86,8 @@ public class ContactDisplay extends FragmentActivity implements AddContactFragme
             ContactDoc message = new ContactDoc(senderToken, senderID, senderName,senderKey);
             contactList.add(message);
         }
+
+        db.close();
     }
 
     @Override
@@ -114,14 +124,15 @@ public class ContactDisplay extends FragmentActivity implements AddContactFragme
         addContactFragment.show(getSupportFragmentManager(),"tag");
     }
 
+    //when contact id has been returned from add contact fragment
     public void returnContactID(String contactID) {
         Toast.makeText(getApplicationContext(),"Contact Added",Toast.LENGTH_SHORT).show();
-        LocalDatabaseManager dbm = new LocalDatabaseManager(getApplicationContext());
-        dbm.addContact(contactID);
+        db.addContact(contactID);
         refreshContactList();
 
     }
 
+    //refresh contacts list
     private void refreshContactList(){
         listAdapter.clear();
 

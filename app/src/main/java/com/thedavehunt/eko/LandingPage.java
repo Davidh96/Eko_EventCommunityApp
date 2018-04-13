@@ -20,14 +20,17 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -38,8 +41,13 @@ import com.android.volley.toolbox.Volley;
 import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -49,10 +57,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import static com.android.volley.DefaultRetryPolicy.DEFAULT_BACKOFF_MULT;
+import static com.android.volley.DefaultRetryPolicy.DEFAULT_MAX_RETRIES;
+import static com.facebook.FacebookSdk.getApplicationContext;
+
 
 public class LandingPage extends Activity {
 
-    private List<EventDoc> eventList;
+    public List<EventDoc> eventList;
+    public EventDoc recEvent;
     private ListAdapter listAdapter;
 
     private ProgressBar loadingCircle;
@@ -79,11 +92,25 @@ public class LandingPage extends Activity {
     private ArrayAdapter<CharSequence> adapter;
 
     String myToken;
+    private int requestCode=1;
+    private int minTime=1000;
+    private int minDistance=10;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_landing_page);
+
+        final int refreshDelay=5;
+
+        //get user location
+        getLocation();
+
+        NetworkManager.getInstance(this);
+        EncryptionManager em = new EncryptionManager();
+
+        LocalDatabaseManager dbm = new LocalDatabaseManager(getApplicationContext());
+        myToken = dbm.retrieveToken("temp");
 
 
         //check if private and public keys have already been created
@@ -91,28 +118,26 @@ public class LandingPage extends Activity {
         File pubKeyFile = new File("/data/data/com.thedavehunt.eko/files/publicKey.txt");
         if(!privKeyFile.exists() || !pubKeyFile.exists()){
             //if not present, generate keys
-            EncryptionManager em = new EncryptionManager();
             em.generateKeys();
+
+            NetworkManager.getInstance().updateUser(em.convertKeyToString(em.keys.getPublic()),myToken,new NetworkManager.SomeCustomListener<JSONObject>()
+            {
+                @Override
+                public void getResult(JSONObject result)
+                {
+                    if (!result.toString().isEmpty())
+                    {
+                        Log.d("Keys updated",result.toString());
+                    }
+                }
+            });
         }
 
-        //DatabaseHelper dbHelper = new DatabaseHelper(getApplicationContext());
-
-        //get url for retrieving events
-        //url=getResources().getString(R.string.serverURLGetEvents);
+        //set url for getting events
         url=getResources().getString(R.string.serverURL) + "/getEvents/" + locLat + "," + locLong + "/" + chosenDist;
+
         //get current user
         user = FirebaseAuth.getInstance().getCurrentUser();
-
-        LocalDatabaseManager dbm = new LocalDatabaseManager(getApplicationContext());
-        SQLiteDatabase db = dbm.getWritableDatabase();
-
-
-        myToken = dbm.retrieveToken(db,"temp");
-
-
-        CloudDatabaseManager dbm1 = new CloudDatabaseManager();
-        dbm1.updateToken(user.getUid(),myToken);
-        dbm1.updateUserDisplayName(user.getUid(),user.getDisplayName());
 
 
         //views
@@ -141,6 +166,7 @@ public class LandingPage extends Activity {
                     LandingPage.this.category = parent.getItemAtPosition(position).toString();
                 }
                 else{
+                    //display all
                     LandingPage.this.category = "All";
                 }
 
@@ -166,7 +192,7 @@ public class LandingPage extends Activity {
                        //reload the list view
                        setListContents(category);
                     }
-                },500);
+                },refreshDelay);
             }
         });
 
@@ -183,6 +209,7 @@ public class LandingPage extends Activity {
             fragmentTransaction.show(createEvenetfrag);
             fragmentTransaction.commit();
         }
+
 
         //set the max distance user can choose
         distanceBar.setMax((int)((maxDist-minDist)/step));
@@ -212,10 +239,6 @@ public class LandingPage extends Activity {
         });
 
 
-        //get user location
-        getLocation();
-
-
     }
 
     @Override
@@ -233,6 +256,10 @@ public class LandingPage extends Activity {
         //needs to be cleared everytime
         eventList = new ArrayList<EventDoc>();
 
+        //get recommendations
+        getRecommendation();
+
+        //get list of events by category
         getEvents(filterCategory);
 
         //initialise adapter
@@ -242,6 +269,7 @@ public class LandingPage extends Activity {
         //set adapter for list view
         list.setAdapter(listAdapter);
 
+        //open view of event when item is clicked
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -266,166 +294,120 @@ public class LandingPage extends Activity {
         });
     }
 
+    //parses list of nearby events
     void getEvents(final String filter){
-        //creating a string request to send request to the url
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        //hiding the loading after completion
-                        loadingCircle.setVisibility(View.INVISIBLE);
 
-                        try {
+        NetworkManager.getInstance().getRelevantEvents(url,new NetworkManager.SomeCustomListener<String>()
+        {
+            @Override
+            public void getResult(String result)
+            {
+                loadingCircle.setVisibility(View.INVISIBLE);
+                if (!result.isEmpty())
+                {
 
-                            //getting the whole json object from the response
-                            JSONObject obj = new JSONObject(response);
+                    try {
+
+                        //getting the whole json object from the response
+                        JSONObject obj = new JSONObject(result);
 
 
-                            String jsonOBj = obj.toString();
+                        String jsonOBj = obj.toString();
 
+                        //if event in json
+                        while(jsonOBj.length()>2) {
 
-                            while(jsonOBj.length()>2) {
+                            String startString = "{\"-";
+                            int ind = jsonOBj.indexOf(startString) + startString.length();
+                            String id = jsonOBj.substring(ind, jsonOBj.substring(ind).indexOf("\"") + ind);
+                            JSONObject eventObj = obj.getJSONObject("-" + id);
 
-                                String startString = "{\"-";
-                                int ind = jsonOBj.indexOf(startString) + startString.length();
-                                String id = jsonOBj.substring(ind, jsonOBj.substring(ind).indexOf("\"") + ind);
-                                ;
-                                JSONObject eventObj = obj.getJSONObject("-" + id);
+                            //place event details into an eventDoc
+                            EventDoc event = new EventDoc(eventObj.getString("id"), eventObj.getString("eventName"), eventObj.getString("eventAuthor"), eventObj.getString("eventAuthorID"),
+                                    eventObj.getString("eventDescription"), eventObj.getString("eventCategory"), eventObj.getString("eventLocation"), eventObj.getString("eventDate"),
+                                    eventObj.getString("eventTime"));
 
-                                //place event details into an eventDoc
-                                EventDoc event = new EventDoc(eventObj.getString("id"), eventObj.getString("eventName"), eventObj.getString("eventAuthor"), eventObj.getString("eventAuthorID"),
-                                        eventObj.getString("eventDescription"), eventObj.getString("eventCategory"), eventObj.getString("eventLocation"), eventObj.getString("eventDate"),
-                                        eventObj.getString("eventTime"));
+//                                EventDoc popular;
+//                                int popMem=0;
+//                                if(recEvent!=null){
+//                                    if(event.getId().equals(recEvent.getId())){
+//                                        EventDoc event1 = eventList.get(0);
+//                                        eventList.set(0,recEvent);
+//                                        event=event1;
+//                                    }
+//                                }
+//                                else{
+//                                    //get members list
+//                                    JSONArray members = eventObj.getJSONArray("members");
+//                                    if(members.length()<popMem){
+//                                        popular=event;
+//                                        EventDoc event1 = eventList.get(0);
+//                                        eventList.set(0,popular);
+//                                        event=event1;
+//                                    }
+//                                }
 
+                            //if event is in the selected category
+                            if(event.getEventCategory().equals(filter) || filter.equals("All")){
                                 //add event to list
                                 eventList.add(event);
-
-                                String middle = "{\"-" + id + "\":" + eventObj.toString() + ",";
-                                String last ="{\"-" + id + "\":" + eventObj.toString();
-
-                                if(jsonOBj.indexOf(middle)>=0){
-                                    jsonOBj = jsonOBj.replace(middle, "{");
-                                }
-                                else{
-                                    jsonOBj = jsonOBj.replace(last,"{");
-                                }
-
-
                             }
 
-                            //initialise adapter
-                            listAdapter = new LandingListAdapter(LandingPage.this,eventList);
+
+                            String middle = "{\"-" + id + "\":" + eventObj.toString() + ",";
+                            String last ="{\"-" + id + "\":" + eventObj.toString();
+
+                            //remove middle elements
+                            if(jsonOBj.indexOf(middle)>=0){
+                                jsonOBj = jsonOBj.replace(middle, "{");
+                            }//remove last element
+                            else{
+                                jsonOBj = jsonOBj.replace(last,"{");
+                            }
+
+                            //notify change of dataset
+                            ((ArrayAdapter)listAdapter).notifyDataSetChanged();
 
 
-                            ListView list = (ListView)findViewById(R.id.listEventLanding);
-                            //set adapter for list view
-                            list.setAdapter(listAdapter);
-
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
                         }
+                    }catch (Exception e){
+
                     }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        //displaying the error in toast if occurs
-                        Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                });
 
 
-
-        //creating a request queue
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-
-        //adding the string request to request queue
-        requestQueue.add(stringRequest);
+                    ListView list = (ListView)findViewById(R.id.listEventLanding);
+                    //set adapter for list view
+                    list.setAdapter(listAdapter);
+               }
+            }
+        });
 
     }
 
-//    void getEvents(final String filter){
-//        HashMap req = new HashMap();
-//        req.put("location",locLat + "," + locLong );
-//        req.put("distance", distance);
-//        req.put("userID", user.getUid());
-//
-//        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-//
-//        //Toast.makeText(getApplicationContext(),filterCategory,Toast.LENGTH_SHORT).show();
-//
-//        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url,new JSONObject(req),
-//            new Response.Listener<JSONObject>() {
-//                @Override
-//                public void onResponse(JSONObject response) {
-//                    //hiding the loading after completion
-//                    loadingCircle.setVisibility(View.INVISIBLE);
-//
-//                    try {
-//
-//                        //getting the whole json object from the response
-//                        JSONObject obj = response;
-//
-//
-//                        String jsonOBj = obj.toString();
-//
-//                        //if more than one event
-//                        while(jsonOBj.length()>2) {
-//
-//                            String startString = "{\"-";
-//                            int ind = jsonOBj.indexOf(startString) + startString.length();
-//                            String id = jsonOBj.substring(ind, jsonOBj.substring(ind).indexOf("\"") + ind);
-//
-//                            JSONObject eventObj = obj.getJSONObject("-" + id);
-//
-//                            //place event details into an eventDoc
-//                            EventDoc event = new EventDoc(eventObj.getString("id"), eventObj.getString("eventName"), eventObj.getString("eventAuthor"), eventObj.getString("eventAuthorID"),
-//                                    eventObj.getString("eventDescription"), eventObj.getString("eventCategory"), eventObj.getString("eventLocation"), eventObj.getString("eventDate"),
-//                                    eventObj.getString("eventTime"));
-//
-//                            //filter out results based on category
-//                            if(filter.equals("All") || filter.equals(event.eventCategory)) {
-//                                //add event to list
-//                                eventList.add(event);
-//                            }
-//
-//
-//                            //get next event in list
-//                            String middle = "{\"-" + id + "\":" + eventObj.toString() + ",";
-//                            String last ="{\"-" + id + "\":" + eventObj.toString();
-//
-//                            //if we haven't reached end of list
-//                            if(jsonOBj.indexOf(middle)>=0){
-//                                jsonOBj = jsonOBj.replace(middle, "{");
-//                            }
-//                            else{
-//                                jsonOBj = jsonOBj.replace(last,"{");
-//                            }
-//
-//
-//                        }
-//
-//                        //initialise adapter
-//                        listAdapter = new LandingListAdapter(LandingPage.this,eventList);
-//
-//                        ListView list = (ListView)findViewById(R.id.listEventLanding);
-//                        //set adapter for list view
-//                        list.setAdapter(listAdapter);
-//
-//
-//                    } catch (JSONException e) {
-//
-//                    }
-//                }},
-//            new Response.ErrorListener() {
-//                @Override
-//                public void onErrorResponse(VolleyError error) {
-//                }
-//            });
-//
-//        requestQueue.add(jsonObjectRequest);
-//    }
+    //parses recommended events
+    void getRecommendation(){
+
+        //set parameters of recommendations
+        HashMap req = new HashMap();
+        req.put("location",locLat + "," + locLong );
+        req.put("distance", distance);
+        req.put("userID", user.getUid());
+
+        //get recommendation
+        NetworkManager.getInstance().getRecommendedEvent(locLat,locLong,distance,new NetworkManager.SomeCustomListener<JSONObject>()
+        {
+            @Override
+            public void getResult(JSONObject result)
+            {
+                if (!result.toString().isEmpty())
+                {
+                    Log.d("Recommendation Recieved",result.toString());
+                }
+            }
+        });
+
+
+    }
 
     //get user location
     void getLocation(){
@@ -443,7 +425,6 @@ public class LandingPage extends Activity {
                 //will get user location when location listener is triggered
 
                 LandingPage.this.url=getResources().getString(R.string.serverURL) + "/getEvents/" + locLat + "," + locLong + "/" + chosenDist;
-
                 setListContents(category);
             }
 
@@ -474,13 +455,13 @@ public class LandingPage extends Activity {
                         android.Manifest.permission.ACCESS_COARSE_LOCATION,
                         android.Manifest.permission.ACCESS_FINE_LOCATION,
                         android.Manifest.permission.INTERNET
-                },10);
+                },requestCode);
                 return;
             }
         }
 
         //set when location is requested
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 100000, 0, locationListener);
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, minTime, minDistance, locationListener);
     }
 
     //is called when refresh button is clicked

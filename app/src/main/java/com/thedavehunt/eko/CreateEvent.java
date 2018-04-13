@@ -15,6 +15,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -71,23 +72,30 @@ public class CreateEvent extends FragmentActivity implements SelectDateDialog.Da
     private String time="";
     private String id;
 
+    private int requestCode=1;
+
+    private int minTime=1000;
+    private int minDistance =0;
+
     public static double locLong;
     public static double locLat;
 
     private ArrayAdapter<CharSequence> adapter;
-    private CloudDatabaseManager dbm = new CloudDatabaseManager();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_event);
+        NetworkManager.getInstance(this);
 
+        //set usrl to get event data
         url = getResources().getString(R.string.serverURLrecieve);
 
         Intent i = getIntent();
         //get id of event selected
         id = i.getStringExtra("id");
 
+        //append id to url
         url += id;
 
         nameEdit = (EditText) findViewById(R.id.editNameCreate);
@@ -108,7 +116,7 @@ public class CreateEvent extends FragmentActivity implements SelectDateDialog.Da
         //dialog for facebook sharing
         shareDialog = new ShareDialog(this);
 
-        // Create an ArrayAdapter using the string array and a default spinner layout
+        //ArrayAdapter using default spinner layout
         adapter = ArrayAdapter.createFromResource(this,
                 R.array.category_array, android.R.layout.simple_spinner_item);
         // Specify the layout to use when the list of choices appears
@@ -116,13 +124,16 @@ public class CreateEvent extends FragmentActivity implements SelectDateDialog.Da
         // Apply the adapter to the spinner
         categorySpin.setAdapter(adapter);
 
+        //if an id was recieved, get date
         if(id!=null){
             retrieveData();
         }
 
+        //on select of category spinner
         categorySpin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                //check that item clicked it not invalid
                 if(position!=0) {
                     category = parent.getItemAtPosition(position).toString();
                 }
@@ -136,11 +147,13 @@ public class CreateEvent extends FragmentActivity implements SelectDateDialog.Da
         });
 
 
+        //get user location
         getLocation();
 
 
     }
 
+    //get result form chosen event location
     @Override
     protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
 
@@ -158,19 +171,22 @@ public class CreateEvent extends FragmentActivity implements SelectDateDialog.Da
     //method for saving new events to the Firebase database
     protected void saveEvent(){
         boolean saved=true;
+        int descriptionMin = 10;
 
         //get event name
         name=nameEdit.getText().toString();
         //get event description
         description=descriptionEdit.getText().toString();
+        //used to check that charachter count
         String descNospc = description.replaceAll("\\s+","");
 
+        //check to see if all data is present before saving
         if(name.isEmpty()){
             Toast.makeText(getApplicationContext(),"Please name your event",Toast.LENGTH_SHORT).show();
             saved=false;
         }
 
-        else if(descNospc.length()<25){
+        else if(descNospc.length()<descriptionMin){
             Toast.makeText(getApplicationContext(),"Description must be atleast 25 characters long",Toast.LENGTH_SHORT).show();
             saved=false;
         }
@@ -253,7 +269,18 @@ public class CreateEvent extends FragmentActivity implements SelectDateDialog.Da
         // create an event
         EventDoc event = new EventDoc(id, name, author, authorID, description, category, location,date,time);
 
-        dbm.createEvent(event);
+        NetworkManager.getInstance().postEvent(event,new NetworkManager.SomeCustomListener<JSONObject>()
+        {
+            @Override
+            public void getResult(JSONObject result)
+            {
+                if (!result.toString().isEmpty())
+                {
+                    //display that event was created
+                    Toast.makeText(getApplicationContext(),"Event Created",Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
 
@@ -277,8 +304,10 @@ public class CreateEvent extends FragmentActivity implements SelectDateDialog.Da
                                     eventObj.getString("eventTime"));
 
 
+                            //get event members
                             JSONArray members = eventObj.getJSONArray("members");
 
+                            //add members to event
                             for(int i=0;i<members.length();i++){
                                 JSONObject mem = members.getJSONObject(i);
                                 EventMember member = new EventMember(mem.getString("id"));
@@ -325,15 +354,17 @@ public class CreateEvent extends FragmentActivity implements SelectDateDialog.Da
         requestQueue.add(stringRequest);
     }
 
+    //open up google maps
     public void setLocation(View v){
         Intent i = new Intent(CreateEvent.this,LocationMaps.class);
         i.putExtra("lat",locLat);
         i.putExtra("long",locLong);
         //to get location result
-        startActivityForResult(i,10);
+        startActivityForResult(i,requestCode);
     }
 
     void getLocation(){
+        //get location services
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
         locationListener = new LocationListener() {
@@ -362,18 +393,19 @@ public class CreateEvent extends FragmentActivity implements SelectDateDialog.Da
             }
         };
 
+        //check location services permission
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(new String[]{
                         android.Manifest.permission.ACCESS_COARSE_LOCATION,
                         android.Manifest.permission.ACCESS_FINE_LOCATION,
                         android.Manifest.permission.INTERNET
-                }, 10);
+                }, requestCode);
                 return;
             }
         }
 
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 5000, 0, locationListener);
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, minTime, minDistance, locationListener);
     }
 
 
@@ -406,6 +438,7 @@ public class CreateEvent extends FragmentActivity implements SelectDateDialog.Da
     @Override
     public void returnTime(String time) {
         this.time=time;
+        //must add :
         timeText.setText(time.substring(0,2) + ":" + time.substring(2,4));
     }
 }

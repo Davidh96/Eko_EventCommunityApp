@@ -16,7 +16,6 @@ import android.widget.Toast;
 
 public class ViewEventToolsFragment extends Fragment {
 
-    CloudDatabaseManager dbm = new CloudDatabaseManager();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
